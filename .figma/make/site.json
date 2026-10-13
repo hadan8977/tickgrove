@@ -1,0 +1,10 @@
+{
+  "description": "Provides a modular, desktop-first trading platform with multi-chart analysis, strategy building, backtesting, and simulated trading for professional traders.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

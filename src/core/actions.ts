@@ -1,0 +1,452 @@
+import { execute, registerCommand } from './commands'
+import type { BacktestConfig, PaperStrategy, Timeframe } from './types'
+import { TIMEFRAMES } from './types'
+import { getBars, SYMBOLS, livePrice } from '../data/feed'
+import { runPine, detectKind, detectTitle } from '../pine/runtime'
+import { runBacktest } from '../backtest/client'
+import { evaluate, currentSignal, uid } from '../builder/model'
+import { toPine } from '../builder/codegen'
+import { getIndicator, listIndicators, defaultInputs } from '../indicators/registry'
+import { getChart, targetChartId, useApp, useBacktests, useBuilder, useCharts, usePaper, useScripts, useWorkspaces } from '../store'
+import { applyPreset, focusChartPanel, loadWorkspace, openPanel, PRESETS, saveCurrentWorkspace, type PresetId } from '../features/workspace/dock'
+
+const SYM_ENUM = SYMBOLS.map((s) => s.symbol)
+const DEFAULT_BT: BacktestConfig = { capital: 100000, commissionBps: 2, slippageBps: 3, sizePct: 95 }
+
+/* ---------- service functions ---------- */
+export async function backtestScript(scriptId: string, chartId?: string) {
+  const script = useScripts.getState().scripts.find((s) => s.id === scriptId)
+  if (!script) throw new Error('Script not found')
+  if (detectKind(script.source) !== 'strategy') throw new Error('Only strategy() scripts can be backtested')
+  const cid = targetChartId(chartId)
+  const chart = getChart(cid)
+  const symbol = chart?.symbol ?? 'NVDA'
+  const tf = chart?.tf ?? '1D'
+  const bars = getBars(symbol, tf)
+  useBacktests.getState().setRunning(true)
+  try {
+    const run = await runPine(script.source, bars, tf)
+    if (!run.ok) throw new Error(`Pine error${run.error?.line ? ` (line ${run.error.line})` : ''}: ${run.error?.message}`)
+    const res = await runBacktest(bars, run.signals, DEFAULT_BT, tf)
+    const id = uid('bt')
+    useBacktests.getState().add({ ...res, id, name: detectTitle(script.source), source: 'pine', sourceRef: scriptId, symbol, tf, createdAt: Date.now() })
+    if (cid) useCharts.getState().setBacktest(cid, id)
+    openPanel('backtest', {}, { direction: 'below' })
+    return `Backtest ${res.metrics.trades} trades · net ${res.metrics.netProfitPct.toFixed(2)}%`
+  } finally {
+    useBacktests.getState().setRunning(false)
+  }
+}
+
+export async function backtestBuilder(defId?: string) {
+  const st = useBuilder.getState()
+  const def = st.defs.find((d) => d.id === (defId ?? st.activeId))
+  if (!def) throw new Error('Strategy not found')
+  const bars = getBars(def.symbol, def.tf)
+  useBacktests.getState().setRunning(true)
+  try {
+    const signals = evaluate(def, bars)
+    const res = await runBacktest(bars, signals, { ...DEFAULT_BT, sizePct: def.sizePct, stopPct: def.stopPct ?? undefined, takePct: def.takePct ?? undefined }, def.tf)
+    const id = uid('bt')
+    useBacktests.getState().add({ ...res, id, name: def.name, source: 'builder', sourceRef: def.id, symbol: def.symbol, tf: def.tf, createdAt: Date.now() })
+    // show on a chart with matching symbol, or retarget the active chart
+    const charts = Object.values(useCharts.getState().charts)
+    const match = charts.find((c) => c.symbol === def.symbol && c.tf === def.tf)
+    const cid = match?.id ?? targetChartId()
+    if (cid) {
+      if (!match) {
+        useCharts.getState().setSymbol(cid, def.symbol)
+        useCharts.getState().setTf(cid, def.tf)
+      }
+      useCharts.getState().setBacktest(cid, id)
+    }
+    openPanel('backtest', {}, { direction: 'below' })
+    return `Backtest ${res.metrics.trades} trades · net ${res.metrics.netProfitPct.toFixed(2)}%`
+  } finally {
+    useBacktests.getState().setRunning(false)
+  }
+}
+
+export function deployToPaper(backtestId?: string) {
+  const bt = useBacktests.getState()
+  const r = bt.results.find((x) => x.id === (backtestId ?? bt.activeId))
+  if (!r) throw new Error('No backtest to deploy')
+  const s: PaperStrategy = { id: uid('ps'), name: r.name, symbol: r.symbol, tf: r.tf, source: r.source, sourceRef: r.sourceRef, status: 'running', startedAt: Date.now(), sizePct: r.config.sizePct }
+  usePaper.getState().addStrategy(s)
+  useApp.getState().toast({ title: `Deployed "${r.name}" to paper`, body: `${r.symbol} · ${r.tf} · evaluates on each tick`, tone: 'demo' })
+  openPanel('positions', {}, { direction: 'below' })
+  return s.id
+}
+
+/** Evaluate running paper strategies against the latest ticks. */
+let evaluating = false
+export async function tickPaperStrategies() {
+  if (evaluating) return
+  evaluating = true
+  try {
+    const paper = usePaper.getState()
+    for (const st of paper.strategies.filter((x) => x.status === 'running')) {
+      const bars = getBars(st.symbol, st.tf)
+      let wantLong: boolean | null = null
+      if (st.source === 'builder') {
+        const def = useBuilder.getState().defs.find((d) => d.id === st.sourceRef)
+        if (!def) continue
+        const sig = currentSignal(def, bars)
+        wantLong = sig.entry ? true : sig.exit ? false : null
+      } else {
+        const script = useScripts.getState().scripts.find((s) => s.id === st.sourceRef)
+        if (!script) continue
+        const run = await runPine(script.source, bars, st.tf)
+        if (!run.ok) continue
+        const last = run.signals[run.signals.length - 1]
+        wantLong = last ? last.action !== 'flat' : false
+      }
+      const pos = usePaper.getState().positions[st.symbol]
+      if (wantLong === true && !pos) {
+        const qty = Math.floor(((usePaper.getState().cash * st.sizePct) / 100 / livePrice(st.symbol)) * 100) / 100
+        if (qty > 0) {
+          usePaper.getState().placeOrder({ symbol: st.symbol, side: 'buy', type: 'market', qty, source: 'strategy', strategyId: st.id })
+          usePaper.getState().patchStrategy(st.id, { lastSignal: `Entry @ ${new Date().toLocaleTimeString()}` })
+          useApp.getState().toast({ title: `${st.name}: simulated entry`, body: `Bought ${qty} ${st.symbol}`, tone: 'demo' })
+        }
+      } else if (wantLong === false && pos && pos.qty > 0) {
+        usePaper.getState().flatten(st.symbol, 'strategy')
+        usePaper.getState().patchStrategy(st.id, { lastSignal: `Exit @ ${new Date().toLocaleTimeString()}` })
+      }
+    }
+  } finally {
+    evaluating = false
+  }
+}
+
+/* ---------- command registrations ---------- */
+export function registerCoreCommands() {
+  registerCommand<{ symbol: string; chartId?: string }>({
+    id: 'chart.setSymbol',
+    title: 'Set chart symbol',
+    category: 'Chart',
+    description: 'Change the symbol of a chart; propagates to charts in the same link group.',
+    scope: 'workspace',
+    params: { symbol: { type: 'enum', enum: SYM_ENUM, required: true, description: 'Ticker symbol' }, chartId: { type: 'string', description: 'Target chart (defaults to active)' } },
+    run: ({ symbol, chartId }) => {
+      const id = targetChartId(chartId)
+      if (!id) throw new Error('No chart open')
+      useCharts.getState().setSymbol(id, symbol)
+      return `${symbol} on ${id}`
+    },
+  })
+  registerCommand<{ tf: Timeframe; chartId?: string }>({
+    id: 'chart.setTimeframe',
+    title: 'Set timeframe',
+    category: 'Chart',
+    description: 'Change chart interval.',
+    scope: 'workspace',
+    params: { tf: { type: 'enum', enum: TIMEFRAMES, required: true, description: 'Interval' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ tf, chartId }) => {
+      const id = targetChartId(chartId)
+      if (!id) throw new Error('No chart open')
+      useCharts.getState().setTf(id, tf)
+    },
+  })
+  TIMEFRAMES.forEach((tf, i) =>
+    registerCommand({ id: `chart.tf.${tf}`, hidden: true, title: `Timeframe ${tf}`, category: 'Chart', description: '', shortcut: String(i + 1), run: () => execute('chart.setTimeframe', { tf }, 'shortcut') }),
+  )
+  registerCommand<{ style: string; chartId?: string }>({
+    id: 'chart.setStyle',
+    title: 'Set chart style',
+    category: 'Chart',
+    description: 'Candles, bars, line or area.',
+    scope: 'workspace',
+    params: { style: { type: 'enum', enum: ['candles', 'bars', 'line', 'area'], required: true, description: 'Series style' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ style, chartId }) => useCharts.getState().setStyle(targetChartId(chartId)!, style as any),
+  })
+  registerCommand<{ group: string; chartId?: string }>({
+    id: 'chart.setLinkGroup',
+    title: 'Set link group',
+    category: 'Chart',
+    description: 'Link symbol, interval and crosshair with other charts of the same color.',
+    scope: 'workspace',
+    params: { group: { type: 'enum', enum: ['violet', 'teal', 'amber', 'rose', 'none'], required: true, description: 'Link color' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ group, chartId }) => useCharts.getState().setGroup(targetChartId(chartId)!, group === 'none' ? null : (group as any)),
+  })
+  registerCommand<{ symbol?: string; tf?: Timeframe }>({
+    id: 'chart.open',
+    title: 'Open new chart',
+    category: 'Chart',
+    description: 'Add a chart panel to the workspace.',
+    scope: 'workspace',
+    params: { symbol: { type: 'enum', enum: SYM_ENUM, description: 'Ticker', default: 'AAPL' }, tf: { type: 'enum', enum: TIMEFRAMES, description: 'Interval', default: '1D' } },
+    run: ({ symbol, tf }) => {
+      useApp.getState().setView('workspace')
+      const id = useCharts.getState().createChart({ symbol, tf, group: null })
+      openPanel('chart', { chartId: id }, { direction: 'right' })
+      useApp.getState().setActiveChart(id)
+      return id
+    },
+  })
+  registerCommand<{ indicator: string; chartId?: string }>({
+    id: 'indicator.add',
+    title: 'Add indicator',
+    category: 'Indicator',
+    description: 'Add a built-in or plugin indicator to a chart.',
+    scope: 'workspace',
+    params: { indicator: { type: 'string', required: true, description: `Indicator id (${listIndicators().map((i) => i.id).join(', ')})` }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ indicator, chartId }) => {
+      const def = getIndicator(indicator)
+      if (!def) throw new Error(`Unknown indicator "${indicator}"`)
+      const id = targetChartId(chartId)
+      if (!id) throw new Error('No chart open')
+      return useCharts.getState().addIndicator(id, { kind: 'builtin', type: def.id, name: def.short, inputs: defaultInputs(def) })
+    },
+  })
+  registerCommand<{ indicatorId: string; chartId?: string }>({
+    id: 'indicator.remove',
+    title: 'Remove indicator',
+    category: 'Indicator',
+    description: 'Remove an indicator instance from a chart.',
+    scope: 'workspace',
+    params: { indicatorId: { type: 'string', required: true, description: 'Indicator instance id' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ indicatorId, chartId }) => useCharts.getState().removeIndicator(targetChartId(chartId)!, indicatorId),
+  })
+  const tools = ['cursor', 'trend', 'hline', 'rect', 'fib', 'text'] as const
+  registerCommand<{ tool: string }>({
+    id: 'drawing.setTool',
+    title: 'Select drawing tool',
+    category: 'Drawing',
+    description: 'Activate a drawing tool on charts.',
+    scope: 'workspace',
+    params: { tool: { type: 'enum', enum: [...tools], required: true, description: 'Tool' } },
+    run: ({ tool }) => useApp.getState().setTool(tool as any),
+  })
+  registerCommand({ id: 'drawing.trend', hidden: true, title: 'Trend line tool', category: 'Drawing', description: '', shortcut: 'Alt+T', run: () => useApp.getState().setTool('trend') })
+  registerCommand({ id: 'drawing.hline', hidden: true, title: 'Horizontal line tool', category: 'Drawing', description: '', shortcut: 'Alt+H', run: () => useApp.getState().setTool('hline') })
+  registerCommand({ id: 'drawing.fib', hidden: true, title: 'Fib retracement tool', category: 'Drawing', description: '', shortcut: 'Alt+F', run: () => useApp.getState().setTool('fib') })
+  registerCommand<{ chartId?: string }>({
+    id: 'drawing.clear',
+    title: 'Clear drawings',
+    category: 'Drawing',
+    description: 'Remove all drawings for the chart symbol.',
+    scope: 'workspace',
+    params: { chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ chartId }) => {
+      const c = getChart(targetChartId(chartId))
+      if (c) useCharts.getState().clearDrawings(c.symbol)
+    },
+  })
+  registerCommand<{ preset: string }>({
+    id: 'workspace.applyLayout',
+    title: 'Apply layout preset',
+    category: 'Workspace',
+    description: 'Rebuild the current workspace from a preset.',
+    scope: 'workspace',
+    params: { preset: { type: 'enum', enum: PRESETS.map((p) => p.id), required: true, description: 'Preset' } },
+    run: ({ preset }) => {
+      useApp.getState().setView('workspace')
+      applyPreset(preset as PresetId)
+    },
+  })
+  registerCommand({ id: 'workspace.save', title: 'Save workspace', category: 'Workspace', description: 'Persist the current layout.', shortcut: 'Mod+S', scope: 'workspace', run: () => {
+    saveCurrentWorkspace()
+    useApp.getState().toast({ title: 'Workspace saved' })
+  } })
+  registerCommand<{ name?: string }>({
+    id: 'workspace.create',
+    title: 'New workspace',
+    category: 'Workspace',
+    description: 'Create and switch to a new workspace.',
+    scope: 'workspace',
+    params: { name: { type: 'string', description: 'Name', default: 'Untitled' }, },
+    run: ({ name }) => {
+      saveCurrentWorkspace()
+      const id = uid('w')
+      useWorkspaces.getState().add({ id, name: name ?? 'Untitled', layout: null, preset: 'charts1', updatedAt: Date.now() })
+      useApp.getState().setView('workspace')
+      loadWorkspace(id)
+      return id
+    },
+  })
+  registerCommand<{ id: string }>({
+    id: 'workspace.switch',
+    title: 'Switch workspace',
+    category: 'Workspace',
+    description: 'Save current and load another workspace.',
+    scope: 'workspace',
+    params: { id: { type: 'string', required: true, description: 'Workspace id' } },
+    run: ({ id }) => {
+      saveCurrentWorkspace()
+      useWorkspaces.getState().setActive(id)
+      useApp.getState().setView('workspace')
+      loadWorkspace(id)
+    },
+  })
+  registerCommand<{ panel: string }>({
+    id: 'panel.open',
+    title: 'Open panel',
+    category: 'Workspace',
+    description: 'Open or focus a panel.',
+    scope: 'workspace',
+    params: { panel: { type: 'enum', enum: ['watchlist', 'detail', 'pine', 'builder', 'backtest', 'ticket', 'positions'], required: true, description: 'Panel type' } },
+    run: ({ panel }) => {
+      useApp.getState().setView('workspace')
+      openPanel(panel, {}, { direction: 'right' })
+    },
+  })
+  registerCommand<{ scriptId?: string; chartId?: string }>({
+    id: 'pine.addToChart',
+    title: 'Add Pine script to chart',
+    category: 'Pine',
+    description: 'Apply a Pine indicator or strategy to a chart.',
+    scope: 'workspace',
+    params: { scriptId: { type: 'string', description: 'Script id (defaults to active editor tab)' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ scriptId, chartId }) => {
+      const sc = useScripts.getState()
+      const script = sc.scripts.find((s) => s.id === (scriptId ?? sc.activeId))
+      if (!script) throw new Error('Script not found')
+      const id = targetChartId(chartId)
+      if (!id) throw new Error('No chart open')
+      useCharts.getState().addIndicator(id, { kind: 'pine', type: script.id, name: detectTitle(script.source), inputs: {} })
+      focusChartPanel(id)
+      return `Added "${script.name}"`
+    },
+  })
+  registerCommand<{ name: string; source: string }>({
+    id: 'pine.createScript',
+    title: 'Create Pine script',
+    category: 'Pine',
+    description: 'Save a new script to the library and open it.',
+    scope: 'workspace',
+    params: { name: { type: 'string', required: true, description: 'Name' }, source: { type: 'string', required: true, description: 'Pine source' } },
+    run: ({ name, source }) => {
+      const id = uid('sc')
+      useScripts.getState().upsert({ id, name, source, kind: detectKind(source), updatedAt: Date.now(), origin: 'user' })
+      openPanel('pine')
+      return id
+    },
+  })
+  registerCommand<{ scriptId?: string; chartId?: string }>({
+    id: 'backtest.runScript',
+    title: 'Backtest Pine strategy',
+    category: 'Backtest',
+    description: 'Run a Pine strategy on the target chart data.',
+    scope: 'read',
+    params: { scriptId: { type: 'string', description: 'Script id (defaults to active)' }, chartId: { type: 'string', description: 'Target chart' } },
+    run: ({ scriptId, chartId }) => backtestScript(scriptId ?? useScripts.getState().activeId, chartId),
+  })
+  registerCommand<{ strategyId?: string }>({
+    id: 'backtest.runBuilder',
+    title: 'Backtest visual strategy',
+    category: 'Backtest',
+    description: 'Evaluate the block strategy and backtest it.',
+    scope: 'read',
+    params: { strategyId: { type: 'string', description: 'Builder strategy id' } },
+    run: ({ strategyId }) => backtestBuilder(strategyId),
+  })
+  registerCommand<{ strategyId?: string }>({
+    id: 'strategy.generatePine',
+    title: 'Generate Pine from blocks',
+    category: 'Strategy',
+    description: 'One-way generation from the visual builder into a new Pine script.',
+    scope: 'workspace',
+    params: { strategyId: { type: 'string', description: 'Builder strategy id' } },
+    run: ({ strategyId }) => {
+      const st = useBuilder.getState()
+      const def = st.defs.find((d) => d.id === (strategyId ?? st.activeId))
+      if (!def) throw new Error('Strategy not found')
+      const existing = useScripts.getState().scripts.find((s) => s.origin === 'builder' && s.name === def.name)
+      const id = existing?.id ?? uid('sc')
+      useScripts.getState().upsert({ id, name: def.name, source: toPine(def), kind: 'strategy', updatedAt: Date.now(), origin: 'builder' })
+      openPanel('pine')
+      return id
+    },
+  })
+  registerCommand<{ backtestId?: string }>({
+    id: 'paper.deploy',
+    title: 'Deploy backtest to paper',
+    category: 'Paper',
+    description: 'Run the strategy of a backtest against simulated live ticks.',
+    scope: 'paper',
+    params: { backtestId: { type: 'string', description: 'Backtest id (defaults to active)' } },
+    run: ({ backtestId }) => deployToPaper(backtestId),
+  })
+  registerCommand<{ symbol: string; side: string; qty: number; type?: string; price?: number }>({
+    id: 'paper.placeOrder',
+    title: 'Place paper order',
+    category: 'Paper',
+    description: 'Submit a simulated order to the local paper broker. Never routes to a live broker.',
+    scope: 'paper',
+    params: {
+      symbol: { type: 'enum', enum: SYM_ENUM, required: true, description: 'Ticker' },
+      side: { type: 'enum', enum: ['buy', 'sell'], required: true, description: 'Side' },
+      qty: { type: 'number', required: true, description: 'Quantity' },
+      type: { type: 'enum', enum: ['market', 'limit', 'stop'], default: 'market', description: 'Order type' },
+      price: { type: 'number', description: 'Limit/stop price' },
+    },
+    run: ({ symbol, side, qty, type, price }, ctx) => {
+      if (type !== 'market' && !price) throw new Error('price is required for limit/stop orders')
+      const o = usePaper.getState().placeOrder({ symbol, side: side as any, qty, type: type as any, price, source: ctx.source === 'agent' ? 'agent' : 'manual' })
+      useApp.getState().toast({
+        title: o.status === 'filled' ? `Simulated fill · ${side.toUpperCase()} ${qty} ${symbol}` : o.status === 'rejected' ? 'Order rejected' : `Working ${type} order`,
+        body: o.status === 'filled' ? `@ ${o.price?.toFixed(2)} · DEMO, no real order was sent` : undefined,
+        tone: o.status === 'rejected' ? 'error' : 'demo',
+      })
+      return o.id
+    },
+  })
+  registerCommand<{ symbol: string }>({
+    id: 'paper.flatten',
+    title: 'Flatten position',
+    category: 'Paper',
+    description: 'Close the paper position in a symbol at market.',
+    scope: 'paper',
+    params: { symbol: { type: 'enum', enum: SYM_ENUM, required: true, description: 'Ticker' } },
+    run: ({ symbol }) => usePaper.getState().flatten(symbol),
+  })
+  registerCommand<{ orderId: string }>({
+    id: 'paper.cancelOrder',
+    title: 'Cancel paper order',
+    category: 'Paper',
+    description: 'Cancel a working paper order.',
+    scope: 'paper',
+    params: { orderId: { type: 'string', required: true, description: 'Order id' } },
+    run: ({ orderId }) => usePaper.getState().cancelOrder(orderId),
+  })
+  registerCommand({ id: 'app.toggleTheme', title: 'Cycle theme', category: 'App', description: 'Switch color theme.', run: () => {
+    const a = useApp.getState()
+    const order = ['light', 'dark', 'cobalt', 'moss'] as const
+    a.setTheme(order[(order.indexOf(a.theme) + 1) % order.length])
+  } })
+  registerCommand({ id: 'app.palette', hidden: true, title: 'Command palette', category: 'App', description: '', shortcut: 'Mod+K', run: () => useApp.getState().setPalette(!useApp.getState().paletteOpen) })
+  registerCommand<{ view: string }>({
+    id: 'app.navigate',
+    title: 'Navigate',
+    category: 'App',
+    description: 'Switch top-level view.',
+    params: { view: { type: 'enum', enum: ['workspace', 'library', 'integrations'], required: true, description: 'View' } },
+    run: ({ view }) => useApp.getState().setView(view as any),
+  })
+  registerCommand({ id: 'app.getState', title: 'Export app state (JSON)', category: 'App', description: 'Structured snapshot of workspace, charts, scripts, backtests and paper account for agents.', scope: 'read', run: () => exportState() })
+  registerCommand({ id: 'app.cancel', hidden: true, title: 'Cancel', category: 'App', description: '', shortcut: 'Escape', run: () => {
+    useApp.getState().setTool('cursor')
+    useApp.getState().setPalette(false)
+  } })
+}
+
+export function exportState() {
+  const charts = useCharts.getState()
+  const paper = usePaper.getState()
+  const ws = useWorkspaces.getState()
+  return {
+    app: 'open-composer',
+    version: '0.1.0',
+    mode: 'DEMO',
+    time: new Date().toISOString(),
+    view: useApp.getState().view,
+    workspace: { active: ws.workspaces.find((w) => w.id === ws.activeId)?.name, all: ws.workspaces.map((w) => ({ id: w.id, name: w.name })) },
+    activeChartId: useApp.getState().activeChartId,
+    charts: Object.values(charts.charts).map((c) => ({ id: c.id, symbol: c.symbol, tf: c.tf, link: c.group, style: c.style, indicators: c.indicators.map((i) => ({ id: i.id, name: i.name, inputs: i.inputs })), last: livePrice(c.symbol) })),
+    scripts: useScripts.getState().scripts.map((s) => ({ id: s.id, name: s.name, kind: detectKind(s.source) })),
+    builder: useBuilder.getState().defs.map((d) => ({ id: d.id, name: d.name, symbol: d.symbol, tf: d.tf })),
+    backtests: useBacktests.getState().results.map((r) => ({ id: r.id, name: r.name, symbol: r.symbol, tf: r.tf, metrics: r.metrics })),
+    paper: { cash: paper.cash, positions: Object.values(paper.positions), workingOrders: paper.orders.filter((o) => o.status === 'working').length, strategies: paper.strategies.map((s) => ({ id: s.id, name: s.name, status: s.status })) },
+  }
+}
