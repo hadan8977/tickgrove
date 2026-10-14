@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-14T13:26:12.532Z",
+  "base": "http://127.0.0.1:18892",
+  "checks": [
+    "legacy localStorage and splash restore under Tickgrove; saved scripts and disabled plugin choice survive; old browser API remains the same object",
+    "existing session token signs into the real Rust workspace; title, favicon, desktop and mobile UI show Tickgrove across four themes"
+  ],
+  "themes": [
+    {
+      "name": "light",
+      "color": "rgb(35, 100, 73)",
+      "overflow": 0
+    },
+    {
+      "name": "dark",
+      "color": "rgb(157, 226, 182)",
+      "overflow": 0
+    },
+    {
+      "name": "cobalt",
+      "color": "rgb(157, 226, 182)",
+      "overflow": 0
+    },
+    {
+      "name": "moss",
+      "color": "rgb(35, 100, 73)",
+      "overflow": 0
+    }
+  ],
+  "errors": [],
+  "isolatedDataDirectory": "var/ui-real-data-review",
+  "publicPreviewWrites": false
+}

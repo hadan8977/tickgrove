@@ -1,4 +1,7 @@
-# Trading Dashboard
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/tickgrove-lockup-dark.svg">
+  <img src="public/brand/tickgrove-lockup-light.svg" alt="Tickgrove" width="360">
+</picture>
 
 A self-hosted workspace for market charts, Pine scripts, backtesting, and paper trading.
 
@@ -20,8 +23,8 @@ React and TypeScript power the UI. Rust handles data, orders, jobs, and SQLite s
 Requires Linux, Docker Compose, and unprivileged user namespaces. See [Ubuntu sandbox setup](docs/self-hosting.md#ubuntu-sandbox-setup) if your host restricts them.
 
 ```sh
-git clone https://github.com/hadan8977/tradingdashboard.git
-cd tradingdashboard
+git clone https://github.com/hadan8977/tickgrove.git
+cd tickgrove
 docker compose up --build -d
 docker compose exec trading cat /app/var/auth-token
 ```

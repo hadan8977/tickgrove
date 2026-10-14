@@ -6,7 +6,7 @@ import { cx } from '../../ui/primitives'
 /**
  * "Field" — the ambient light layer that sits behind every glass surface.
  * Domain-warped fbm (flow) + a pointer lens (the field leans toward the cursor)
- * + a ripple pulse fired on navigation (window event `oc:pulse`).
+ * + a ripple pulse fired on navigation (window event `tickgrove:pulse`).
  */
 const FRAG = `
 precision mediump float;
@@ -51,7 +51,7 @@ function rgb(c: string): [number, number, number] {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
 }
 
-export const pulseField = (x = 0.5, y = 0.5) => window.dispatchEvent(new CustomEvent('oc:pulse', { detail: { x, y } }))
+export const pulseField = (x = 0.5, y = 0.5) => window.dispatchEvent(new CustomEvent('tickgrove:pulse', { detail: { x, y } }))
 
 export default function Shader({ className, intensity = 1, interactive = false }: { className?: string; intensity?: number; interactive?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -105,7 +105,7 @@ export default function Shader({ className, intensity = 1, interactive = false }
       if (reduced) draw(performance.now())
     }
     if (interactive && !reduced) window.addEventListener('pointermove', onMove, { passive: true })
-    window.addEventListener('oc:pulse', onPulse)
+    window.addEventListener('tickgrove:pulse', onPulse)
     let raf = 0
     let visible = true
     let last = 0
@@ -144,7 +144,7 @@ export default function Shader({ className, intensity = 1, interactive = false }
       cancelAnimationFrame(raf)
       io.disconnect()
       window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('oc:pulse', onPulse)
+      window.removeEventListener('tickgrove:pulse', onPulse)
       window.removeEventListener('resize', onResize)
     }
   }, [reduced, theme, intensity, interactive])

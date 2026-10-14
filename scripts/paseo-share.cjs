@@ -1,4 +1,4 @@
-// Optional authenticated-instance sharing; never starts a second trading service.
+// Tickgrove optional authenticated-instance sharing; never starts a second trading service.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
@@ -10,7 +10,7 @@ const { spawn } = require('node:child_process');
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw Error('Invalid preview port');
   const origin = `http://127.0.0.1:${port}`;
   const health = await fetch(origin + '/health', { signal: AbortSignal.timeout(5000) });
-  if (!health.ok) throw Error('Start the trading preview first');
+  if (!health.ok) throw Error('Start the Tickgrove preview first');
   const child = spawn('cloudflared', ['tunnel', '--config', process.platform === 'win32' ? 'NUL' : '/dev/null', '--no-autoupdate', '--protocol', 'http2', '--url', origin, '--logfile', path.join(state, 'share.log')], {
     cwd: root,
     stdio: 'inherit',

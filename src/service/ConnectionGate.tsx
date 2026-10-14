@@ -19,7 +19,7 @@ export default function ConnectionGate() {
         }}
       >
         <Logo />
-        <h1 className="mb-2 mt-6 text-xl font-semibold">Connect to your trading workspace</h1>
+        <h1 className="mb-2 mt-6 text-xl font-semibold">Connect to Tickgrove</h1>
         <p className="mb-5 text-sm text-muted">
           Charts use the market data providers configured on this instance. Layouts, strategies,
           runs and simulated accounts are saved by the server.

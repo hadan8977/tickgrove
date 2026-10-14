@@ -154,11 +154,11 @@ export default function ServerIntegrations({ children }: { children: React.React
               />
               <Code
                 title="CLI"
-                value={`# Save parameters in params.json\nserver/target/release/trading-cli ${method} params.json --key <unique-request-key>\n\n# Read token from a local file\nTRADING_TOKEN_FILE=/path/to/auth-token\nTRADING_URL=https://your-instance`}
+                value={`# Save parameters in params.json\nserver/target/release/tickgrove ${method} params.json --key <unique-request-key>\n\n# Read token from a local file\nTICKGROVE_TOKEN_FILE=/path/to/auth-token\nTICKGROVE_URL=https://your-instance`}
               />
               <Code
                 title="MCP (stdio)"
-                value={`server/target/release/trading-mcp\n\nEnvironment:\nTRADING_URL=https://your-instance\nTRADING_TOKEN_FILE=/path/to/auth-token\n\nUse tools/list to discover the server's command tool and input schema.`}
+                value={`server/target/release/tickgrove-mcp\n\nEnvironment:\nTICKGROVE_URL=https://your-instance\nTICKGROVE_TOKEN_FILE=/path/to/auth-token\n\nUse tools/list to discover the server's command tool and input schema.`}
               />
             </div>
           </>
@@ -225,7 +225,7 @@ export default function ServerIntegrations({ children }: { children: React.React
                     type: "application/json",
                   }),
                 );
-                a.download = "workspace.json";
+                a.download = "tickgrove-workspace.json";
                 a.click();
                 URL.revokeObjectURL(a.href);
               }}

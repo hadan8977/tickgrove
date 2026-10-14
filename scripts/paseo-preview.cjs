@@ -1,13 +1,16 @@
-// Paseo launcher only; all HTTP, market and trading services run in Rust.
+// Tickgrove Paseo launcher only; all HTTP, market and trading services run in Rust.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 
 const root = path.resolve(__dirname, '..');
-const binary = path.join(root, 'server/target/debug', process.platform === 'win32' ? 'trading-service.exe' : 'trading-service');
-const portText = process.env.PASEO_PORT || '8471';
+const suffix = process.platform === 'win32' ? '.exe' : '';
+const current = path.join(root, 'server/target/debug', 'tickgrove-server' + suffix);
+const legacy = path.join(root, 'server/target/debug', 'trading-service' + suffix);
+const binary = fs.existsSync(current) ? current : legacy;
+const portText = process.env.TICKGROVE_PREVIEW_PORT ?? process.env.PASEO_PORT ?? '8471';
 if (!/^\d+$/.test(portText) || Number(portText) < 1 || Number(portText) > 65535) throw Error('Invalid PASEO_PORT');
-if (!fs.existsSync(binary) || !fs.existsSync(path.join(root, 'dist/index.html'))) throw Error('Build the Rust service and React application first; see README.md');
+if (!fs.existsSync(binary) || !fs.existsSync(path.join(root, 'dist/index.html'))) throw Error('Build tickgrove-server and the React application first; see README.md');
 const data = path.join(root, 'var/paseo-preview');
 fs.mkdirSync(data, { recursive: true });
 fs.writeFileSync(path.join(data, 'port'), portText);

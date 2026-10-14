@@ -52,8 +52,8 @@ export function TopBar() {
   const [searchOpen, setSearchOpen] = useState(false);
   useEffect(() => {
     const h = () => setSearchOpen(true);
-    window.addEventListener("oc:symbol-search", h);
-    return () => window.removeEventListener("oc:symbol-search", h);
+    window.addEventListener("tickgrove:symbol-search", h);
+    return () => window.removeEventListener("tickgrove:symbol-search", h);
   }, []);
   return (
     <header className="relative z-40 flex h-12 shrink-0 items-center gap-2 pl-3 pr-2.5">
@@ -519,7 +519,7 @@ export function StatusBar() {
               {last.source}
             </div>
           )}
-          <div className="num px-1.5 pt-2 text-[10.5px] text-faint">Open Composer v0.1.0</div>
+          <div className="num px-1.5 pt-2 text-[10.5px] text-faint">Tickgrove v0.1.0</div>
         </div>
       </Popover>
     </footer>
@@ -729,12 +729,8 @@ export function Splash({ onDone }: { onDone: () => void }) {
         >
           <LogoMark size={64} />
         </motion.div>
-        <div className="text-[28px] font-semibold tracking-[-0.03em]">
-          Open <span className="font-normal text-muted">Composer</span>
-        </div>
-        <div className="text-[12.5px] text-muted">
-          Open-source trading workbench · charts, Pine, strategies, paper
-        </div>
+        <div className="text-[28px] font-semibold tracking-[-0.03em]">Tickgrove</div>
+        <div className="text-[12.5px] text-muted">An extensible trading workspace</div>
         <motion.div className="mt-2 h-[2px] w-40 overflow-hidden rounded-full bg-line-2">
           <motion.div
             initial={{ x: "-100%" }}
@@ -768,7 +764,7 @@ export function useShortcuts() {
       if (typing) return;
       if (e.key === "/") {
         e.preventDefault();
-        window.dispatchEvent(new Event("oc:symbol-search"));
+        window.dispatchEvent(new Event("tickgrove:symbol-search"));
         return;
       }
       // Alt+letter produces special chars on macOS; use e.code

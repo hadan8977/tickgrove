@@ -1,11 +1,15 @@
+import { compatibleStorage } from "../brand/storage";
 let token =
-  typeof sessionStorage === "undefined" ? "" : (sessionStorage.getItem("trading.token") ?? "");
+  typeof sessionStorage === "undefined"
+    ? ""
+    : (compatibleStorage(sessionStorage, "trading.").getItem("tickgrove.token") ?? "");
 export function getServiceToken() {
   return token;
 }
 export function setServiceToken(value: string) {
   token = value;
-  if (typeof sessionStorage !== "undefined") sessionStorage.setItem("trading.token", value);
+  if (typeof sessionStorage !== "undefined")
+    compatibleStorage(sessionStorage, "trading.").setItem("tickgrove.token", value);
 }
 export async function command<T = any>(
   method: string,

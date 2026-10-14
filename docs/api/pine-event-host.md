@@ -19,7 +19,7 @@ Remaining compatibility boundaries: `calc_on_order_fills`, scoped or structured 
 Acceptance commands (test-only Python dependencies are not production dependencies):
 
 ```sh
-CARGO_BUILD_JOBS=1 cargo build --manifest-path server/Cargo.toml --bin trading-service
+CARGO_BUILD_JOBS=1 cargo build --manifest-path server/Cargo.toml --bin tickgrove-server
 node --test tests/pine-host.test.cjs tests/pine-broker.test.cjs
 python3 scripts/acceptance/pine-event-service.py > /tmp/pine-event-service.json
 ```

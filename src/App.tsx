@@ -1,3 +1,4 @@
+import { compatibleStorage } from "./brand/storage";
 import ServiceWorkbench from "./service/ServiceWorkbench";
 import ConnectionGate from "./service/ConnectionGate";
 import MarketPanel from "./service/MarketPanel";
@@ -34,7 +35,7 @@ function boot() {
   registerCoreCommands();
   initPlugins();
   // Offline demo-only in-page command surface. Server bridges use /api/command.
-  (window as any).openComposer = {
+  const api = {
     version: "0.1.0",
     mode: isDemoData() ? "DEMO" : "SERVICE",
     commands: () =>
@@ -51,6 +52,9 @@ function boot() {
     state: exportState,
     activity: () => getActivity().slice(0, 50),
   };
+  (window as any).tickgrove = api;
+  // Compatibility for existing integrations; all new examples use window.tickgrove.
+  (window as any).openComposer = api;
   if (!isDemoData()) return;
   configureData("demo", false);
   let n = 0;
@@ -71,7 +75,9 @@ export default function App() {
   const connected = useConnection((s) => s.connected);
   const theme = useApp((s) => s.theme);
   const view = useApp((s) => s.view);
-  const [splash, setSplash] = useState(() => !sessionStorage.getItem("oc.splash"));
+  const [splash, setSplash] = useState(
+    () => !compatibleStorage(sessionStorage).getItem("tickgrove.splash"),
+  );
   useShortcuts();
   useEffect(() => {
     boot();
@@ -83,7 +89,7 @@ export default function App() {
     pulseField(0.02, 0.1 + (view === "workspace" ? 0 : view === "library" ? 0.05 : 0.1));
   }, [view]);
   useEffect(() => {
-    document.title = "Open Composer";
+    document.title = "Tickgrove";
     let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
     if (!link) {
       link = document.createElement("link");
@@ -91,7 +97,7 @@ export default function App() {
       document.head.appendChild(link);
     }
     link.type = "image/svg+xml";
-    link.href = "/favicon.svg";
+    link.href = "/favicon.svg?v=tickgrove-1";
   }, []);
   if (serviceMode && !connected) return <ConnectionGate />;
   return (
@@ -155,7 +161,7 @@ export default function App() {
           {splash && !serviceMode && (
             <Splash
               onDone={() => {
-                sessionStorage.setItem("oc.splash", "1");
+                compatibleStorage(sessionStorage).setItem("tickgrove.splash", "1");
                 setSplash(false);
               }}
             />

@@ -83,7 +83,7 @@ pub fn identity(
 pub fn client() -> anyhow::Result<reqwest::Client> {
     Ok(reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(20))
-        .user_agent("TradingDashboard/0.2 self-hosted research")
+        .user_agent("Tickgrove/0.2 self-hosted research")
         .build()?)
 }
 pub async fn event(

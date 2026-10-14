@@ -2094,6 +2094,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "tickgrove"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "base64 0.22.1",
+ "chrono",
+ "chrono-tz",
+ "fs2",
+ "futures-util",
+ "libc",
+ "reqwest",
+ "rmcp",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "tokio",
+ "tokio-tungstenite",
+ "tower-http",
+ "uuid",
+]
+
+[[package]]
 name = "tinystr"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2273,30 +2297,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
 dependencies = [
  "once_cell",
-]
-
-[[package]]
-name = "trading-service"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "base64 0.22.1",
- "chrono",
- "chrono-tz",
- "fs2",
- "futures-util",
- "libc",
- "reqwest",
- "rmcp",
- "serde",
- "serde_json",
- "sha2",
- "sqlx",
- "tokio",
- "tokio-tungstenite",
- "tower-http",
- "uuid",
 ]
 
 [[package]]

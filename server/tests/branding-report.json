@@ -1,0 +1,70 @@
+{
+  "product": "Tickgrove",
+  "date": "2026-10-14T13:19:20.438Z",
+  "checks": [
+    {
+      "name": "database upgrade + new env precedence",
+      "passed": true,
+      "previousBinary": true
+    },
+    {
+      "name": "canonical and legacy Rust CLI + Node compatibility client",
+      "passed": true
+    },
+    {
+      "name": "official MCP clients and both tool aliases",
+      "passed": true,
+      "pythonClient": true
+    },
+    {
+      "name": "canonical backup + legacy restore",
+      "passed": true
+    },
+    {
+      "name": "rebuilt legacy server alias",
+      "passed": true
+    }
+  ],
+  "total": 5,
+  "passed": 5,
+  "scope": "isolated local rename compatibility; no external orders or provider credentials",
+  "unchangedExecutionHashes": {
+    "server/src/account.rs": "10a984cd8db9b780cc6136070b24e0e6bc5fcf2567dbab4d8db6c17d5e2ba813",
+    "server/src/sandbox.rs": "5dbc9dfb76deafae42fa798e5a75d229c1f85f7b9d28deaf2faa890766bcef42",
+    "server/src/pine_host.rs": "0e929609e35368ea6b2e77bda2e47162438414be8e65ded97c5e885c8afbe7aa",
+    "scripts/service-worker.cjs": "00f81ae0c2a4df78d630deaaf396d3a8b2ef3aa0586ff3e687ddae63a65085de",
+    "scripts/pine-host-worker.cjs": "1a54f6be7c366fe44e7773175f8fe1f4d0f73285c95230ae3452a35f17850b06",
+    "scripts/register-typescript.cjs": "826e57636162cbaf82ba3185adf23874a45fc73de322f3e6f4126841319672ad",
+    "src/pine/host.ts": "7367e9fee0078e15e64e8bfca7c2fe5ebb60fe1885678dd247785f5d6c74158e",
+    "src/pine/broker.ts": "3a03df1ade326c0d9f976e09892fd0d04e11de9d345b03ee3d0ced5596ebad21",
+    "src/pine/rollback.ts": "3f8223d1b0c23b4b8d9585249509b0ad8b59a3b823cd50027d90ea2e54d23185",
+    "src/pine/runtime.ts": "6549fb36426ae3c3ec88450f12a8108352f657c42561a5caae9fa724b0c549b8",
+    "src/pine/library.ts": "ae56908fb45fb562f245c319d4d492125d606293a71268abfb82926b42f3e0a1",
+    "src/pine/compat.ts": "b61864c9961f92a82906e2dcb8792febf008931c105c68a6b1b94725914a65a0",
+    "src/pine/data.ts": "5b183884320e01f3618adc84da3ad41b7dc43ba59108b773ad1e4b47f97fa0ea",
+    "src/pine/report.ts": "6508e7ce4b33120d3e7d142a8f6227803a3ed77f56afa5fcaab81bf9096bd07d",
+    "src/composer/engine.ts": "a56919e18fca6d7ddcb780468ad978988a74eef0cc1ebfb8b37390ebae336a4f"
+  },
+  "dependencies": "All dependency package/checksum entries unchanged; only root Cargo package renamed",
+  "tools": {
+    "rustc": "1.90.0",
+    "cargo": "1.90.0",
+    "node": "22.22.2",
+    "rmcp": "3.2.0"
+  },
+  "build": {
+    "command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 cargo build --locked --offline --manifest-path server/Cargo.toml --bins",
+    "passed": true,
+    "bins": [
+      "tickgrove-server",
+      "tickgrove",
+      "tickgrove-mcp",
+      "tickgrove-admin",
+      "trading-service",
+      "trading-cli",
+      "trading-mcp",
+      "trading-admin"
+    ]
+  },
+  "containerValidation": "Dockerfile/Compose updated; this branding revision was not rebuilt as an image"
+}

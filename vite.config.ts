@@ -32,7 +32,7 @@ react(),
     },
     optimizeDeps: { entries: ['index.html'] },
     server: {
-      proxy: { "/api": process.env.TRADING_URL || "http://127.0.0.1:8787" },
+      proxy: { "/api": process.env.TICKGROVE_URL || process.env.TRADING_URL || "http://127.0.0.1:8787" },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
@@ -46,7 +46,7 @@ react(),
       },
     },
     preview: {
-      proxy: { "/api": process.env.TRADING_URL || "http://127.0.0.1:8787" },
+      proxy: { "/api": process.env.TICKGROVE_URL || process.env.TRADING_URL || "http://127.0.0.1:8787" },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
     },
@@ -92,7 +92,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
     return html.replace(`<!-- ${slotName} -->`, content)
   }
 
-  const title = config.title ?? "Figma Make App"
+  const title = config.title ?? "Tickgrove"
   const description = config.description ?? ''
   // Imported HTML keeps its own favicon; new Makes default to the Make product icon.
   const favicon = config.icons?.icon ?? '/favicon.svg'

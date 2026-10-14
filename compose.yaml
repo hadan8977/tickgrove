@@ -1,8 +1,12 @@
+# Compatibility project name preserves the original default named volume after repo rename.
+# Keep an existing custom COMPOSE_PROJECT_NAME / -p value when upgrading.
+name: ${COMPOSE_PROJECT_NAME:-tradingdashboard}
 services:
   trading:
     build: .
+    image: tickgrove:local
     ports:
-      - "127.0.0.1:${TRADING_PORT:-8787}:8787"
+      - "127.0.0.1:${TICKGROVE_PORT:-${TRADING_PORT:-8787}}:8787"
     volumes:
       - trading-data:/app/var
     read_only: true
@@ -15,7 +19,7 @@ services:
     # Bubblewrap uses unprivileged user namespaces. Host must enable these.
     security_opt:
       - seccomp:unconfined
-      - apparmor:${TRADING_APPARMOR_PROFILE:-unconfined}
+      - apparmor:${TICKGROVE_APPARMOR_PROFILE:-${TRADING_APPARMOR_PROFILE:-unconfined}}
       # Nested unprivileged PID namespaces must mount their own /proc.
       - systempaths:unconfined
       - no-new-privileges:true

@@ -1,10 +1,18 @@
 {
-  "description": "Provides a modular, desktop-first trading platform with multi-chart analysis, strategy building, backtesting, and simulated trading for professional traders.",
+  "description": "An extensible trading workspace. Charts, Pine scripts, backtesting, and paper trading on your own infrastructure.",
   "robots": {
     "index": false
   },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
+  },
+  "title": "Tickgrove",
+  "language": "en",
+  "icons": {
+    "icon": "/favicon.svg?v=tickgrove-1"
+  },
+  "openGraph": {
+    "image": "/brand/tickgrove-social.png"
   }
 }

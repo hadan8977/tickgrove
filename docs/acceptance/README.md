@@ -4,6 +4,9 @@ These files record actual offline, local and public-market network checks. Each 
 
 | Evidence | Scope |
 | --- | --- |
+| [rebrand-preview.json](rebrand-preview.json) | Deployed Tickgrove service, unchanged workspace/account/token, HTTPS preview and API authentication after restart |
+| [rebrand-browser.json](rebrand-browser.json) | Tickgrove browser identity, legacy storage/token migration, four themes and mobile width; isolated review instance |
+| [branding-report.json](../../server/tests/branding-report.json) | Old-to-new database continuity, canonical/legacy CLI, two official MCP clients, backup/restore, eight Rust binaries; image rebuild excluded |
 | locked-runtime.json | Full no-key service/Pine/three-portfolio/plugin/CLI chain repeated with a clean frozen dependency installation |
 | locked-build.json | Clean frozen pnpm install, identical final src, typecheck/build, project dist copied from exact locked dependencies |
 | default-startup.json | Independent no-token startup: generated token 0600, CLI token-file auth, no secret in logs, temporary service stopped |

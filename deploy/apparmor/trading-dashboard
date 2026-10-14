@@ -1,3 +1,4 @@
+# Compatibility profile name for existing deployments; new installs may use tickgrove.
 # Opt-in profile for hosts that restrict unprivileged user namespaces.
 # Applied only to this application's container; does not change host sysctls.
 abi <abi/4.0>,

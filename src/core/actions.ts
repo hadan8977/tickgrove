@@ -82,18 +82,16 @@ export async function backtestScript(scriptId: string, chartId?: string) {
     const res = run.backtest;
     if (!res) throw new Error("Pine runtime produced no strategy ledger");
     const id = uid("bt");
-    useBacktests
-      .getState()
-      .add({
-        ...res,
-        id,
-        name: detectTitle(script.source),
-        source: "pine",
-        sourceRef: scriptId,
-        symbol,
-        tf,
-        createdAt: Date.now(),
-      });
+    useBacktests.getState().add({
+      ...res,
+      id,
+      name: detectTitle(script.source),
+      source: "pine",
+      sourceRef: scriptId,
+      symbol,
+      tf,
+      createdAt: Date.now(),
+    });
     if (cid) useCharts.getState().setBacktest(cid, id);
     if (useApp.getState().view === "workspace") openPanel("backtest", {}, { direction: "below" });
     return `Backtest ${res.metrics.trades} trades · net ${res.metrics.netProfitPct.toFixed(2)}%`;
@@ -141,18 +139,16 @@ export async function backtestBuilder(defId?: string) {
           tf: def.tf,
         });
     const id = uid("bt");
-    useBacktests
-      .getState()
-      .add({
-        ...res,
-        id,
-        name: def.name,
-        source: "builder",
-        sourceRef: def.id,
-        symbol: def.symbol,
-        tf: def.tf,
-        createdAt: Date.now(),
-      });
+    useBacktests.getState().add({
+      ...res,
+      id,
+      name: def.name,
+      source: "builder",
+      sourceRef: def.id,
+      symbol: def.symbol,
+      tf: def.tf,
+      createdAt: Date.now(),
+    });
     // show on a chart with matching symbol, or retarget the active chart
     const charts = Object.values(useCharts.getState().charts);
     const match = charts.find((c) => c.symbol === def.symbol && c.tf === def.tf);
@@ -191,12 +187,10 @@ export async function deployToPaper(backtestId?: string) {
       },
       crypto.randomUUID(),
     );
-    useApp
-      .getState()
-      .toast({
-        title: `Deployed ${r.name}`,
-        body: "Server session follows its bound market stream",
-      });
+    useApp.getState().toast({
+      title: `Deployed ${r.name}`,
+      body: "Server session follows its bound market stream",
+    });
     openPanel("positions", {}, { direction: "below" });
     return session.session_id;
   }
@@ -219,17 +213,14 @@ export async function deployToPaper(backtestId?: string) {
     s.lastSignal = "Historical replay · independent native ledger";
   }
   usePaper.getState().addStrategy(s);
-  useApp
-    .getState()
-    .toast({
-      title:
-        r.source === "pine" ? `Started replay of "${r.name}"` : `Deployed "${r.name}" to paper`,
-      body:
-        r.source === "pine"
-          ? "20 historical bars per step · view Strategies for equity and position"
-          : `${r.symbol} · ${r.tf} · evaluates on each tick`,
-      tone: "demo",
-    });
+  useApp.getState().toast({
+    title: r.source === "pine" ? `Started replay of "${r.name}"` : `Deployed "${r.name}" to paper`,
+    body:
+      r.source === "pine"
+        ? "20 historical bars per step · view Strategies for equity and position"
+        : `${r.symbol} · ${r.tf} · evaluates on each tick`,
+    tone: "demo",
+  });
   openPanel("positions", {}, { direction: "below" });
   return s.id;
 }
@@ -248,22 +239,18 @@ export async function tickPaperStrategies() {
       if (st.source === "pine") {
         const frames = pineReplays.get(st.id);
         if (!frames || !st.replay) {
-          usePaper
-            .getState()
-            .patchStrategy(st.id, {
-              status: "stopped",
-              lastSignal: "Run a backtest to start a fresh historical replay",
-            });
+          usePaper.getState().patchStrategy(st.id, {
+            status: "stopped",
+            lastSignal: "Run a backtest to start a fresh historical replay",
+          });
           continue;
         }
         const next = advanceReplay(frames, st.replay.cursor, 20);
-        usePaper
-          .getState()
-          .patchStrategy(st.id, {
-            replay: next,
-            status: next.completed ? "completed" : "running",
-            lastSignal: `${next.cursor}/${next.total} bars · ${next.frame.closedTrades} closed trades`,
-          });
+        usePaper.getState().patchStrategy(st.id, {
+          replay: next,
+          status: next.completed ? "completed" : "running",
+          lastSignal: `${next.cursor}/${next.total} bars · ${next.frame.closedTrades} closed trades`,
+        });
         continue;
       }
       const bars = getBars(st.symbol, st.tf);
@@ -278,26 +265,22 @@ export async function tickPaperStrategies() {
           Math.floor(((usePaper.getState().cash * st.sizePct) / 100 / livePrice(st.symbol)) * 100) /
           100;
         if (qty > 0) {
-          usePaper
-            .getState()
-            .placeOrder({
-              symbol: st.symbol,
-              side: "buy",
-              type: "market",
-              qty,
-              source: "strategy",
-              strategyId: st.id,
-            });
+          usePaper.getState().placeOrder({
+            symbol: st.symbol,
+            side: "buy",
+            type: "market",
+            qty,
+            source: "strategy",
+            strategyId: st.id,
+          });
           usePaper
             .getState()
             .patchStrategy(st.id, { lastSignal: `Entry @ ${new Date().toLocaleTimeString()}` });
-          useApp
-            .getState()
-            .toast({
-              title: `${st.name}: simulated entry`,
-              body: `Bought ${qty} ${st.symbol}`,
-              tone: "demo",
-            });
+          useApp.getState().toast({
+            title: `${st.name}: simulated entry`,
+            body: `Bought ${qty} ${st.symbol}`,
+            tone: "demo",
+          });
         }
       } else if (wantLong === false && pos && pos.qty > 0) {
         usePaper.getState().flatten(st.symbol, "strategy");
@@ -438,14 +421,12 @@ export function registerCoreCommands() {
       if (!def) throw new Error(`Unknown indicator "${indicator}"`);
       const id = targetChartId(chartId);
       if (!id) throw new Error("No chart open");
-      return useCharts
-        .getState()
-        .addIndicator(id, {
-          kind: "builtin",
-          type: def.id,
-          name: def.short,
-          inputs: defaultInputs(def),
-        });
+      return useCharts.getState().addIndicator(id, {
+        kind: "builtin",
+        type: def.id,
+        name: def.short,
+        inputs: defaultInputs(def),
+      });
     },
   });
   registerCommand<{ indicatorId: string; chartId?: string }>({
@@ -552,15 +533,13 @@ export function registerCoreCommands() {
     run: ({ name }) => {
       saveCurrentWorkspace();
       const id = uid("w");
-      useWorkspaces
-        .getState()
-        .add({
-          id,
-          name: name ?? "Untitled",
-          layout: null,
-          preset: "charts1",
-          updatedAt: Date.now(),
-        });
+      useWorkspaces.getState().add({
+        id,
+        name: name ?? "Untitled",
+        layout: null,
+        preset: "charts1",
+        updatedAt: Date.now(),
+      });
       useApp.getState().setView("workspace");
       loadWorkspace(id);
       return id;
@@ -632,14 +611,12 @@ export function registerCoreCommands() {
           .getState()
           .updateIndicator(id, existing.id, { name: detectTitle(script.source), visible: true });
       else
-        useCharts
-          .getState()
-          .addIndicator(id, {
-            kind: "pine",
-            type: script.id,
-            name: detectTitle(script.source),
-            inputs: {},
-          });
+        useCharts.getState().addIndicator(id, {
+          kind: "pine",
+          type: script.id,
+          name: detectTitle(script.source),
+          inputs: {},
+        });
       focusChartPanel(id);
       return `${existing ? "Updated" : "Added"} "${script.name}"`;
     },
@@ -656,16 +633,14 @@ export function registerCoreCommands() {
     },
     run: ({ name, source }) => {
       const id = uid("sc");
-      useScripts
-        .getState()
-        .upsert({
-          id,
-          name,
-          source,
-          kind: detectKind(source),
-          updatedAt: Date.now(),
-          origin: "user",
-        });
+      useScripts.getState().upsert({
+        id,
+        name,
+        source,
+        kind: detectKind(source),
+        updatedAt: Date.now(),
+        origin: "user",
+      });
       openPanel("pine");
       return id;
     },
@@ -707,16 +682,14 @@ export function registerCoreCommands() {
         .getState()
         .scripts.find((s) => s.origin === "builder" && s.name === def.name);
       const id = existing?.id ?? uid("sc");
-      useScripts
-        .getState()
-        .upsert({
-          id,
-          name: def.name,
-          source: toPine(def),
-          kind: "strategy",
-          updatedAt: Date.now(),
-          origin: "builder",
-        });
+      useScripts.getState().upsert({
+        id,
+        name: def.name,
+        source: toPine(def),
+        kind: "strategy",
+        updatedAt: Date.now(),
+        origin: "builder",
+      });
       openPanel("pine");
       return id;
     },
@@ -768,26 +741,22 @@ export function registerCoreCommands() {
           stopPrice: stopPrice ?? (type === "stop" ? price : undefined),
           client_order_id: crypto.randomUUID(),
         });
-        useApp
-          .getState()
-          .toast({
-            title: `Local order ${response.status ?? "submitted"}`,
-            body: response.error ?? `${side.toUpperCase()} ${qty} ${symbol}`,
-            tone: response.status === "rejected" ? "error" : undefined,
-          });
+        useApp.getState().toast({
+          title: `Local order ${response.status ?? "submitted"}`,
+          body: response.error ?? `${side.toUpperCase()} ${qty} ${symbol}`,
+          tone: response.status === "rejected" ? "error" : undefined,
+        });
         return response.id;
       }
       if (type !== "market" && !price) throw new Error("price is required for limit/stop orders");
-      const o = usePaper
-        .getState()
-        .placeOrder({
-          symbol,
-          side: side as any,
-          qty,
-          type: type as any,
-          price,
-          source: ctx.source === "agent" ? "agent" : "manual",
-        });
+      const o = usePaper.getState().placeOrder({
+        symbol,
+        side: side as any,
+        qty,
+        type: type as any,
+        price,
+        source: ctx.source === "agent" ? "agent" : "manual",
+      });
       useApp.getState().toast({
         title:
           o.status === "filled"
@@ -896,7 +865,7 @@ export function exportState() {
   const paper = usePaper.getState();
   const ws = useWorkspaces.getState();
   return {
-    app: "open-composer",
+    app: "tickgrove",
     version: "0.1.0",
     mode: isDemoData() ? "DEMO" : "SERVICE",
     time: new Date().toISOString(),
@@ -921,15 +890,13 @@ export function exportState() {
     builder: useBuilder
       .getState()
       .defs.map((d) => ({ id: d.id, name: d.name, symbol: d.symbol, tf: d.tf })),
-    backtests: useBacktests
-      .getState()
-      .results.map((r) => ({
-        id: r.id,
-        name: r.name,
-        symbol: r.symbol,
-        tf: r.tf,
-        metrics: r.metrics,
-      })),
+    backtests: useBacktests.getState().results.map((r) => ({
+      id: r.id,
+      name: r.name,
+      symbol: r.symbol,
+      tf: r.tf,
+      metrics: r.metrics,
+    })),
     paper: isDemoData()
       ? {
           cash: paper.cash,

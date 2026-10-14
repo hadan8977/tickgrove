@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   BacktestResult,
   ChartState,
@@ -17,6 +17,9 @@ import type {
 import { exampleStrategy, uid, type StrategyDefinition } from "../builder/model";
 import { EXAMPLE_SCRIPTS } from "../pine/examples";
 import { livePrice } from "../data/feed";
+
+import { compatibleStorage } from "../brand/storage";
+const browserStorage = createJSONStorage<any>(() => compatibleStorage(localStorage));
 
 /* ---------------- App ---------------- */
 export type View = "workspace" | "library" | "integrations" | "operations" | "market" | "alerts";
@@ -76,7 +79,8 @@ export const useApp = create<AppState>()(
       dismiss: (id) => set((s) => ({ toasts: s.toasts.filter((x) => x.id !== id) })),
     }),
     {
-      name: "oc.app",
+      name: "tickgrove.app",
+      storage: browserStorage,
       partialize: (s) => ({
         theme: s.theme,
         view: s.view,
@@ -367,7 +371,7 @@ export const useCharts = create<ChartsState>()(
           }),
         })),
     }),
-    { name: "oc.charts" },
+    { name: "tickgrove.charts", storage: browserStorage },
   ),
 );
 export const getChart = (id: string | null | undefined) =>
@@ -454,7 +458,7 @@ export const useWorkspaces = create<WorkspacesState>()(
         }),
       setActive: (activeId) => set({ activeId }),
     }),
-    { name: "oc.workspaces" },
+    { name: "tickgrove.workspaces", storage: browserStorage },
   ),
 );
 
@@ -519,7 +523,7 @@ export const useScripts = create<ScriptsState>()(
           };
         }),
     }),
-    { name: "oc.scripts" },
+    { name: "tickgrove.scripts", storage: browserStorage },
   ),
 );
 
@@ -573,7 +577,7 @@ export const useBuilder = create<BuilderState>()(
         }),
       setActive: (activeId) => set({ activeId }),
     }),
-    { name: "oc.builder" },
+    { name: "tickgrove.builder", storage: browserStorage },
   ),
 );
 
@@ -731,11 +735,15 @@ export const usePaper = create<PaperState>()(
           strategies: [],
         }),
     }),
-    { name: "oc.paper" },
+    { name: "tickgrove.paper", storage: browserStorage },
   ),
 );
 
 /* ---------------- Plugins ---------------- */
+const pluginId = (id: string) =>
+  ["supertrend", "position-sizer", "sector-heatmap"].some((name) => id === "oc." + name)
+    ? id.replace(/^oc\./, "tickgrove.")
+    : id;
 interface PluginsState {
   enabled: Record<string, boolean>;
   toggle: (id: string, on: boolean) => void;
@@ -744,12 +752,24 @@ export const usePlugins = create<PluginsState>()(
   persist(
     (set) => ({
       enabled: {
-        "oc.supertrend": true,
-        "oc.position-sizer": true,
-        "oc.sector-heatmap": false,
+        "tickgrove.supertrend": true,
+        "tickgrove.position-sizer": true,
+        "tickgrove.sector-heatmap": false,
       },
-      toggle: (id, on) => set((s) => ({ enabled: { ...s.enabled, [id]: on } })),
+      toggle: (id, on) => set((s) => ({ enabled: { ...s.enabled, [pluginId(id)]: on } })),
     }),
-    { name: "oc.plugins" },
+    {
+      name: "tickgrove.plugins",
+      storage: browserStorage,
+      merge: (persisted, current) => {
+        const old = (persisted as Partial<PluginsState>)?.enabled ?? {};
+        const enabled = { ...current.enabled };
+        for (const [id, value] of Object.entries(old)) {
+          const key = pluginId(id);
+          if (key === id || !(key in old)) enabled[key] = value;
+        }
+        return { ...current, enabled };
+      },
+    },
   ),
 );

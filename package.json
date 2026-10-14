@@ -1,5 +1,5 @@
 {
-  "name": "figma-make-app",
+  "name": "tickgrove",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -11,7 +11,8 @@
     "test": "node --test --test-concurrency=1 tests/*.test.cjs",
     "pine": "node scripts/pine.cjs",
     "test:pine-public": "node scripts/pine-corpus.cjs",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "brand:generate": "node scripts/generate-brand.cjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",

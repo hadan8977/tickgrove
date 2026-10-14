@@ -1,7 +1,45 @@
 [package]
-name = "trading-service"
+name = "tickgrove"
 version = "0.1.0"
 edition = "2024"
+default-run = "tickgrove-server"
+autobins = false
+
+[lib]
+name = "tickgrove"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tickgrove-server"
+path = "src/main.rs"
+
+[[bin]]
+name = "trading-service"
+path = "src/bin/trading-service.rs"
+
+[[bin]]
+name = "tickgrove"
+path = "src/bin/tickgrove.rs"
+
+[[bin]]
+name = "trading-cli"
+path = "src/bin/trading-cli.rs"
+
+[[bin]]
+name = "tickgrove-mcp"
+path = "src/bin/tickgrove-mcp.rs"
+
+[[bin]]
+name = "trading-mcp"
+path = "src/bin/trading-mcp.rs"
+
+[[bin]]
+name = "tickgrove-admin"
+path = "src/bin/tickgrove-admin.rs"
+
+[[bin]]
+name = "trading-admin"
+path = "src/bin/trading-admin.rs"
 
 [dependencies]
 axum = "=0.8.6"

@@ -1,106 +1,147 @@
-import type { Condition, Group, Operand, StrategyDefinition } from './model'
+import type { Condition, Group, Operand, StrategyDefinition } from "./model";
 
-const MARKER = '// @oc-blocks '
+const MARKER = "// @tickgrove-blocks ";
+const LEGACY_MARKER = "// @oc-blocks ";
+export const isBuilderMarker = (line: string) =>
+  line.startsWith(MARKER) || line.startsWith(LEGACY_MARKER);
 
 function opExpr(o: Operand, vars: Map<string, string>): string {
   switch (o.kind) {
-    case 'price':
-      return o.field ?? 'close'
-    case 'value':
-      return String(o.value ?? 0)
-    case 'volume':
-      return 'volume'
+    case "price":
+      return o.field ?? "close";
+    case "value":
+      return String(o.value ?? 0);
+    case "volume":
+      return "volume";
     default: {
-      const key = JSON.stringify(o)
+      const key = JSON.stringify(o);
       if (!vars.has(key)) {
-        const name = o.kind === 'macd' ? 'macdHist' : `${o.kind}${o.length}`
-        vars.set(key, name)
+        const name = o.kind === "macd" ? "macdHist" : `${o.kind}${o.length}`;
+        vars.set(key, name);
       }
-      return vars.get(key)!
+      return vars.get(key)!;
     }
   }
 }
 function varDecl(o: Operand, name: string) {
   switch (o.kind) {
-    case 'sma':
-      return `${name} = ta.sma(close, ${o.length})`
-    case 'ema':
-      return `${name} = ta.ema(close, ${o.length})`
-    case 'rsi':
-      return `${name} = ta.rsi(close, ${o.length})`
-    case 'atr':
-      return `${name} = ta.atr(${o.length})`
-    case 'macd':
-      return `[_m, _s, ${name}] = ta.macd(close, 12, 26, 9)`
+    case "sma":
+      return `${name} = ta.sma(close, ${o.length})`;
+    case "ema":
+      return `${name} = ta.ema(close, ${o.length})`;
+    case "rsi":
+      return `${name} = ta.rsi(close, ${o.length})`;
+    case "atr":
+      return `${name} = ta.atr(${o.length})`;
+    case "macd":
+      return `[_m, _s, ${name}] = ta.macd(close, 12, 26, 9)`;
     default:
-      return ''
+      return "";
   }
 }
 function condExpr(c: Condition, vars: Map<string, string>) {
-  const a = opExpr(c.left, vars)
-  const b = opExpr(c.right, vars)
-  if (c.cmp === 'crosses above') return `ta.crossover(${a}, ${b})`
-  if (c.cmp === 'crosses below') return `ta.crossunder(${a}, ${b})`
-  return `${a} ${c.cmp} ${b}`
+  const a = opExpr(c.left, vars);
+  const b = opExpr(c.right, vars);
+  if (c.cmp === "crosses above") return `ta.crossover(${a}, ${b})`;
+  if (c.cmp === "crosses below") return `ta.crossunder(${a}, ${b})`;
+  return `${a} ${c.cmp} ${b}`;
 }
 function groupExpr(g: Group, vars: Map<string, string>): string {
-  if (!g.children.length) return 'false'
-  const parts = g.children.map((c) => (c.type === 'group' ? `(${groupExpr(c, vars)})` : condExpr(c, vars)))
-  return parts.join(g.op === 'all' ? ' and ' : ' or ')
+  if (!g.children.length) return "false";
+  const parts = g.children.map((c) =>
+    c.type === "group" ? `(${groupExpr(c, vars)})` : condExpr(c, vars),
+  );
+  return parts.join(g.op === "all" ? " and " : " or ");
 }
 
 /** One-way generator: block tree -> Pine v5 strategy. Embeds the tree for round-tripping. */
 export function toPine(def: StrategyDefinition): string {
-  const vars = new Map<string, string>()
-  const entry = groupExpr(def.entry, vars)
-  const exit = groupExpr(def.exit, vars)
-  const decls = [...vars.entries()].map(([k, name]) => varDecl(JSON.parse(k), name)).filter(Boolean)
-  const dir = def.direction === 'long' ? 'strategy.long' : 'strategy.short'
-  const risk: string[] = []
+  const vars = new Map<string, string>();
+  const entry = groupExpr(def.entry, vars);
+  const exit = groupExpr(def.exit, vars);
+  const decls = [...vars.entries()]
+    .map(([k, name]) => varDecl(JSON.parse(k), name))
+    .filter(Boolean);
+  const dir = def.direction === "long" ? "strategy.long" : "strategy.short";
+  const risk: string[] = [];
   if (def.stopPct || def.takePct) {
-    const sign = def.direction === 'long' ? 1 : -1
-    risk.push('if strategy.position_size != 0')
-    const parts = []
-    if (def.stopPct) parts.push(`stop = strategy.position_avg_price * ${1 - (sign * def.stopPct) / 100}`)
-    if (def.takePct) parts.push(`limit = strategy.position_avg_price * ${1 + (sign * def.takePct) / 100}`)
-    risk.push(`    strategy.exit("Risk", "Entry", ${parts.join(', ')})`)
+    const sign = def.direction === "long" ? 1 : -1;
+    risk.push("if strategy.position_size != 0");
+    const parts = [];
+    if (def.stopPct)
+      parts.push(`stop = strategy.position_avg_price * ${1 - (sign * def.stopPct) / 100}`);
+    if (def.takePct)
+      parts.push(`limit = strategy.position_avg_price * ${1 + (sign * def.takePct) / 100}`);
+    risk.push(`    strategy.exit("Risk", "Entry", ${parts.join(", ")})`);
   }
-  const payload = btoa(unescape(encodeURIComponent(JSON.stringify(def))))
+  const payload = btoa(unescape(encodeURIComponent(JSON.stringify(def))));
   return [
-    '//@version=5',
-    `// Generated by Open Composer Strategy Builder — ${def.symbol} ${def.tf}`,
-    `strategy(${JSON.stringify(def.name)}, overlay=true, initial_capital=${def.capital??100000}, commission_type=strategy.commission.percent, commission_value=${(def.commissionBps??2)/100}, slippage=${def.slippageTicks??3}, default_qty_type=strategy.percent_of_equity, default_qty_value=${def.sizePct})`,
-    '',
+    "//@version=5",
+    `// Generated by Tickgrove Strategy Builder — ${def.symbol} ${def.tf}`,
+    `strategy(${JSON.stringify(def.name)}, overlay=true, initial_capital=${def.capital ?? 100000}, commission_type=strategy.commission.percent, commission_value=${(def.commissionBps ?? 2) / 100}, slippage=${def.slippageTicks ?? 3}, default_qty_type=strategy.percent_of_equity, default_qty_value=${def.sizePct})`,
+    "",
     ...decls,
-    '',
+    "",
     `entryCond = ${entry}`,
     `exitCond = ${exit}`,
-    '',
-    'if entryCond and strategy.position_size == 0',
+    "",
+    "if entryCond and strategy.position_size == 0",
     `    strategy.entry("Entry", ${dir})`,
-    'if exitCond',
+    "if exitCond",
     '    strategy.close("Entry")',
     ...risk,
-    '',
+    "",
     // only price-scale series belong on the overlay
-    ...decls.filter((d) => /= ta\.(sma|ema)\(/.test(d)).map((d) => `plot(${d.split(' = ')[0]}, "${d.split(' = ')[0].toUpperCase()}")`),
-    '',
+    ...decls
+      .filter((d) => /= ta\.(sma|ema)\(/.test(d))
+      .map((d) => `plot(${d.split(" = ")[0]}, "${d.split(" = ")[0].toUpperCase()}")`),
+    "",
     MARKER + payload,
-    '',
-  ].join('\n')
+    "",
+  ].join("\n");
 }
 
 /** Reverse mapping is supported only for scripts produced by the builder. */
-export function fromPine(source: string): { ok: true; def: StrategyDefinition } | { ok: false; reason: string } {
-  const line = source.split('\n').find((l) => l.startsWith(MARKER))
-  if (!line) return { ok: false, reason: 'This script was not generated by the Strategy Builder. Only builder-generated scripts (with an @oc-blocks marker) can be converted back to blocks.' }
+export function fromPine(
+  source: string,
+): { ok: true; def: StrategyDefinition } | { ok: false; reason: string } {
+  const line = source.split("\n").find(isBuilderMarker);
+  if (!line)
+    return {
+      ok: false,
+      reason:
+        "This script was not generated by the Strategy Builder. Only builder-generated scripts (with a builder metadata marker) can be converted back to blocks.",
+    };
   try {
-    const def = JSON.parse(decodeURIComponent(escape(atob(line.slice(MARKER.length).trim())))) as StrategyDefinition
-    const regenerated = toPine(def).split('\n').filter((l) => !l.startsWith(MARKER)).join('\n').trim()
-    const current = source.split('\n').filter((l) => !l.startsWith(MARKER)).join('\n').trim()
-    if (regenerated !== current) return { ok: false, reason: 'The script was edited after generation. Manual edits cannot be mapped back to blocks; regenerate from the builder or keep editing in Pine.' }
-    return { ok: true, def }
+    const def = JSON.parse(
+      decodeURIComponent(
+        escape(
+          atob(line.slice(line.startsWith(MARKER) ? MARKER.length : LEGACY_MARKER.length).trim()),
+        ),
+      ),
+    ) as StrategyDefinition;
+    const regenerated = toPine(def)
+      .split("\n")
+      .filter((l) => !isBuilderMarker(l))
+      .join("\n")
+      .trim();
+    const current = source
+      .replace(
+        "// Generated by Open Composer Strategy Builder",
+        "// Generated by Tickgrove Strategy Builder",
+      )
+      .split("\n")
+      .filter((l) => !isBuilderMarker(l))
+      .join("\n")
+      .trim();
+    if (regenerated !== current)
+      return {
+        ok: false,
+        reason:
+          "The script was edited after generation. Manual edits cannot be mapped back to blocks; regenerate from the builder or keep editing in Pine.",
+      };
+    return { ok: true, def };
   } catch {
-    return { ok: false, reason: 'Block payload is corrupted.' }
+    return { ok: false, reason: "Block payload is corrupted." };
   }
 }

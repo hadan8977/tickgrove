@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-14T13:29:10.438Z",
+  "health": {
+    "ok": true,
+    "product": "Tickgrove",
+    "service": "tickgrove-server",
+    "version": "0.1.0"
+  },
+  "checks": {
+    "workspaceRevisionUnchanged": true,
+    "workspaceDocumentUnchanged": true,
+    "tokenUnchanged": true,
+    "accountUnchanged": true,
+    "unauthenticatedApiRejected": true,
+    "httpsPreviewReachable": true
+  },
+  "account": {
+    "cash": 100000,
+    "positions": 0,
+    "orders": 0,
+    "fills": 0
+  },
+  "backup": "var/rebrand-backup-20261014",
+  "publicPreviewWrites": false
+}

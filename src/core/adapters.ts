@@ -55,7 +55,7 @@ export const ADAPTERS: AdapterSlot[] = [
   { id: 'lwc', kind: 'chart', name: 'Lightweight Charts', description: 'TradingView open-source canvas charts.', status: 'demo', license: 'Apache-2.0', active: true },
   { id: 'vela', kind: 'chart', name: 'Vela', description: 'Alternative engine, under evaluation.', status: 'not-connected' },
   { id: 'pinets', kind: 'runtime', name: 'PineTS', description: 'Pine Script runtime in the browser.', status: 'demo', license: 'AGPL-3.0', active: true },
-  { id: 'oc-bt', kind: 'backtest', name: 'OC Browser Engine', description: 'Event-driven backtester running in a Web Worker.', status: 'demo', license: 'MIT', active: true },
+  { id: 'oc-bt', kind: 'backtest', name: 'Tickgrove Browser Engine', description: 'Event-driven backtester running in a Web Worker.', status: 'demo', license: 'MIT', active: true },
   { id: 'nautilus', kind: 'backtest', name: 'NautilusTrader', description: 'Remote high-fidelity engine (reserved slot).', status: 'not-connected' },
   { id: 'paper', kind: 'broker', name: 'Local paper broker', description: 'Simulated fills against demo ticks.', status: 'demo', active: true },
   { id: 'alpaca', kind: 'broker', name: 'Alpaca', description: 'Live brokerage. Requires credentials.', status: 'not-connected' },

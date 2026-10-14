@@ -293,8 +293,8 @@ export default function Workspace() {
         <DockviewReact
           className="h-full"
           theme={{
-            name: "oc",
-            className: "dockview-theme-oc",
+            name: "tickgrove",
+            className: "dockview-theme-tickgrove",
             colorScheme: isDarkTheme(theme) ? "dark" : "light",
             gap: 6,
           }}
