@@ -1,0 +1,1 @@
+{"id":"csv-data","version":"0.1.0","api_version":"trading.plugin.v1","entrypoint":"index.cjs","contributes":["data"],"permissions":["input.read"]}

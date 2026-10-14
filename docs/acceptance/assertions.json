@@ -1,0 +1,8 @@
+{
+  "test": "npm test",
+  "passed": 47,
+  "total": 47,
+  "failures": 0,
+  "includes": "Pine native semantics/drawings/CLI plus four Composer numerical/calendar/prefix cases",
+  "stdoutSummary": "1..47\n# tests 47\n# suites 0\n# pass 47\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 20425.568121\n"
+}

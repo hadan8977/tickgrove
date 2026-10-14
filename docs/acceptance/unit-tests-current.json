@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-14T04:17:30.081Z",
+  "command": "node --test --test-concurrency=1 tests/*.test.cjs",
+  "tests": 64,
+  "passed": 64,
+  "failed": 0,
+  "scope": "Current builder, Composer, workspace validation, Pine library/static requests and existing runtime regressions; later tick-host additions require their own run",
+  "log": "var/unit-tests-current.log"
+}

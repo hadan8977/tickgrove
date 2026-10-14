@@ -23,6 +23,9 @@ export interface Group {
   children: (Condition | Group)[]
 }
 export interface StrategyDefinition {
+  capital?:number
+  commissionBps?:number
+  slippageTicks?:number
   id: string
   name: string
   symbol: string

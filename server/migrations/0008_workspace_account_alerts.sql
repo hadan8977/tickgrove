@@ -1,0 +1,9 @@
+CREATE TABLE workspaces(id TEXT PRIMARY KEY, revision INTEGER NOT NULL, data TEXT, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE local_account(id INTEGER PRIMARY KEY CHECK(id=1), starting_cash REAL NOT NULL, cash REAL NOT NULL, realized_pnl REAL NOT NULL DEFAULT 0, total_fees REAL NOT NULL DEFAULT 0, commission_bps REAL NOT NULL DEFAULT 5);
+INSERT INTO local_account(id,starting_cash,cash) VALUES(1,100000,100000);
+CREATE TABLE local_positions(provider TEXT NOT NULL,symbol TEXT NOT NULL,qty REAL NOT NULL,avg REAL NOT NULL,last REAL NOT NULL,PRIMARY KEY(provider,symbol));
+CREATE TABLE local_orders(id TEXT PRIMARY KEY,client_order_id TEXT NOT NULL UNIQUE,request TEXT NOT NULL,provider TEXT NOT NULL,symbol TEXT NOT NULL,side TEXT NOT NULL,type TEXT NOT NULL,qty REAL NOT NULL,price REAL,stop_price REAL,status TEXT NOT NULL,created_at INTEGER NOT NULL,error TEXT);
+CREATE TABLE local_fills(id TEXT PRIMARY KEY,order_id TEXT NOT NULL UNIQUE REFERENCES local_orders(id),provider TEXT NOT NULL,symbol TEXT NOT NULL,side TEXT NOT NULL,qty REAL NOT NULL,price REAL NOT NULL,time INTEGER NOT NULL,fee REAL NOT NULL,market_cursor INTEGER NOT NULL);
+CREATE TABLE local_order_events(cursor INTEGER PRIMARY KEY AUTOINCREMENT,order_id TEXT NOT NULL REFERENCES local_orders(id),kind TEXT NOT NULL,payload TEXT NOT NULL,time INTEGER NOT NULL);
+CREATE TABLE alerts(id TEXT PRIMARY KEY,provider TEXT NOT NULL,symbol TEXT NOT NULL,params TEXT NOT NULL,status TEXT NOT NULL,previous_price REAL,last_bar INTEGER,created_at INTEGER NOT NULL);
+CREATE TABLE alert_history(id TEXT PRIMARY KEY,alert_id TEXT NOT NULL REFERENCES alerts(id),market_cursor INTEGER NOT NULL,price REAL NOT NULL,event_time INTEGER NOT NULL,received_at INTEGER NOT NULL,message TEXT NOT NULL,UNIQUE(alert_id,market_cursor));

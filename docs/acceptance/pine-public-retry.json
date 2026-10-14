@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-14T05:44:13.440Z",
+  "pinets": "0.11.1",
+  "sourceCommit": "7ad36e247768993238e2e14342ef2872aa99c933",
+  "adapterHashes": {
+    "src/pine/runtime.ts": "6549fb36426ae3c3ec88450f12a8108352f657c42561a5caae9fa724b0c549b8",
+    "src/pine/data.ts": "5b183884320e01f3618adc84da3ad41b7dc43ba59108b773ad1e4b47f97fa0ea",
+    "src/pine/report.ts": "6508e7ce4b33120d3e7d142a8f6227803a3ed77f56afa5fcaab81bf9096bd07d",
+    "src/pine/compat.ts": "b61864c9961f92a82906e2dcb8792febf008931c105c68a6b1b94725914a65a0",
+    "src/pine/library.ts": "ae56908fb45fb562f245c319d4d492125d606293a71268abfb82926b42f3e0a1"
+  },
+  "test": "Unmodified public source on 256 deterministic synthetic bars (15m for request scripts, 60m otherwise), with a consistent synthetic 1m tape",
+  "limitations": [
+    "Execution coverage only; not TradingView equivalence",
+    "No browser rendering assertion",
+    "No real brokerage",
+    "Missing datasets remain explicit failures"
+  ],
+  "total": 1,
+  "passed": 1,
+  "withWarnings": 0,
+  "withClosedTrades": 1,
+  "results": [
+    {
+      "file": "mtf-htf-confluence-manual-trail-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1611.7206590000005,
+      "timeframe": "15",
+      "finiteEquity": true
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "startedAt": "2026-10-14T04:59:40.357Z",
+  "completedAt": "2026-10-14T05:02:26.973Z",
+  "provider": "coinbase",
+  "symbol": "BTC-USD",
+  "timeframe": "1m",
+  "synthetic": false,
+  "session": "5f214eef-3f83-452b-9125-17606f766d49",
+  "subscription": "fdbe5d8a-1bde-4f28-affe-b935b2eff74a",
+  "historicalBars": 65,
+  "finalBars": 70,
+  "initialJob": "0c16db5b-5c82-4030-91df-3e4ac51feae2",
+  "finalJob": "d781f503-2900-4e51-9801-02b063caed79",
+  "trade": {
+    "commission": 0.008365301000000002,
+    "entryBar": 68,
+    "entryId": "live-entry",
+    "entryPrice": 83670.8,
+    "entryTime": 1791954000,
+    "exitBar": 69,
+    "exitId": "Close entry(s) order live-entry",
+    "exitPrice": 83635.22,
+    "exitTime": 1791954060,
+    "id": 1,
+    "pnl": -0.011923301000000176,
+    "pnlPct": -0.1425025337393711,
+    "qty": 0.0001,
+    "reason": "pine",
+    "side": "long"
+  },
+  "checks": [
+    "initial committed native ledger contains no closed trade",
+    "actual public stream closes two new bars",
+    "bound source advances persisted cursor and native ledger",
+    "entry and exit match new official bar opens with exact requested size"
+  ]
+}

@@ -1,0 +1,16 @@
+node_modules
+dist
+server/target
+var
+backups
+var-restored
+**/auth-token
+**/private-tokens.json
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm
+.git
+.env*
+plans/research
+
+!.env.example

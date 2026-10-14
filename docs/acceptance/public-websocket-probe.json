@@ -1,0 +1,118 @@
+{
+  "realNetwork": true,
+  "credentialsUsed": false,
+  "sources": [
+    {
+      "url": "wss://ws-feed.exchange.coinbase.com",
+      "params": {
+        "type": "subscribe",
+        "product_ids": [
+          "LTC-USD"
+        ],
+        "channels": [
+          "ticker",
+          "matches",
+          "heartbeat"
+        ]
+      },
+      "startedAt": "2026-10-14T02:18:46.615283+00:00",
+      "messages": [
+        {
+          "type": "subscriptions",
+          "channels": [
+            {
+              "name": "matches",
+              "product_ids": [
+                "LTC-USD"
+              ],
+              "account_ids": null
+            },
+            {
+              "name": "heartbeat",
+              "product_ids": [
+                "LTC-USD"
+              ],
+              "account_ids": null
+            },
+            {
+              "name": "ticker",
+              "product_ids": [
+                "LTC-USD"
+              ],
+              "account_ids": null
+            }
+          ]
+        },
+        {
+          "type": "ticker",
+          "sequence": 25032927263,
+          "product_id": "LTC-USD",
+          "price": "61.632",
+          "open_24h": "61.357",
+          "volume_24h": "87010.77062828",
+          "low_24h": "60.389",
+          "high_24h": "62.619",
+          "volume_30d": "6093794.25340992",
+          "best_bid": "61.618",
+          "best_bid_size": "3.58200000",
+          "best_ask": "61.632",
+          "best_ask_size": "4.63116044",
+          "side": "buy",
+          "time": "2026-10-14T02:18:46.143467Z",
+          "trade_id": 200664093,
+          "last_size": "1.65615951"
+        },
+        {
+          "type": "last_match",
+          "trade_id": 200664093,
+          "maker_order_id": "9bb72579-af77-4dff-9a8a-f2620475be67",
+          "taker_order_id": "0f617a48-2e0d-41c2-bbb1-ea4ceade2183",
+          "side": "sell",
+          "size": "1.65615951",
+          "price": "61.632",
+          "product_id": "LTC-USD",
+          "sequence": 25032927263,
+          "time": "2026-10-14T02:18:46.143467Z"
+        },
+        {
+          "type": "heartbeat",
+          "last_trade_id": 200664093,
+          "product_id": "LTC-USD",
+          "sequence": 25032927815,
+          "time": "2026-10-14T02:18:48.000000Z"
+        }
+      ],
+      "connected": true
+    },
+    {
+      "url": "wss://streamer.finance.yahoo.com/?version=2",
+      "params": {
+        "subscribe": [
+          "BTC-USD",
+          "SPY",
+          "MSFT"
+        ]
+      },
+      "startedAt": "2026-10-14T02:18:48.153209+00:00",
+      "messages": [
+        {
+          "type": "pricing",
+          "message": "CgdCVEMtVVNEFX2wokcY0Jykg6doIgNVU0QqA0NDQzApOAFFfmMSP0iAgJa/0gFVMEGjR11TSqJHZQDO7EN9U0qiR7ABgICWv9IB2AEE4AGAgJa/0gHoAYCAlr/SAfIBA0JUQ4ECAAAAYLUqc0GJAgAAmZ+fWnhC9QIAzuxD/QJ+YxI/"
+        },
+        {
+          "type": "pricing",
+          "message": "CgdCVEMtVVNEFSquokcY4Oqkg6doIgNVU0QqA0NDQzApOAFFrPMQP0iAgJa/0gFVMEGjR11TSqJHZQB76kN9U0qiR7ABgICWv9IB2AEE4AGAgJa/0gHoAYCAlr/SAfIBA0JUQ4ECAAAAYLUqc0GJAgAAmZ+fWnhC9QIAe+pD/QKs8xA/"
+        },
+        {
+          "type": "pricing",
+          "message": "CgdCVEMtVVNEFaivokcY8Lilg6doIgNVU0QqA0NDQzApOAFF0d8RP0iAgJa/0gFVMEGjR11TSqJHZQD560N9U0qiR7ABgICWv9IB2AEE4AGAgJa/0gHoAYCAlr/SAfIBA0JUQ4ECAAAAYLUqc0GJAgAAmZ+fWnhC9QIA+etD/QLR3xE/"
+        },
+        {
+          "type": "pricing",
+          "message": "CgdCVEMtVVNEFX2wokcYgIemg6doIgNVU0QqA0NDQzApOAFFfmMSP0iAgInj0gFVMEGjR11TSqJHZQDO7EN9U0qiR7ABgICJ49IB2AEE4AGAgInj0gHoAYCAiePSAfIBA0JUQ4ECAAAAYLUqc0GJAgAAQx+UWnhC9QIAzuxD/QJ+YxI/"
+        }
+      ],
+      "connected": true
+    }
+  ]
+}

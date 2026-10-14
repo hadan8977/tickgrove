@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Pause, Play, RotateCcw, Square, X } from 'lucide-react'
 import { execute } from '../../core/commands'
-import { livePrice } from '../../data/feed'
+import { livePrice, isDemoData } from '../../data/feed'
+import ServerAccount from '../../service/ServerAccount'
 import { usePaper } from '../../store'
 import { useTick } from '../../ui/hooks'
 import { Badge, Button, IconButton, StatusBadge, cx, fmt } from '../../ui/primitives'
@@ -9,9 +10,13 @@ import { Badge, Button, IconButton, StatusBadge, cx, fmt } from '../../ui/primit
 type Tab = 'positions' | 'orders' | 'fills' | 'strategies'
 
 export default function PaperAccount() {
+  return isDemoData()?<DemoAccount/>:<ServerAccount/>
+}
+function DemoAccount() {
   useTick()
   const { cash, startingCash, positions, orders, fills, strategies, setStrategyStatus, cancelOrder, reset } = usePaper()
   const [tab, setTab] = useState<Tab>('positions')
+  useEffect(() => { if (strategies.length) setTab('strategies') }, [strategies[0]?.id])
   const pos = Object.values(positions)
   const mv = pos.reduce((a, p) => a + p.qty * livePrice(p.symbol), 0)
   const upnl = pos.reduce((a, p) => a + (livePrice(p.symbol) - p.avg) * p.qty, 0)
@@ -46,6 +51,7 @@ export default function PaperAccount() {
         ))}
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
+        {tab === 'strategies' && strategies.some(s => s.source === 'pine') && <p className="px-3 py-2 text-[11px] text-muted">Pine replay uses an independent historical ledger. Its equity and position are shown in each row; the account totals above belong to demo tick trading.</p>}
         {tab === 'positions' && (
           <Table head={['Symbol', 'Qty', 'Avg', 'Last', 'Mkt value', 'Unrealized', '']} empty="No open paper positions.">
             {pos.map((p) => {
@@ -111,14 +117,14 @@ export default function PaperAccount() {
           </Table>
         )}
         {tab === 'strategies' && (
-          <Table head={['Strategy', 'Market', 'Source', 'Status', 'Last signal', 'Since', '']} empty="Deploy a backtest to run it against simulated ticks.">
+          <Table head={['Strategy', 'Market', 'Mode', 'Status', 'Progress / last signal', 'Native equity / position', '']} empty="Start a Pine backtest replay or a visual paper strategy.">
             {strategies.map((s) => (
               <tr key={s.id}>
                 <td className="!text-left font-sans font-semibold">{s.name}</td>
                 <td>
                   {s.symbol} · {s.tf}
                 </td>
-                <td className="text-muted">{s.source}</td>
+                <td className="text-muted">{s.source === 'pine' ? 'Historical replay' : 'Demo ticks'}</td>
                 <td>
                   <span className={cx('inline-flex items-center gap-1.5', s.status === 'running' ? 'text-up' : s.status === 'paused' ? 'text-demo' : 'text-faint')}>
                     <span className={cx('size-1.5 rounded-full bg-current', s.status === 'running' && 'animate-pulse')} />
@@ -126,7 +132,7 @@ export default function PaperAccount() {
                   </span>
                 </td>
                 <td className="text-muted">{s.lastSignal ?? '—'}</td>
-                <td className="text-faint">{new Date(s.startedAt).toLocaleTimeString()}</td>
+                <td className="text-faint">{s.replay?.frame ? `${fmt.money(s.replay.frame.equity)} / ${s.replay.frame.positionSize} units` : '—'}</td>
                 <td>
                   <div className="flex justify-end">
                     {s.status === 'running' ? (
@@ -138,7 +144,7 @@ export default function PaperAccount() {
                         <Play size={12} />
                       </IconButton>
                     ) : null}
-                    {s.status !== 'stopped' && (
+                    {['running', 'paused'].includes(s.status) && (
                       <IconButton label="Stop" onClick={() => setStrategyStatus(s.id, 'stopped')}>
                         <Square size={11} />
                       </IconButton>

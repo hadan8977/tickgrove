@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-14T04:48:30.557Z",
+  "reference": "review/BrowserMath1791953279338/1",
+  "hash": "bd1c5f2fcc6fd1e9be9109877edc2800f7d9f3666590f77eb3facf46b589f2d4",
+  "job": "5b6a2d80-b9f0-4cdd-a300-9724daa6480f",
+  "libraryLock": {
+    "lockHash": "d82c366c0ef87a4a25d23376c4c425282d07dc2d43d25a30b1251307a5ad13ed",
+    "modules": [
+      {
+        "hash": "bd1c5f2fcc6fd1e9be9109877edc2800f7d9f3666590f77eb3facf46b589f2d4",
+        "reference": "review/BrowserMath1791953279338/1"
+      }
+    ]
+  },
+  "checks": [
+    "library manager saves exact source and version metadata through Rust",
+    "editor resolves imported library and compiles against real market data",
+    "imported strategy retains editable root inputs",
+    "server native job records immutable dependency hash, edited input and exact trade size"
+  ],
+  "errors": []
+}

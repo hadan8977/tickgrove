@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "fixtureOnly": true,
+  "publicPreviewWrites": false,
+  "cases": [
+    "same-tick duplicate alert submit -> one create",
+    "triggered/expired/deleted cannot resume",
+    "manual alert draft preserved, explicit chart selection, auto-follow and price cleared",
+    "8-digit depth/tape/spread, tiny quantities nonzero",
+    "2019 daily statistics labeled as available 2019 not today",
+    "source starts collapsed, 400/320 inline, 1000px sidebar, visible delete, scrollable constrained dialog"
+  ],
+  "cssLayoutBrowserAcceptance": false
+}

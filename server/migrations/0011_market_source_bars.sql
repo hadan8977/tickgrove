@@ -1,0 +1,1 @@
+CREATE TABLE market_source_bars(subscription_id TEXT NOT NULL REFERENCES market_subscriptions(id),time INTEGER NOT NULL,payload TEXT NOT NULL,received_at INTEGER NOT NULL,PRIMARY KEY(subscription_id,time));

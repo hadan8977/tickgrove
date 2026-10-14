@@ -1,0 +1,34 @@
+{
+  "checks": [
+    {
+      "check": "Initial paper job can cancel and retry",
+      "ok": true,
+      "detail": "initial cancellation leaves no committed ledger; explicit retry initializes once"
+    },
+    {
+      "check": "Closed-bar append is idempotent and resumes after restart",
+      "ok": true,
+      "detail": {
+        "duplicateAppendOneJob": true,
+        "restartThenExitQty": 2,
+        "finalEquity": 10005.586
+      }
+    },
+    {
+      "check": "A failed market event preserves the committed account",
+      "ok": true,
+      "detail": "failed/retried append never advanced committed snapshot; corrected new event succeeds"
+    },
+    {
+      "check": "Trade identity rewrites are rejected even when equity is unchanged",
+      "ok": true,
+      "detail": {
+        "sameEquityButChangedEntryIdRejected": true,
+        "error": "Continuous rebuild changed committed trade identity/price/fee"
+      }
+    }
+  ],
+  "passed": 4,
+  "total": 4,
+  "artifactDirectory": "/tmp/trading-supervision-y32157qn"
+}

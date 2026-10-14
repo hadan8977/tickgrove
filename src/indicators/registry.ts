@@ -2,12 +2,14 @@ import type { Bar } from '../core/types'
 
 export type Series = (number | null)[]
 export interface IndicatorOutput {
+  colors?: (string | undefined)[]
   title: string
   kind: 'line' | 'histogram' | 'area'
   color: string
   data: Series
   width?: number
   dashed?: boolean
+  stepped?: boolean
 }
 export interface IndicatorInputSpec {
   key: string

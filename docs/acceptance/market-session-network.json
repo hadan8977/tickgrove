@@ -1,0 +1,1295 @@
+{
+  "realNetwork": true,
+  "credentials": false,
+  "cases": [
+    {
+      "session": "regular",
+      "timeframe": "5m",
+      "ok": true,
+      "bars": 390,
+      "hash": "61ddc08543ceaad70cf7f4762f631eb3e936931e52a900924b0d237f8fb986c7",
+      "first": {
+        "close": 770.7999877929688,
+        "closeTime": 1791207300,
+        "high": 770.9299926757812,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 2143140.0
+      },
+      "last": {
+        "close": 778.530029296875,
+        "closeTime": 1791576000,
+        "high": 778.5800170898438,
+        "low": 778.22998046875,
+        "open": 778.3900146484375,
+        "time": 1791575700,
+        "volume": 1632177.0
+      },
+      "gaps": [],
+      "complete": true
+    },
+    {
+      "session": "regular",
+      "timeframe": "1H",
+      "ok": true,
+      "bars": 35,
+      "hash": "25c6a36b864f8af6751c2d0d3ffe9fa174b102bf7874328ea9996871cbc44cee",
+      "first": {
+        "close": 772.6699829101562,
+        "closeTime": 1791210600,
+        "high": 772.9600219726562,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 7004077.0
+      },
+      "last": {
+        "close": 778.530029296875,
+        "closeTime": 1791576000,
+        "high": 779.0277099609375,
+        "low": 778.22998046875,
+        "open": 778.8900146484375,
+        "time": 1791574200,
+        "volume": 3817548.0
+      },
+      "gaps": [],
+      "complete": true
+    },
+    {
+      "session": "regular",
+      "timeframe": "4H",
+      "ok": true,
+      "bars": 10,
+      "hash": "3134292061649a3b7d578e92cc5909f58ddbe76fe68c16298a341cb0a12fa52e",
+      "first": {
+        "close": 774.35498046875,
+        "closeTime": 1791221400,
+        "high": 774.5399780273438,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 17010468.0
+      },
+      "last": {
+        "close": 778.530029296875,
+        "closeTime": 1791576000,
+        "high": 779.4199829101562,
+        "low": 777.8499755859375,
+        "open": 778.0399780273438,
+        "time": 1791567000,
+        "volume": 8253226.0
+      },
+      "gaps": [],
+      "complete": true
+    },
+    {
+      "session": "regular",
+      "timeframe": "1D",
+      "ok": true,
+      "bars": 5,
+      "hash": "363f5f4f91b85278f1b7d1f34b8b9d10591f2abeb2a79715733dc3804ec2855e",
+      "first": {
+        "close": 774.8300170898438,
+        "closeTime": 1791230400,
+        "high": 776.6099853515625,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 44840200.0
+      },
+      "last": {
+        "close": 778.5700073242188,
+        "closeTime": 1791576000,
+        "high": 779.4199829101562,
+        "low": 775.1400146484375,
+        "open": 776.239990234375,
+        "time": 1791552600,
+        "volume": 22624500.0
+      },
+      "gaps": [],
+      "complete": true
+    },
+    {
+      "session": "regular",
+      "timeframe": "1W",
+      "ok": true,
+      "bars": 1,
+      "hash": "0f1325a70f32ed9ba76bdd8609c73f46871565bb5a8d95cf51fa06e274b7bd3f",
+      "first": {
+        "close": 778.5700073242188,
+        "closeTime": 1791576000,
+        "high": 781.6199951171875,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 174939300.0
+      },
+      "last": {
+        "close": 778.5700073242188,
+        "closeTime": 1791576000,
+        "high": 781.6199951171875,
+        "low": 769.6300048828125,
+        "open": 769.6900024414062,
+        "time": 1791207000,
+        "volume": 174939300.0
+      },
+      "gaps": [],
+      "complete": true
+    },
+    {
+      "session": "extended",
+      "timeframe": "5m",
+      "ok": true,
+      "bars": 791,
+      "hash": "7ddbec91e41008d2af66add74f3a2fd5f20a87f64407b72f0dca5fa7dbb12368",
+      "first": {
+        "close": 768.99,
+        "closeTime": 1791187500,
+        "high": 769.32,
+        "low": 768.12,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 0.0
+      },
+      "last": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 778.62,
+        "low": 778.55,
+        "open": 778.5608,
+        "time": 1791590100,
+        "volume": 0.0
+      },
+      "gaps": [
+        {
+          "end": 1791206400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791206100
+        },
+        {
+          "end": 1791206700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791206400
+        },
+        {
+          "end": 1791207000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791206700
+        },
+        {
+          "end": 1791292800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791292500
+        },
+        {
+          "end": 1791293100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791292800
+        },
+        {
+          "end": 1791293400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791293100
+        },
+        {
+          "end": 1791325200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791324900
+        },
+        {
+          "end": 1791325500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791325200
+        },
+        {
+          "end": 1791325800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791325500
+        },
+        {
+          "end": 1791326100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791325800
+        },
+        {
+          "end": 1791326400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791326100
+        },
+        {
+          "end": 1791326700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791326400
+        },
+        {
+          "end": 1791327000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791326700
+        },
+        {
+          "end": 1791327300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791327000
+        },
+        {
+          "end": 1791327600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791327300
+        },
+        {
+          "end": 1791327900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791327600
+        },
+        {
+          "end": 1791328200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791327900
+        },
+        {
+          "end": 1791328500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791328200
+        },
+        {
+          "end": 1791328800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791328500
+        },
+        {
+          "end": 1791329100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791328800
+        },
+        {
+          "end": 1791329400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791329100
+        },
+        {
+          "end": 1791329700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791329400
+        },
+        {
+          "end": 1791330000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791329700
+        },
+        {
+          "end": 1791330300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791330000
+        },
+        {
+          "end": 1791330600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791330300
+        },
+        {
+          "end": 1791379200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791378900
+        },
+        {
+          "end": 1791379500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791379200
+        },
+        {
+          "end": 1791379800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791379500
+        },
+        {
+          "end": 1791403800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791403500
+        },
+        {
+          "end": 1791404100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791403800
+        },
+        {
+          "end": 1791404400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791404100
+        },
+        {
+          "end": 1791404700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791404400
+        },
+        {
+          "end": 1791405000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791404700
+        },
+        {
+          "end": 1791405300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791405000
+        },
+        {
+          "end": 1791405600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791405300
+        },
+        {
+          "end": 1791405900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791405600
+        },
+        {
+          "end": 1791406200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791405900
+        },
+        {
+          "end": 1791406500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406200
+        },
+        {
+          "end": 1791406800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406500
+        },
+        {
+          "end": 1791407100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406800
+        },
+        {
+          "end": 1791407400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791407100
+        },
+        {
+          "end": 1791407700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791407400
+        },
+        {
+          "end": 1791408000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791407700
+        },
+        {
+          "end": 1791408300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791408000
+        },
+        {
+          "end": 1791408600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791408300
+        },
+        {
+          "end": 1791408900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791408600
+        },
+        {
+          "end": 1791409200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791408900
+        },
+        {
+          "end": 1791409500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791409200
+        },
+        {
+          "end": 1791409800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791409500
+        },
+        {
+          "end": 1791410100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791409800
+        },
+        {
+          "end": 1791410400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410100
+        },
+        {
+          "end": 1791410700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410400
+        },
+        {
+          "end": 1791411000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410700
+        },
+        {
+          "end": 1791411300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791411000
+        },
+        {
+          "end": 1791411600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791411300
+        },
+        {
+          "end": 1791411900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791411600
+        },
+        {
+          "end": 1791412200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791411900
+        },
+        {
+          "end": 1791412500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791412200
+        },
+        {
+          "end": 1791412800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791412500
+        },
+        {
+          "end": 1791413100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791412800
+        },
+        {
+          "end": 1791413400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791413100
+        },
+        {
+          "end": 1791413700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791413400
+        },
+        {
+          "end": 1791414000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791413700
+        },
+        {
+          "end": 1791414300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791414000
+        },
+        {
+          "end": 1791414600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791414300
+        },
+        {
+          "end": 1791414900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791414600
+        },
+        {
+          "end": 1791415200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791414900
+        },
+        {
+          "end": 1791415500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791415200
+        },
+        {
+          "end": 1791415800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791415500
+        },
+        {
+          "end": 1791416100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791415800
+        },
+        {
+          "end": 1791416400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791416100
+        },
+        {
+          "end": 1791416700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791416400
+        },
+        {
+          "end": 1791417000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791416700
+        },
+        {
+          "end": 1791465600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791465300
+        },
+        {
+          "end": 1791465900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791465600
+        },
+        {
+          "end": 1791466200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791465900
+        },
+        {
+          "end": 1791490200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791489900
+        },
+        {
+          "end": 1791490500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791490200
+        },
+        {
+          "end": 1791490800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791490500
+        },
+        {
+          "end": 1791491100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791490800
+        },
+        {
+          "end": 1791491400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791491100
+        },
+        {
+          "end": 1791491700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791491400
+        },
+        {
+          "end": 1791492000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791491700
+        },
+        {
+          "end": 1791492300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791492000
+        },
+        {
+          "end": 1791492600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791492300
+        },
+        {
+          "end": 1791492900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791492600
+        },
+        {
+          "end": 1791493200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791492900
+        },
+        {
+          "end": 1791493500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493200
+        },
+        {
+          "end": 1791493800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493500
+        },
+        {
+          "end": 1791494100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493800
+        },
+        {
+          "end": 1791494400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791494100
+        },
+        {
+          "end": 1791494700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791494400
+        },
+        {
+          "end": 1791495000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791494700
+        },
+        {
+          "end": 1791495300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791495000
+        },
+        {
+          "end": 1791495600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791495300
+        },
+        {
+          "end": 1791495900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791495600
+        },
+        {
+          "end": 1791496200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791495900
+        },
+        {
+          "end": 1791496500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496200
+        },
+        {
+          "end": 1791496800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496500
+        },
+        {
+          "end": 1791497100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496800
+        },
+        {
+          "end": 1791497400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791497100
+        },
+        {
+          "end": 1791497700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791497400
+        },
+        {
+          "end": 1791498000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791497700
+        },
+        {
+          "end": 1791498300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791498000
+        },
+        {
+          "end": 1791498600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791498300
+        },
+        {
+          "end": 1791498900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791498600
+        },
+        {
+          "end": 1791499200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791498900
+        },
+        {
+          "end": 1791499500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791499200
+        },
+        {
+          "end": 1791499800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791499500
+        },
+        {
+          "end": 1791500100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791499800
+        },
+        {
+          "end": 1791500400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791500100
+        },
+        {
+          "end": 1791500700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791500400
+        },
+        {
+          "end": 1791501000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791500700
+        },
+        {
+          "end": 1791501300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791501000
+        },
+        {
+          "end": 1791501600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791501300
+        },
+        {
+          "end": 1791501900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791501600
+        },
+        {
+          "end": 1791502200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791501900
+        },
+        {
+          "end": 1791502500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791502200
+        },
+        {
+          "end": 1791502800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791502500
+        },
+        {
+          "end": 1791503100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791502800
+        },
+        {
+          "end": 1791503400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791503100
+        },
+        {
+          "end": 1791552000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791551700
+        },
+        {
+          "end": 1791552300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791552000
+        },
+        {
+          "end": 1791552600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791552300
+        },
+        {
+          "end": 1791576600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791576300
+        },
+        {
+          "end": 1791576900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791576600
+        },
+        {
+          "end": 1791577200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791576900
+        },
+        {
+          "end": 1791577500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791577200
+        },
+        {
+          "end": 1791577800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791577500
+        },
+        {
+          "end": 1791578100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791577800
+        },
+        {
+          "end": 1791578400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791578100
+        },
+        {
+          "end": 1791578700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791578400
+        },
+        {
+          "end": 1791579000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791578700
+        },
+        {
+          "end": 1791579300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579000
+        },
+        {
+          "end": 1791579600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579300
+        },
+        {
+          "end": 1791579900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579600
+        },
+        {
+          "end": 1791580200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579900
+        },
+        {
+          "end": 1791580500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791580200
+        },
+        {
+          "end": 1791580800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791580500
+        },
+        {
+          "end": 1791581100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791580800
+        },
+        {
+          "end": 1791581400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791581100
+        },
+        {
+          "end": 1791581700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791581400
+        },
+        {
+          "end": 1791582000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791581700
+        },
+        {
+          "end": 1791582300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791582000
+        },
+        {
+          "end": 1791582600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791582300
+        },
+        {
+          "end": 1791582900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791582600
+        },
+        {
+          "end": 1791583200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791582900
+        },
+        {
+          "end": 1791583500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583200
+        },
+        {
+          "end": 1791583800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583500
+        },
+        {
+          "end": 1791584100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583800
+        },
+        {
+          "end": 1791584400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791584100
+        },
+        {
+          "end": 1791584700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791584400
+        },
+        {
+          "end": 1791585000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791584700
+        },
+        {
+          "end": 1791585300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791585000
+        },
+        {
+          "end": 1791585600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791585300
+        },
+        {
+          "end": 1791585900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791585600
+        },
+        {
+          "end": 1791586200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791585900
+        },
+        {
+          "end": 1791586500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791586200
+        },
+        {
+          "end": 1791586800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791586500
+        },
+        {
+          "end": 1791587100,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791586800
+        },
+        {
+          "end": 1791587400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791587100
+        },
+        {
+          "end": 1791587700,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791587400
+        },
+        {
+          "end": 1791588000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791587700
+        },
+        {
+          "end": 1791588300,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791588000
+        },
+        {
+          "end": 1791588600,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791588300
+        },
+        {
+          "end": 1791588900,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791588600
+        },
+        {
+          "end": 1791589200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791588900
+        },
+        {
+          "end": 1791589500,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791589200
+        },
+        {
+          "end": 1791589800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791589500
+        }
+      ],
+      "complete": false
+    },
+    {
+      "session": "extended",
+      "timeframe": "1H",
+      "ok": true,
+      "bars": 79,
+      "hash": "0c78111466091953eda76207be0cd92a975ee8a07c8ae5d3fdf7388c425a1e8a",
+      "first": {
+        "close": 769.55,
+        "closeTime": 1791190800,
+        "high": 769.74,
+        "low": 768.12,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 0.0
+      },
+      "last": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 778.62,
+        "low": 778.55,
+        "open": 778.61,
+        "time": 1791586800,
+        "volume": 0.0
+      },
+      "gaps": [
+        {
+          "end": 1791410400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406800
+        },
+        {
+          "end": 1791414000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410400
+        },
+        {
+          "end": 1791496800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493200
+        },
+        {
+          "end": 1791500400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496800
+        },
+        {
+          "end": 1791583200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579600
+        },
+        {
+          "end": 1791586800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583200
+        }
+      ],
+      "complete": false
+    },
+    {
+      "session": "extended",
+      "timeframe": "4H",
+      "ok": true,
+      "bars": 25,
+      "hash": "c20c329c97aa6ba2fcdf8af06c2571e91042f4c9e2600279a0be18444a9339f4",
+      "first": {
+        "close": 769.7,
+        "closeTime": 1791201600,
+        "high": 769.92,
+        "low": 767.96,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 0.0
+      },
+      "last": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 778.62,
+        "low": 778.55,
+        "open": 778.57,
+        "time": 1791576000,
+        "volume": 0.0
+      },
+      "gaps": [
+        {
+          "end": 1791410400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406800
+        },
+        {
+          "end": 1791414000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410400
+        },
+        {
+          "end": 1791496800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493200
+        },
+        {
+          "end": 1791500400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496800
+        },
+        {
+          "end": 1791583200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579600
+        },
+        {
+          "end": 1791586800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583200
+        },
+        {
+          "end": 1791417600,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791403200
+        },
+        {
+          "end": 1791504000,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791489600
+        },
+        {
+          "end": 1791590400,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791576000
+        }
+      ],
+      "complete": false
+    },
+    {
+      "session": "extended",
+      "timeframe": "1D",
+      "ok": true,
+      "bars": 5,
+      "hash": "41c2a16a4daace62da86be3ba16d7df70cbb9041976045a34d05c032ca8b4c1b",
+      "first": {
+        "close": 774.94,
+        "closeTime": 1791244800,
+        "high": 776.60498046875,
+        "low": 767.96,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 36114284.0
+      },
+      "last": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 779.4199829101562,
+        "low": 775.1400146484375,
+        "open": 776.62,
+        "time": 1791532800,
+        "volume": 19382256.0
+      },
+      "gaps": [
+        {
+          "end": 1791410400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406800
+        },
+        {
+          "end": 1791414000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410400
+        },
+        {
+          "end": 1791496800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493200
+        },
+        {
+          "end": 1791500400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496800
+        },
+        {
+          "end": 1791583200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579600
+        },
+        {
+          "end": 1791586800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583200
+        },
+        {
+          "end": 1791417600,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791360000
+        },
+        {
+          "end": 1791504000,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791446400
+        },
+        {
+          "end": 1791590400,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791532800
+        }
+      ],
+      "complete": false
+    },
+    {
+      "session": "extended",
+      "timeframe": "1W",
+      "ok": true,
+      "bars": 1,
+      "hash": "ff4b8965b874d435f6fcabc7276f8eecab596f5c0f17cfebb40bea7a2b0abee3",
+      "first": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 781.6199951171875,
+        "low": 767.96,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 144118302.0
+      },
+      "last": {
+        "close": 778.57,
+        "closeTime": 1791590400,
+        "high": 781.6199951171875,
+        "low": 767.96,
+        "open": 768.66,
+        "time": 1791187200,
+        "volume": 144118302.0
+      },
+      "gaps": [
+        {
+          "end": 1791410400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791406800
+        },
+        {
+          "end": 1791414000,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791410400
+        },
+        {
+          "end": 1791496800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791493200
+        },
+        {
+          "end": 1791500400,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791496800
+        },
+        {
+          "end": 1791583200,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791579600
+        },
+        {
+          "end": 1791586800,
+          "reason": "Yahoo omitted source bucket; inactivity versus transport/provider gap is unverified",
+          "start": 1791583200
+        },
+        {
+          "end": 1791590400,
+          "reason": "aggregate has missing source buckets; available real OHLCV only",
+          "start": 1791187200
+        }
+      ],
+      "complete": false
+    },
+    {
+      "symbol": "VOO",
+      "session": "regular",
+      "timeframe": "1m-unaligned-regression",
+      "ok": true,
+      "bars": 780,
+      "excluded": [
+        {
+          "reason": "provider timestamp outside selected session; source row excluded without rewriting",
+          "time": 1791921600
+        }
+      ],
+      "gaps": []
+    }
+  ]
+}

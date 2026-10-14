@@ -77,11 +77,13 @@ function validate(cmd: Command, params: Record<string, unknown>) {
       if (spec.default !== undefined) params[k] = spec.default
       continue
     }
-    if (spec.type === 'number' && typeof v !== 'number') {
+    if (spec.type === 'number') {
       const n = Number(v)
-      if (Number.isNaN(n)) throw new Error(`Param "${k}" must be a number`)
+      if (!Number.isFinite(n)) throw new Error(`Param "${k}" must be a finite number`)
       params[k] = n
     }
+    if(spec.type==='string'&&typeof v!=='string')throw Error(`Param "${k}" must be a string`)
+    if(spec.type==='boolean'&&typeof v!=='boolean')throw Error(`Param "${k}" must be a boolean`)
     if (spec.type === 'enum' && spec.enum && !spec.enum.includes(String(v))) {
       throw new Error(`Param "${k}" must be one of ${spec.enum.join(', ')}`)
     }

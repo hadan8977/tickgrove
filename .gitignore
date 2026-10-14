@@ -19,3 +19,17 @@ logs/
 # beside it.
 /.plugins/
 /.opencode-skills/
+
+/var/
+/server/target/
+/backups/
+/var-restored/
+auth-token
+private-tokens.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+!.env.example
+__pycache__/
+*.pyc

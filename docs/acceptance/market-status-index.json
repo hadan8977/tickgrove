@@ -1,0 +1,97 @@
+{
+  "ok": true,
+  "sourceReadOnly": true,
+  "sourceIsRunningService": true,
+  "eventCount": 100350,
+  "subscriptionCount": 6,
+  "beforePlan": [
+    [
+      4,
+      0,
+      0,
+      "SCAN s"
+    ],
+    [
+      8,
+      0,
+      0,
+      "CORRELATED SCALAR SUBQUERY 1"
+    ],
+    [
+      14,
+      8,
+      0,
+      "SEARCH e USING INDEX market_events_subscription (subscription_id=?)"
+    ],
+    [
+      32,
+      0,
+      0,
+      "CORRELATED SCALAR SUBQUERY 2"
+    ],
+    [
+      38,
+      32,
+      0,
+      "SEARCH e USING INDEX market_events_subscription (subscription_id=?)"
+    ]
+  ],
+  "afterPlan": [
+    [
+      4,
+      0,
+      0,
+      "SCAN s"
+    ],
+    [
+      8,
+      0,
+      0,
+      "CORRELATED SCALAR SUBQUERY 1"
+    ],
+    [
+      13,
+      8,
+      0,
+      "SEARCH e USING COVERING INDEX market_quote_event_time (subscription_id=?)"
+    ],
+    [
+      29,
+      0,
+      0,
+      "CORRELATED SCALAR SUBQUERY 2"
+    ],
+    [
+      34,
+      29,
+      0,
+      "SEARCH e USING COVERING INDEX market_quote_received_at (subscription_id=?)"
+    ]
+  ],
+  "before": {
+    "medianMs": 768.3878520037979,
+    "samplesMs": [
+      746.1523209931329,
+      646.4852730277926,
+      816.5958219906315,
+      680.7667739922181,
+      768.3878520037979,
+      769.103538012132,
+      839.0812920406461
+    ]
+  },
+  "after": {
+    "medianMs": 0.15337695367634296,
+    "samplesMs": [
+      0.8153370581567287,
+      0.16741803847253323,
+      0.15337695367634296,
+      0.14463893603533506,
+      0.2549829659983516,
+      0.14574790839105844,
+      0.15047600027173758
+    ]
+  },
+  "speedup": 5009.799931385095,
+  "resultsUnchanged": true
+}

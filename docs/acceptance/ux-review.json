@@ -1,0 +1,143 @@
+{
+  "at": "2026-10-14T07:34:23.548Z",
+  "base": "http://127.0.0.1:18892",
+  "checks": [
+    "one/four/six actual chart panels keep a single-row toolbar and at least 65% canvas height without toolbar overflow",
+    "compact source details and nested chart menus stay visible and actionable outside narrow panels",
+    "paste/import opens an editable script in place; Add and Update retain a single chart instance",
+    "bundled UI font is loaded and code uses its separate monospace family"
+  ],
+  "layouts": [
+    {
+      "preset": "charts1",
+      "dimensions": [
+        {
+          "width": 1096,
+          "height": 600,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 540,
+          "canvasWidth": 1006,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        }
+      ]
+    },
+    {
+      "preset": "charts4",
+      "dimensions": [
+        {
+          "width": 456,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 366,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 456,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 366,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 456,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 366,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 456,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 352,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        }
+      ]
+    },
+    {
+      "preset": "charts6",
+      "dimensions": [
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 248,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 234,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 248,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 248,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 248,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        },
+        {
+          "width": 338.5,
+          "height": 280,
+          "toolbarHeight": 31,
+          "toolbarOverflow": 0,
+          "canvasHeight": 220,
+          "canvasWidth": 248,
+          "diagnosticBlocks": 0,
+          "font": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif"
+        }
+      ]
+    }
+  ],
+  "fonts": {
+    "body": "Geist, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+    "code": "\"Geist Mono\", ui-monospace, SFMono-Regular, Consolas, \"Microsoft YaHei\", monospace",
+    "loaded": true
+  },
+  "errors": []
+}

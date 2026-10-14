@@ -1,0 +1,403 @@
+{
+  "fixtureOnly": true,
+  "externalNetworkBlocked": true,
+  "externalOrders": false,
+  "initial": [
+    {
+      "error": null,
+      "last_job_id": "e24085da-1640-4129-abaa-8d9a856f7911",
+      "name": "Composer live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "de0daf2f-c8aa-499d-9c8c-5c4ec98c9cf3",
+      "snapshot_id": "e9b65b66-6228-45fb-ada4-873787303a7c",
+      "status": "active",
+      "stream_cursor": 3,
+      "subscription_id": "fixture",
+      "version_id": "bc92d5f0-3148-4499-9d0b-6f2d8795cfbb"
+    },
+    {
+      "error": null,
+      "last_job_id": "b378b957-2355-47e9-919b-6ff33c9e965f",
+      "name": "Pine live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "676a9c36-1632-421b-89b8-36669c438a02",
+      "snapshot_id": "e9b65b66-6228-45fb-ada4-873787303a7c",
+      "status": "active",
+      "stream_cursor": 3,
+      "subscription_id": "fixture",
+      "version_id": "2b8851bb-24d7-4741-9261-a00a554823fc"
+    }
+  ],
+  "settled": [
+    {
+      "error": null,
+      "last_job_id": "c386236d-2d32-4d6a-b2ae-3aa78581dc90",
+      "name": "Composer live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "de0daf2f-c8aa-499d-9c8c-5c4ec98c9cf3",
+      "snapshot_id": "82fd8985-cfed-4658-9414-4b3eee44867b",
+      "status": "active",
+      "stream_cursor": 19,
+      "subscription_id": "fixture",
+      "version_id": "bc92d5f0-3148-4499-9d0b-6f2d8795cfbb"
+    },
+    {
+      "error": null,
+      "last_job_id": "f811bf42-3ace-4dc5-82d0-0a719647f6ab",
+      "name": "Pine live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "676a9c36-1632-421b-89b8-36669c438a02",
+      "snapshot_id": "c3f20543-4c37-4fce-8a27-ef6534c983c6",
+      "status": "active",
+      "stream_cursor": 19,
+      "subscription_id": "fixture",
+      "version_id": "2b8851bb-24d7-4741-9261-a00a554823fc"
+    }
+  ],
+  "reports": [
+    {
+      "error": null,
+      "job_id": "c386236d-2d32-4d6a-b2ae-3aa78581dc90",
+      "manifest": {
+        "adapter_hash": "494187a305d761f786138353de4de448698bd114b0811bc6a7dd4dedc911668a",
+        "continuous": true,
+        "engine": "pinets@0.11.1 / composer-v1",
+        "event_id": "market:1791948120:19",
+        "execution": "closed_bar_native",
+        "inputs": {},
+        "paper_session": "de0daf2f-c8aa-499d-9c8c-5c4ec98c9cf3",
+        "previous_job_id": "0b8fd694-381d-4e4d-857c-cdd41baaeb44",
+        "snapshot_hash": "c58292ef18cb3f66ba638dd400ebfa45e5e93676dee0b0945583fa5c3d2c570a",
+        "snapshot_id": "82fd8985-cfed-4658-9414-4b3eee44867b",
+        "strategy_hash": "2ee0ee41fa3574a9d1cbb7a78b72e0494c593ea95d12402d5ee582607fe9c3ff",
+        "version_id": "bc92d5f0-3148-4499-9d0b-6f2d8795cfbb"
+      },
+      "result": {
+        "contract": "closed-bar targets \u2192 next open fractional shares; no forced liquidation",
+        "equity": [
+          {
+            "time": 1791948000,
+            "value": 1000
+          },
+          {
+            "time": 1791948060,
+            "value": 1000
+          },
+          {
+            "time": 1791948120,
+            "value": 1090.909090909091
+          }
+        ],
+        "frames": [
+          {
+            "cash": 1000,
+            "equity": 1000,
+            "orders": [],
+            "positions": {},
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791948000,
+            "weights": {
+              "TEST-USD": 1
+            }
+          },
+          {
+            "cash": 0,
+            "equity": 1000,
+            "orders": [
+              {
+                "commission": 0,
+                "price": 11,
+                "qty": 90.9090909090909,
+                "symbol": "TEST-USD"
+              }
+            ],
+            "positions": {
+              "TEST-USD": 90.9090909090909
+            },
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791948060,
+            "weights": {
+              "TEST-USD": 1
+            }
+          },
+          {
+            "cash": 0,
+            "equity": 1090.909090909091,
+            "orders": [],
+            "positions": {
+              "TEST-USD": 90.9090909090909
+            },
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791948120,
+            "weights": {
+              "TEST-USD": 1
+            }
+          }
+        ],
+        "kind": "composer",
+        "metrics": {
+          "netProfit": 90.909090909091,
+          "netProfitPct": 9.090909090909104
+        },
+        "ok": true,
+        "pendingWeights": {
+          "TEST-USD": 1
+        },
+        "title": "Composer portfolio"
+      },
+      "status": "succeeded"
+    },
+    {
+      "error": null,
+      "job_id": "f811bf42-3ace-4dc5-82d0-0a719647f6ab",
+      "manifest": {
+        "adapter_hash": "d89c7d7cae51b945c6591e7cc339b3034c174e9bd39aedee3d51fb795618bcba",
+        "continuous": true,
+        "engine": "pinets@0.11.1 / composer-v1",
+        "event_id": "market:1791948120:19",
+        "execution": "closed_bar_native",
+        "inputs": {},
+        "paper_session": "676a9c36-1632-421b-89b8-36669c438a02",
+        "previous_job_id": "514000b5-5c23-48f4-8b50-a38072d2ad82",
+        "snapshot_hash": "c58292ef18cb3f66ba638dd400ebfa45e5e93676dee0b0945583fa5c3d2c570a",
+        "snapshot_id": "c3f20543-4c37-4fce-8a27-ef6534c983c6",
+        "strategy_hash": "22567998e1f1a90aa2b59b6edf4eb946982760c82a6d64b45028e2ef610916e6",
+        "version_id": "2b8851bb-24d7-4741-9261-a00a554823fc"
+      },
+      "result": {
+        "backtest": {
+          "config": {
+            "capital": 1000,
+            "commissionBps": 0,
+            "sizePct": 0,
+            "slippageBps": 0
+          },
+          "drawdown": [
+            {
+              "time": 1791948000,
+              "value": 0
+            },
+            {
+              "time": 1791948060,
+              "value": 0
+            },
+            {
+              "time": 1791948120,
+              "value": 0
+            }
+          ],
+          "engine": "pinets",
+          "equity": [
+            {
+              "time": 1791948000,
+              "value": 1000
+            },
+            {
+              "time": 1791948060,
+              "value": 1000
+            },
+            {
+              "time": 1791948120,
+              "value": 1002
+            }
+          ],
+          "metrics": {
+            "avgTradePct": 9.090909090909092,
+            "buyHoldPct": 19.999999999999996,
+            "cagr": "NaN",
+            "exposurePct": 33.33333333333333,
+            "maxDrawdownPct": 0,
+            "netProfit": 2,
+            "netProfitPct": 0.20000000000000015,
+            "profitFactor": "Infinity",
+            "sharpe": 0,
+            "sortino": 0,
+            "trades": 1,
+            "winRate": 100
+          },
+          "monthly": [
+            {
+              "m": 9,
+              "r": 0.20000000000000015,
+              "y": 2026
+            }
+          ],
+          "nativeConfig": {
+            "commissionType": "cash_per_order",
+            "commissionValue": 0,
+            "sizeType": "fixed",
+            "sizeValue": 1,
+            "slippageTicks": 0
+          },
+          "openPositions": [],
+          "pendingOrders": [],
+          "replayFrames": [
+            {
+              "closedTrades": 0,
+              "equity": 1000,
+              "positionSize": 0,
+              "time": 1791948000
+            },
+            {
+              "closedTrades": 0,
+              "equity": 1000,
+              "positionSize": 2,
+              "time": 1791948060
+            },
+            {
+              "closedTrades": 1,
+              "equity": 1002,
+              "positionSize": 0,
+              "time": 1791948120
+            }
+          ],
+          "trades": [
+            {
+              "commission": 0,
+              "entryBar": 1,
+              "entryId": "L",
+              "entryPrice": 11,
+              "entryTime": 1791948060,
+              "exitBar": 2,
+              "exitId": "Close entry(s) order L",
+              "exitPrice": 12,
+              "exitTime": 1791948120,
+              "id": 1,
+              "pnl": 2,
+              "pnlPct": 9.090909090909092,
+              "qty": 2,
+              "reason": "pine",
+              "side": "long"
+            }
+          ]
+        },
+        "kind": "strategy",
+        "ms": 218.98457800000008,
+        "ok": true,
+        "overlay": false,
+        "plots": [],
+        "signals": [
+          {
+            "action": "long",
+            "bar": 1
+          },
+          {
+            "action": "flat",
+            "bar": 2
+          }
+        ],
+        "title": "Fixture",
+        "visuals": {
+          "__boxes__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_box"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_box"
+            },
+            "title": "__boxes__"
+          },
+          "__labels__": {
+            "data": [
+              {
+                "options": {
+                  "style": "label"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "label"
+            },
+            "title": "__labels__"
+          },
+          "__linefills__": {
+            "data": [
+              {
+                "options": {
+                  "style": "linefill"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "linefill"
+            },
+            "title": "__linefills__"
+          },
+          "__lines__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_line"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_line"
+            },
+            "title": "__lines__"
+          },
+          "__polylines__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_polyline"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_polyline"
+            },
+            "title": "__polylines__"
+          },
+          "__tables__": {
+            "data": [
+              {
+                "options": {
+                  "style": "table"
+                },
+                "time": 1791948000000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": true,
+              "style": "table"
+            },
+            "title": "__tables__"
+          }
+        },
+        "warnings": []
+      },
+      "status": "succeeded"
+    }
+  ]
+}

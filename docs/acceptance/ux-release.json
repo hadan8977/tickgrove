@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-14T07:35:31.005Z",
+  "publicUrl": "https://joint-listprice-blast-refinance.trycloudflare.com",
+  "backendRestarted": false,
+  "workspaceOrAccountMutated": false,
+  "indexSha256": "9ba8d0e22e0bbb5ba1c62f6aa7b35ffa16e069407371f7fa2e7f169140da5656",
+  "assets": [
+    {
+      "url": "/assets/index-mpqVAXCF.js",
+      "sha256": "c5e496a85de475042aaa10f3efac052bb001d2b168e565abe5dbc2fa4c89468f"
+    },
+    {
+      "url": "/assets/index-BfrqDTr4.css",
+      "sha256": "888b5f5c999a6653d81cfa4ba08e926fa5c80466bc62e726b3081ae5c0d0340a"
+    }
+  ],
+  "validation": [
+    "ux-review.json",
+    "ux-flows.json",
+    "ux-components.json"
+  ],
+  "notes": [
+    "Copied verified static assets, retained previous hashed assets, replaced index last",
+    "This report covers the web frontend; existing Docker image has not been rebuilt"
+  ],
+  "remoteVerification": {
+    "at": "2026-10-14T07:35:59.886Z",
+    "indexMatches": true,
+    "assets": [
+      {
+        "path": "/assets/index-mpqVAXCF.js",
+        "status": 200,
+        "bytes": 2501026
+      },
+      {
+        "path": "/assets/index-BfrqDTr4.css",
+        "status": 200,
+        "bytes": 198258
+      },
+      {
+        "path": "/fonts/geist-latin.woff2",
+        "status": 200,
+        "bytes": 29400
+      },
+      {
+        "path": "/fonts/geist-mono-latin.woff2",
+        "status": 200,
+        "bytes": 23128
+      }
+    ],
+    "health": 200,
+    "unauthorized": 401
+  }
+}

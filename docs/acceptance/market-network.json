@@ -1,0 +1,541 @@
+{
+  "catalogueCount": 842,
+  "discovery": {
+    "symbols": [
+      {
+        "assetClass": "etf",
+        "currency": null,
+        "name": "Vanguard Total International St",
+        "provider": "yahoo",
+        "symbol": "VXUS",
+        "symbolId": "YAHOO:NGM:VXUS",
+        "venue": "NGM"
+      },
+      {
+        "assetClass": "etf",
+        "currency": null,
+        "name": "VANGUARD STAR FUND",
+        "provider": "yahoo",
+        "symbol": "^VXUS",
+        "symbolId": "YAHOO:NIM:^VXUS",
+        "venue": "NIM"
+      },
+      {
+        "assetClass": "etf",
+        "currency": null,
+        "name": "V.F.P.-VANGUARD FTSE A.E.ETF  R",
+        "provider": "yahoo",
+        "symbol": "VXUS.DE",
+        "symbolId": "YAHOO:GER:VXUS.DE",
+        "venue": "GER"
+      },
+      {
+        "assetClass": "etf",
+        "currency": null,
+        "name": "VANGUARD FUNDS PLC VG FTSE AW E",
+        "provider": "yahoo",
+        "symbol": "VXUS.L",
+        "symbolId": "YAHOO:LSE:VXUS.L",
+        "venue": "LSE"
+      },
+      {
+        "assetClass": "etf",
+        "currency": null,
+        "name": "VANGUARD STAR FUND TOTAL INTL S",
+        "provider": "yahoo",
+        "symbol": "VXUS.MX",
+        "symbolId": "YAHOO:MEX:VXUS.MX",
+        "venue": "MEX"
+      }
+    ]
+  },
+  "history": [
+    {
+      "provider": "coinbase",
+      "symbol": "BTC-USD",
+      "bars": 660,
+      "pages": 3,
+      "snapshot_id": "6ce5e0e8-9852-4e42-88a2-2f4be64dc6e3",
+      "identity": {
+        "adjustment": "none",
+        "assetClass": "crypto",
+        "baseCurrency": "BTC",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+          "kind": "realtime",
+          "seconds": null
+        },
+        "feed": "public",
+        "priceIncrement": "0.01",
+        "pricePrecision": 2,
+        "provider": "coinbase",
+        "quantityIncrement": "0.00000001",
+        "session": "24x7",
+        "sizeIncrement": 1e-08,
+        "status": "online",
+        "symbol": "BTC-USD",
+        "symbolId": "COINBASE:BTC-USD",
+        "tickSize": 0.01,
+        "timeframe": "1m",
+        "timezone": "UTC",
+        "venue": "COINBASE"
+      },
+      "first": {
+        "close": 83495.83,
+        "closeTime": 1791905580,
+        "high": 83521.34,
+        "low": 83466.87,
+        "open": 83511.92,
+        "time": 1791905520,
+        "volume": 3.47680455
+      },
+      "last": {
+        "close": 83196.84,
+        "closeTime": 1791945120,
+        "high": 83261.7,
+        "low": 83194.82,
+        "open": 83255.04,
+        "time": 1791945060,
+        "volume": 0.77202721
+      }
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "ETH-USD",
+      "bars": 99,
+      "pages": 1,
+      "snapshot_id": "b13d1d12-4639-4949-8d54-bb16de09e7af",
+      "identity": {
+        "adjustment": "none",
+        "assetClass": "crypto",
+        "baseCurrency": "ETH",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+          "kind": "realtime",
+          "seconds": null
+        },
+        "feed": "public",
+        "priceIncrement": "0.01",
+        "pricePrecision": 2,
+        "provider": "coinbase",
+        "quantityIncrement": "0.00000001",
+        "session": "24x7",
+        "sizeIncrement": 1e-08,
+        "status": "online",
+        "symbol": "ETH-USD",
+        "symbolId": "COINBASE:ETH-USD",
+        "tickSize": 0.01,
+        "timeframe": "5m",
+        "timezone": "UTC",
+        "venue": "COINBASE"
+      },
+      "first": {
+        "close": 2503.19,
+        "closeTime": 1791915600,
+        "high": 2504.39,
+        "low": 2502.01,
+        "open": 2503.23,
+        "time": 1791915300,
+        "volume": 253.43337551
+      },
+      "last": {
+        "close": 2502.65,
+        "closeTime": 1791945000,
+        "high": 2507.39,
+        "low": 2502.37,
+        "open": 2505.88,
+        "time": 1791944700,
+        "volume": 70.43988993
+      }
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "SOL-USD",
+      "bars": 47,
+      "pages": 1,
+      "snapshot_id": "721d056c-398e-434c-b9e7-bec204cb505d",
+      "identity": {
+        "adjustment": "none",
+        "assetClass": "crypto",
+        "baseCurrency": "SOL",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+          "kind": "realtime",
+          "seconds": null
+        },
+        "feed": "public",
+        "priceIncrement": "0.01",
+        "pricePrecision": 2,
+        "provider": "coinbase",
+        "quantityIncrement": "0.00000001",
+        "session": "24x7",
+        "sizeIncrement": 1e-08,
+        "status": "online",
+        "symbol": "SOL-USD",
+        "symbolId": "COINBASE:SOL-USD",
+        "tickSize": 0.01,
+        "timeframe": "1H",
+        "timezone": "UTC",
+        "venue": "COINBASE"
+      },
+      "first": {
+        "close": 111.58,
+        "closeTime": 1791777600,
+        "high": 111.9,
+        "low": 111.45,
+        "open": 111.9,
+        "time": 1791774000,
+        "volume": 22971.95792476
+      },
+      "last": {
+        "close": 107.32,
+        "closeTime": 1791943200,
+        "high": 107.57,
+        "low": 106.86,
+        "open": 107.34,
+        "time": 1791939600,
+        "volume": 19627.16362787
+      }
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "SPY",
+      "bars": 22,
+      "pages": 1,
+      "snapshot_id": "5610140f-3c9b-4ac7-adff-0907f1ca12a9",
+      "identity": {
+        "adjustment": "raw",
+        "assetClass": "etf",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+          "kind": "delayed",
+          "seconds": null
+        },
+        "feed": "public",
+        "pricePrecision": 2,
+        "provider": "yahoo",
+        "session": "regular",
+        "symbol": "SPY",
+        "symbolId": "YAHOO:PCX:SPY",
+        "tickSize": 0.01,
+        "timeframe": "1D",
+        "timezone": "America/New_York",
+        "venue": "PCX",
+        "venueName": "NYSEArca"
+      },
+      "first": {
+        "close": 760.8800048828125,
+        "closeTime": 1789416000,
+        "high": 763.52001953125,
+        "low": 757.9299926757812,
+        "open": 759.0,
+        "time": 1789392600,
+        "volume": 43992400.0
+      },
+      "last": {
+        "close": 778.010009765625,
+        "closeTime": 1791921600,
+        "high": 778.75,
+        "low": 775.9500122070312,
+        "open": 777.3400268554688,
+        "time": 1791898200,
+        "volume": 25787100.0
+      }
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "VOO",
+      "bars": 22,
+      "pages": 1,
+      "snapshot_id": "0bcb3b71-1ed7-49cb-8da7-a4735ba54256",
+      "identity": {
+        "adjustment": "raw",
+        "assetClass": "etf",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+          "kind": "delayed",
+          "seconds": null
+        },
+        "feed": "public",
+        "pricePrecision": 2,
+        "provider": "yahoo",
+        "session": "regular",
+        "symbol": "VOO",
+        "symbolId": "YAHOO:PCX:VOO",
+        "tickSize": 0.01,
+        "timeframe": "1D",
+        "timezone": "America/New_York",
+        "venue": "PCX",
+        "venueName": "NYSEArca"
+      },
+      "first": {
+        "close": 699.2999877929688,
+        "closeTime": 1789416000,
+        "high": 701.8499755859375,
+        "low": 696.719970703125,
+        "open": 697.780029296875,
+        "time": 1789392600,
+        "volume": 6801300.0
+      },
+      "last": {
+        "close": 715.2000122070312,
+        "closeTime": 1791921600,
+        "high": 715.8400268554688,
+        "low": 713.27001953125,
+        "open": 714.5399780273438,
+        "time": 1791898200,
+        "volume": 4950800.0
+      }
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "MSFT",
+      "bars": 22,
+      "pages": 1,
+      "snapshot_id": "3ba09cc5-8d3d-4654-b27b-2851d13af0d1",
+      "identity": {
+        "adjustment": "raw",
+        "assetClass": "equity",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+          "kind": "delayed",
+          "seconds": null
+        },
+        "feed": "public",
+        "pricePrecision": 2,
+        "provider": "yahoo",
+        "session": "regular",
+        "symbol": "MSFT",
+        "symbolId": "YAHOO:NMS:MSFT",
+        "tickSize": 0.01,
+        "timeframe": "1D",
+        "timezone": "America/New_York",
+        "venue": "NMS",
+        "venueName": "NasdaqGS"
+      },
+      "first": {
+        "close": 505.4100036621094,
+        "closeTime": 1789416000,
+        "high": 509.9500122070313,
+        "low": 495.3399963378906,
+        "open": 497.05999755859375,
+        "time": 1789392600,
+        "volume": 23091900.0
+      },
+      "last": {
+        "close": 543.4500122070312,
+        "closeTime": 1791921600,
+        "high": 551.1500244140625,
+        "low": 543.0599975585938,
+        "open": 544.6400146484375,
+        "time": 1791898200,
+        "volume": 23824500.0
+      }
+    }
+  ],
+  "streams": [
+    {
+      "provider": "coinbase",
+      "symbol": "LTC-USD",
+      "subscription_id": "4a854121-26c2-4f1b-a15b-a762499d9389",
+      "types": [
+        "bar.closed",
+        "connection",
+        "heartbeat",
+        "quote"
+      ],
+      "sample": {
+        "cursor": 9,
+        "eventTime": 1791945174989,
+        "identity": {
+          "adjustment": "none",
+          "assetClass": "crypto",
+          "baseCurrency": "LTC",
+          "currency": "USD",
+          "delay": {
+            "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+            "kind": "realtime",
+            "seconds": null
+          },
+          "feed": "public-websocket",
+          "priceIncrement": "0.001",
+          "pricePrecision": 3,
+          "provider": "coinbase",
+          "quantityIncrement": "0.00000001",
+          "session": "24x7",
+          "sizeIncrement": 1e-08,
+          "status": "online",
+          "symbol": "LTC-USD",
+          "symbolId": "COINBASE:LTC-USD",
+          "tickSize": 0.001,
+          "timeframe": "1m",
+          "timezone": "UTC",
+          "venue": "COINBASE"
+        },
+        "payload": {
+          "best_ask": "61.562",
+          "best_ask_size": "9.08118592",
+          "best_bid": "61.545",
+          "best_bid_size": "16.86469220",
+          "high_24h": "62.619",
+          "last_size": "0.61619725",
+          "low_24h": "60.389",
+          "open_24h": "61.357",
+          "price": "61.562",
+          "product_id": "LTC-USD",
+          "sequence": 25033028465,
+          "side": "buy",
+          "time": "2026-10-14T02:32:54.989234Z",
+          "trade_id": 200664449,
+          "type": "ticker",
+          "volume_24h": "87585.08192285",
+          "volume_30d": "6094368.56470449"
+        },
+        "quality": {
+          "complete": true,
+          "reason": null,
+          "stale": false
+        },
+        "receivedAt": 1791945178859,
+        "subscriptionId": "4a854121-26c2-4f1b-a15b-a762499d9389",
+        "type": "quote"
+      },
+      "state": [
+        {
+          "desired": true,
+          "error": null,
+          "id": "4a854121-26c2-4f1b-a15b-a762499d9389",
+          "identity": {
+            "adjustment": "none",
+            "assetClass": "crypto",
+            "baseCurrency": "LTC",
+            "currency": "USD",
+            "delay": {
+              "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+              "kind": "realtime",
+              "seconds": null
+            },
+            "feed": "public-websocket",
+            "priceIncrement": "0.001",
+            "pricePrecision": 3,
+            "provider": "coinbase",
+            "quantityIncrement": "0.00000001",
+            "session": "24x7",
+            "sizeIncrement": 1e-08,
+            "status": "online",
+            "symbol": "LTC-USD",
+            "symbolId": "COINBASE:LTC-USD",
+            "tickSize": 0.001,
+            "timeframe": "1m",
+            "timezone": "UTC",
+            "venue": "COINBASE"
+          },
+          "lastEventAt": 1791945179052,
+          "lastQuoteEventTime": 1791945174989,
+          "lastQuoteReceivedAt": 1791945178859,
+          "quoteStale": false,
+          "stalenessMs": 858,
+          "status": "connected"
+        }
+      ]
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "SPY",
+      "subscription_id": "08873c0f-643d-4735-ab60-27a7c8bb58ae",
+      "types": [
+        "connection",
+        "quote"
+      ],
+      "sample": {
+        "cursor": 13,
+        "eventTime": 1791945181000,
+        "identity": {
+          "adjustment": "none",
+          "assetClass": "etf",
+          "currency": "USD",
+          "delay": {
+            "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+            "kind": "delayed",
+            "seconds": null
+          },
+          "feed": "public-pricing-websocket",
+          "pricePrecision": 2,
+          "provider": "yahoo",
+          "session": "regular",
+          "symbol": "SPY",
+          "symbolId": "YAHOO:PCX:SPY",
+          "tickSize": 0.01,
+          "timeframe": "1m",
+          "timezone": "America/New_York",
+          "venue": "PCX",
+          "venueName": "NYSEArca"
+        },
+        "payload": {
+          "change": 0.969970703125,
+          "changePercent": 0.12467329204082488,
+          "eventTime": 1791945181000,
+          "kind": "public-pricing-websocket; exchange delay not guaranteed",
+          "marketHours": 4,
+          "price": 778.97998046875,
+          "priceHint": 2,
+          "provider": "yahoo",
+          "quoteType": 20,
+          "receivedAt": 1791945182889,
+          "symbol": "SPY",
+          "venue": "PCX"
+        },
+        "quality": {
+          "complete": true,
+          "reason": "Unofficial Yahoo push quote; no completeness claim for exchange trades",
+          "stale": false
+        },
+        "receivedAt": 1791945182889,
+        "subscriptionId": "08873c0f-643d-4735-ab60-27a7c8bb58ae",
+        "type": "quote"
+      },
+      "state": [
+        {
+          "desired": true,
+          "error": null,
+          "id": "08873c0f-643d-4735-ab60-27a7c8bb58ae",
+          "identity": {
+            "adjustment": "none",
+            "assetClass": "etf",
+            "currency": "USD",
+            "delay": {
+              "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+              "kind": "delayed",
+              "seconds": null
+            },
+            "feed": "public-pricing-websocket",
+            "pricePrecision": 2,
+            "provider": "yahoo",
+            "session": "regular",
+            "symbol": "SPY",
+            "symbolId": "YAHOO:PCX:SPY",
+            "tickSize": 0.01,
+            "timeframe": "1m",
+            "timezone": "America/New_York",
+            "venue": "PCX",
+            "venueName": "NYSEArca"
+          },
+          "lastEventAt": 1791945182889,
+          "lastQuoteEventTime": 1791945181000,
+          "lastQuoteReceivedAt": 1791945182889,
+          "quoteStale": false,
+          "stalenessMs": 303,
+          "status": "connected"
+        }
+      ]
+    }
+  ],
+  "realCredentials": false,
+  "orders": false
+}

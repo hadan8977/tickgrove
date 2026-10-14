@@ -1,136 +1,615 @@
-import type { Bar, SymbolInfo, Timeframe } from '../core/types'
-import { TF_SECONDS } from '../core/types'
+import type { Bar, SymbolInfo, Timeframe } from "../core/types";
+import type { MarketEvent, MarketHistoryResult, MarketIdentity } from "../core/marketTypes";
+import type { PineRunOptions } from "../pine/runtime";
+import { command } from "../service/client";
+import * as demo from "./demoFeed";
 
-export const SYMBOLS: SymbolInfo[] = [
-  { symbol: 'AAPL', name: 'Apple Inc.', exchange: 'NASDAQ', sector: 'Technology', price: 228.4, vol: 0.26, kind: 'stock' },
-  { symbol: 'MSFT', name: 'Microsoft Corp.', exchange: 'NASDAQ', sector: 'Technology', price: 431.2, vol: 0.24, kind: 'stock' },
-  { symbol: 'NVDA', name: 'NVIDIA Corp.', exchange: 'NASDAQ', sector: 'Semiconductors', price: 138.6, vol: 0.52, kind: 'stock' },
-  { symbol: 'TSLA', name: 'Tesla Inc.', exchange: 'NASDAQ', sector: 'Automotive', price: 251.3, vol: 0.58, kind: 'stock' },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', exchange: 'NASDAQ', sector: 'Consumer', price: 198.7, vol: 0.32, kind: 'stock' },
-  { symbol: 'META', name: 'Meta Platforms', exchange: 'NASDAQ', sector: 'Communication', price: 582.1, vol: 0.38, kind: 'stock' },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.', exchange: 'NASDAQ', sector: 'Communication', price: 172.9, vol: 0.3, kind: 'stock' },
-  { symbol: 'AMD', name: 'Advanced Micro Devices', exchange: 'NASDAQ', sector: 'Semiconductors', price: 152.4, vol: 0.5, kind: 'stock' },
-  { symbol: 'JPM', name: 'JPMorgan Chase', exchange: 'NYSE', sector: 'Financials', price: 221.8, vol: 0.22, kind: 'stock' },
-  { symbol: 'SPY', name: 'SPDR S&P 500 ETF', exchange: 'NYSE Arca', sector: 'Index ETF', price: 571.3, vol: 0.15, kind: 'etf' },
-  { symbol: 'QQQ', name: 'Invesco QQQ Trust', exchange: 'NASDAQ', sector: 'Index ETF', price: 489.6, vol: 0.2, kind: 'etf' },
-  { symbol: 'BTCUSD', name: 'Bitcoin / US Dollar', exchange: 'DEMO', sector: 'Crypto', price: 67250, vol: 0.6, kind: 'crypto' },
-  { symbol: 'ETHUSD', name: 'Ethereum / US Dollar', exchange: 'DEMO', sector: 'Crypto', price: 2615, vol: 0.7, kind: 'crypto' },
-]
-export const symbolInfo = (s: string) => SYMBOLS.find((x) => x.symbol === s) ?? SYMBOLS[0]
-
-function hash(str: string) {
-  let h = 2166136261
-  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619)
-  return h >>> 0
+export type DataMode = "service" | "demo";
+let mode: DataMode =
+  typeof location !== "undefined" && new URLSearchParams(location.search).get("mode") === "demo"
+    ? "demo"
+    : "service";
+let connected = false,
+  revision = 0,
+  polling = false;
+let timer: ReturnType<typeof setInterval> | undefined;
+let demoOff: (() => void) | undefined;
+type Listener = (prices: Record<string, number>) => void;
+const listeners = new Set<Listener>();
+const prices: Record<string, number> = {},
+  previous: Record<string, number> = {};
+// Initial watchlist suggestions, never a provider whitelist or fallback prices.
+export const SYMBOLS: SymbolInfo[] = demo.SYMBOLS.map((s) => ({
+  ...s,
+  price: Number.NaN,
+  vol: Number.NaN,
+  exchange: s.kind === "crypto" ? "COINBASE" : s.exchange,
+}));
+export interface Instrument extends SymbolInfo {
+  provider?: "yahoo" | "coinbase" | "alpaca";
+  providerSymbol?: string;
+  currency?: string;
+  pricePrecision?: number;
 }
-function rng(seed: number) {
-  let a = seed
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+export interface MarketSeries {
+  bars: Bar[];
+  snapshotId?: string;
+  identity?: MarketIdentity;
+  metadata?: Record<string, unknown>;
+  loading: boolean;
+  error?: string;
+  streamError?: string;
+  subscriptionId?: string;
+  cursor: number;
+  status: string;
+  eventTime?: number;
+  receivedAt?: number;
+  quoteReceivedAt?: number;
+  complete: boolean;
+  revision: number;
+  loadedAt?: number;
+  provenance?: Record<string, unknown>;
+  gaps?: { start: number; end: number }[];
+  historyRange?: { start: number; end: number; live: boolean };
+  subscribing?: boolean;
+}
+export interface TradePrint {
+  id: string;
+  time: number;
+  price: number;
+  size: number;
+  side?: string;
+}
+export interface DepthSnapshot {
+  asks: { price: number; size: number }[];
+  bids: { price: number; size: number }[];
+  spread: number;
+  receivedAt?: number;
+  kind?: string;
+  error?: string;
+}
+const series = new Map<string, MarketSeries>(),
+  trades = new Map<string, TradePrint[]>(),
+  books = new Map<string, DepthSnapshot>();
+const depthInFlight = new Set<string>(),
+  histories = new Map<string, Promise<MarketSeries>>();
+const quoteLoaded = new Set<string>();
+const subscriptionsInFlight = new Map<string, Promise<string>>();
+const EMPTY_BOOK: DepthSnapshot = { asks: [], bids: [], spread: Number.NaN };
+const queued: (() => void)[] = [];
+let activeRequests = 0;
+async function budget<T>(work: () => Promise<T>): Promise<T> {
+  if (activeRequests >= 3) await new Promise<void>((resolve) => queued.push(resolve));
+  activeRequests++;
+  try {
+    return await work();
+  } finally {
+    activeRequests--;
+    queued.shift()?.();
   }
 }
-function gauss(r: () => number) {
-  const u = Math.max(r(), 1e-9)
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r())
+function emit() {
+  revision++;
+  for (const listener of listeners) listener(prices);
 }
-
-const BAR_COUNT = 900
-const cache = new Map<string, Bar[]>()
-// Session start anchored so data is stable across reloads within a day.
-const ANCHOR = Math.floor(Date.now() / 1000 / 300) * 300
-
-/** Seeded regime-switching GBM; final close is rescaled to the symbol's reference price. */
+export const feedVersion = () => revision;
+export const isDemoData = () => mode === "demo";
+export const isServiceDataReady = () => mode === "service" && connected;
+export function configureData(next: DataMode, authenticated = false) {
+  mode = next;
+  connected = authenticated;
+  demoOff?.();
+  demoOff = undefined;
+  if (timer) clearInterval(timer);
+  timer = undefined;
+  if (mode === "demo")
+    demoOff = demo.subscribeTicks((value) => {
+      Object.assign(prices, value);
+      emit();
+    });
+  else if (connected)
+    timer = setInterval(() => {
+      void poll();
+    }, 700);
+  emit();
+}
+export function subscribeTicks(listener: Listener) {
+  listeners.add(listener);
+  if (mode === "demo" && !demoOff)
+    demoOff = demo.subscribeTicks((value) => {
+      Object.assign(prices, value);
+      emit();
+    });
+  return () => {
+    listeners.delete(listener);
+  };
+}
+export function registerInstrument(value: Partial<Instrument> & { symbol: string }): Instrument {
+  const found = SYMBOLS.find((s) => s.symbol === value.symbol);
+  const next = {
+    name: value.name ?? value.symbol,
+    exchange: value.exchange ?? "Unresolved",
+    sector: value.sector ?? "",
+    kind: value.kind ?? "stock",
+    price: Number.NaN,
+    vol: Number.NaN,
+    ...found,
+    ...value,
+  } as Instrument;
+  if (found) Object.assign(found, next);
+  else SYMBOLS.push(next);
+  return next;
+}
+export function symbolInfo(symbol: string): Instrument {
+  const known = SYMBOLS.find((s) => s.symbol === symbol);
+  if (known) return known;
+  const parts = symbol.split(":"),
+    provider = parts[0].toLowerCase();
+  return registerInstrument({
+    symbol,
+    name: parts.at(-1),
+    provider: ["coinbase", "yahoo", "alpaca"].includes(provider)
+      ? (provider as Instrument["provider"])
+      : "yahoo",
+    providerSymbol: parts.at(-1),
+    kind: provider === "coinbase" ? "crypto" : "stock",
+    exchange: parts.length > 1 ? parts[0] : "Unresolved",
+  });
+}
+export function marketRequest(symbol: string, tf: Timeframe = "1D") {
+  const info = symbolInfo(symbol),
+    parts = symbol.split(":");
+  const provider = info.provider ?? (info.kind === "crypto" ? "coinbase" : "yahoo");
+  const raw =
+    info.providerSymbol ??
+    (symbol === "BTCUSD" ? "BTC-USD" : symbol === "ETHUSD" ? "ETH-USD" : parts.at(-1)!);
+  const feed = provider === "alpaca" ? (parts.length > 2 ? parts[1] : "iex") : undefined;
+  const session =
+    provider === "yahoo" && parts.length > 2 && parts[1] === "extended" ? "extended" : "regular";
+  return {
+    provider,
+    symbol: raw,
+    timeframe: tf,
+    ...(feed ? { feed } : {}),
+    ...(provider === "yahoo" ? { session } : {}),
+    adjustment: provider === "coinbase" ? "none" : "raw",
+  };
+}
+export function marketSeries(symbol: string, tf: Timeframe): MarketSeries {
+  const key = `${symbol}|${tf}`;
+  if (!series.has(key))
+    series.set(key, {
+      bars: [],
+      loading: false,
+      cursor: 0,
+      status: "not-connected",
+      complete: false,
+      revision: 0,
+    });
+  return series.get(key)!;
+}
+function windowSeconds(tf: Timeframe) {
+  return tf === "1m"
+    ? 86400 * 2
+    : tf === "5m" || tf === "15m"
+      ? 86400 * 14
+      : tf === "1H" || tf === "4H"
+        ? 86400 * 45
+        : 86400 * 450;
+}
+export async function loadMarketHistory(
+  symbol: string,
+  tf: Timeframe,
+  range?: { start: number; end: number },
+): Promise<MarketSeries> {
+  if (!connected) throw Error("Connect to the trading service before loading market data");
+  const key = `${symbol}|${tf}`,
+    existing = histories.get(key);
+  if (existing) {
+    const done = await existing;
+    if (range && (done.historyRange?.start !== range.start || done.historyRange?.end !== range.end))
+      return loadMarketHistory(symbol, tf, range);
+    return done;
+  }
+  const entry = marketSeries(symbol, tf);
+  entry.loading = true;
+  entry.error = undefined;
+  emit();
+  const task = budget(async () => {
+    try {
+      const end = range?.end ?? Math.floor(Date.now() / 1000);
+      const start = range?.start ?? end - windowSeconds(tf);
+      const result = await command<MarketHistoryResult>("market.history", {
+        ...marketRequest(symbol, tf),
+        start,
+        end,
+        allowGaps: true,
+      });
+      entry.historyRange = { start, end, live: !range };
+      entry.bars.splice(
+        0,
+        entry.bars.length,
+        ...result.data.bars.map((b) => ({
+          ...b,
+          volume: b.volume ?? Number.NaN,
+        })),
+      );
+      entry.snapshotId = result.snapshot_id;
+      entry.identity = result.identity;
+      entry.metadata = result.data.metadata;
+      entry.provenance = result.provenance;
+      entry.gaps = result.gaps;
+      entry.revision++;
+      entry.complete = !result.gaps.length;
+      entry.loadedAt = Date.now();
+      if (!entry.subscriptionId) entry.status = "historical";
+      const last = entry.bars.at(-1);
+      if (last && !Number.isFinite(prices[symbol])) prices[symbol] = last.close;
+      if (tf === "1D" && entry.bars.length >= 2 && !Number.isFinite(previous[symbol]))
+        previous[symbol] = entry.bars.at(-2)!.close;
+      const raw = result.provenance.rawMetadata as Record<string, unknown> | undefined;
+      const prev = Number(raw?.previousClose);
+      if (Number.isFinite(prev) && prev > 0) previous[symbol] = prev;
+      if (!quoteLoaded.has(symbol)) {
+        quoteLoaded.add(symbol);
+        void budget(async () => {
+          try {
+            const quote = await command<Record<string, any>>(
+              "market.quote",
+              marketRequest(symbol, tf),
+            );
+            const price = Number(quote.price),
+              prev = Number(quote.previousClose);
+            if (Number.isFinite(price) && price > 0) prices[symbol] = price;
+            if (Number.isFinite(prev) && prev > 0) previous[symbol] = prev;
+            emit();
+          } catch {
+            quoteLoaded.delete(symbol);
+          }
+        });
+      }
+      registerInstrument({
+        symbol,
+        provider: result.identity.provider,
+        providerSymbol: result.identity.symbol,
+        currency: result.identity.currency,
+        pricePrecision: result.identity.pricePrecision,
+        exchange: result.identity.venue,
+        kind:
+          result.identity.assetClass === "crypto"
+            ? "crypto"
+            : result.identity.assetClass === "etf"
+              ? "etf"
+              : "stock",
+      });
+      if (!entry.subscriptionId)
+        void subscribeMarket(symbol, tf).catch((error) => {
+          entry.streamError = String(error);
+          emit();
+        });
+      else await hydrateMarket(symbol, entry);
+      return entry;
+    } catch (error) {
+      entry.error = String(error);
+      entry.status = "error";
+      throw error;
+    } finally {
+      entry.loading = false;
+      histories.delete(key);
+      emit();
+    }
+  });
+  histories.set(key, task);
+  return task;
+}
+export function ensureMarket(symbol: string, tf: Timeframe) {
+  if (!connected || mode === "demo") return;
+  const entry = marketSeries(symbol, tf);
+  if (!entry.loadedAt && !entry.loading && !entry.error)
+    queueMicrotask(() => {
+      if (connected && !entry.loadedAt && !entry.loading && !entry.error)
+        void loadMarketHistory(symbol, tf).catch(() => {});
+    });
+}
 export function getBars(symbol: string, tf: Timeframe): Bar[] {
-  const key = `${symbol}:${tf}`
-  const hit = cache.get(key)
-  if (hit) return hit
-  const info = symbolInfo(symbol)
-  const r = rng(hash(key))
-  const step = TF_SECONDS[tf]
-  const dt = step / (86400 * 252)
-  const raw: Bar[] = []
-  let p = 100
-  let drift = 0.08
-  let volMul = 1
-  const end = Math.floor(ANCHOR / step) * step
-  for (let i = 0; i < BAR_COUNT; i++) {
-    if (r() < 0.02) drift = (r() - 0.45) * 0.9
-    if (r() < 0.03) volMul = 0.6 + r() * 1.2
-    const sigma = info.vol * volMul
-    const o = p
-    const ret = (drift - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * gauss(r)
-    const c = o * Math.exp(ret)
-    const wick = sigma * Math.sqrt(dt) * o
-    const h = Math.max(o, c) + Math.abs(gauss(r)) * wick * 0.6
-    const l = Math.min(o, c) - Math.abs(gauss(r)) * wick * 0.6
-    const baseVol = info.kind === 'crypto' ? 2400 : 1_200_000
-    const v = baseVol * (step / 3600) ** 0.7 * (0.5 + r() + Math.abs(ret) * 40)
-    raw.push({ time: end - (BAR_COUNT - 1 - i) * step, open: o, high: h, low: l, close: c, volume: Math.round(v) })
-    p = c
+  if (mode === "demo") return demo.getBars(symbol, tf);
+  ensureMarket(symbol, tf);
+  return marketSeries(symbol, tf).bars;
+}
+export function livePrice(symbol: string) {
+  if (mode === "demo") return demo.livePrice(symbol);
+  ensureMarket(symbol, "1D");
+  return prices[symbol] ?? Number.NaN;
+}
+export function prevClosePrice(symbol: string) {
+  return mode === "demo" ? demo.prevClosePrice(symbol) : (previous[symbol] ?? Number.NaN);
+}
+export function formatInstrumentPrice(symbol: string, value: number) {
+  if (!Number.isFinite(value)) return "—";
+  const precision = Math.max(
+    0,
+    Math.min(
+      20,
+      symbolInfo(symbol).pricePrecision ?? (Math.abs(value) > 0 && Math.abs(value) < 1 ? 8 : 2),
+    ),
+  );
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: precision,
+    maximumFractionDigits: precision,
+  });
+}
+export function tradeTape(symbol: string) {
+  return trades.get(symbol) ?? [];
+}
+export function orderBook(symbol: string, levels = 10): DepthSnapshot {
+  if (mode === "demo") return demo.orderBook(symbol, levels);
+  const value = books.get(symbol) ?? EMPTY_BOOK;
+  return {
+    ...value,
+    asks: value.asks.slice(0, levels),
+    bids: value.bids.slice(0, levels),
+  };
+}
+export async function loadDepth(symbol: string) {
+  if (!connected || mode === "demo" || depthInFlight.has(symbol)) return;
+  const request = marketRequest(symbol);
+  if (request.provider !== "coinbase") {
+    books.set(symbol, {
+      ...EMPTY_BOOK,
+      error: "This provider has no authenticated depth feed configured.",
+    });
+    return;
   }
-  const k = info.price / p
-  const dec = info.price > 1000 ? 2 : info.price > 10 ? 2 : 4
-  const f = (x: number) => Number((x * k).toFixed(dec))
-  const bars = raw.map((b) => ({ ...b, open: f(b.open), high: f(b.high), low: f(b.low), close: f(b.close) }))
-  cache.set(key, bars)
-  return bars
-}
-
-/** Simulated tick stream shared by all consumers. */
-type TickListener = (prices: Record<string, number>) => void
-const tickListeners = new Set<TickListener>()
-const live: Record<string, number> = Object.fromEntries(SYMBOLS.map((s) => [s.symbol, s.price]))
-const prevClose: Record<string, number> = Object.fromEntries(
-  SYMBOLS.map((s) => {
-    const d = getBars(s.symbol, '1D')
-    return [s.symbol, d[d.length - 2].close]
-  }),
-)
-const tickRng = rng(42)
-let timer: ReturnType<typeof setInterval> | null = null
-
-export function livePrice(s: string) {
-  return live[s]
-}
-export function prevClosePrice(s: string) {
-  return prevClose[s]
-}
-
-function tick() {
-  for (const s of SYMBOLS) {
-    if (tickRng() < 0.35) continue
-    const sigma = s.vol / Math.sqrt(252 * 6.5 * 3600) * 4
-    live[s.symbol] = Number((live[s.symbol] * Math.exp(sigma * gauss(tickRng))).toFixed(2))
-  }
-  // propagate into last bar of every cached series
-  for (const [key, bars] of cache) {
-    const sym = key.split(':')[0]
-    const last = bars[bars.length - 1]
-    const p = live[sym]
-    bars[bars.length - 1] = { ...last, close: p, high: Math.max(last.high, p), low: Math.min(last.low, p), volume: last.volume + Math.round(last.volume * 0.002) }
-  }
-  tickListeners.forEach((l) => l(live))
-}
-
-export function subscribeTicks(l: TickListener) {
-  tickListeners.add(l)
-  if (!timer) timer = setInterval(tick, 1000)
-  return () => {
-    tickListeners.delete(l)
+  depthInFlight.add(symbol);
+  try {
+    const response = await command<{
+      book: { asks: [string, string][]; bids: [string, string][] };
+      receivedAt: number;
+      kind: string;
+    }>("market.depth", request);
+    const map = (rows: [string, string][]) =>
+      rows
+        .map(([p, q]) => ({ price: Number(p), size: Number(q) }))
+        .filter((x) => Number.isFinite(x.price) && Number.isFinite(x.size));
+    const asks = map(response.book.asks),
+      bids = map(response.book.bids);
+    books.set(symbol, {
+      asks,
+      bids,
+      spread: asks[0]?.price - bids[0]?.price,
+      receivedAt: response.receivedAt,
+      kind: response.kind,
+    });
+  } catch (error) {
+    books.set(symbol, {
+      ...(books.get(symbol) ?? EMPTY_BOOK),
+      error: String(error),
+    });
+  } finally {
+    depthInFlight.delete(symbol);
+    emit();
   }
 }
-
-/** Synthetic order book around the live price. */
-export function orderBook(symbol: string, levels = 10) {
-  const p = live[symbol]
-  const tickSize = p > 1000 ? 0.5 : p > 100 ? 0.01 : 0.01
-  const r = rng(Math.floor(Date.now() / 1000) + hash(symbol))
-  const spread = Math.max(tickSize, p * 0.00015)
-  const asks = Array.from({ length: levels }, (_, i) => ({ price: p + spread / 2 + i * spread, size: Math.round(50 + r() * 900 * (1 + i * 0.3)) }))
-  const bids = Array.from({ length: levels }, (_, i) => ({ price: p - spread / 2 - i * spread, size: Math.round(50 + r() * 900 * (1 + i * 0.3)) }))
-  return { asks, bids, spread }
+export async function subscribeMarket(symbol: string, tf: Timeframe) {
+  const entry = marketSeries(symbol, tf);
+  const key = `${symbol}|${tf}`,
+    pending = subscriptionsInFlight.get(key);
+  if (pending) return pending;
+  if (entry.subscriptionId) return entry.subscriptionId;
+  entry.subscribing = true;
+  const task = (async () => {
+    try {
+      const response = await command<{
+        subscription_id: string;
+        identity: MarketIdentity;
+        status?: string;
+      }>("market.subscribe", marketRequest(symbol, tf));
+      entry.subscriptionId = response.subscription_id;
+      entry.identity = response.identity;
+      entry.status = response.status ?? "connecting";
+      await hydrateMarket(symbol, entry);
+      return response.subscription_id;
+    } finally {
+      entry.subscribing = false;
+      subscriptionsInFlight.delete(key);
+      emit();
+    }
+  })();
+  subscriptionsInFlight.set(key, task);
+  return task;
+}
+async function hydrateMarket(symbol: string, entry: MarketSeries) {
+  const value = await command<any>("market.bars", {
+    subscription_id: entry.subscriptionId,
+  });
+  for (let index = 0; index < (value.bars?.length ?? 0); index++) {
+    const bar = value.bars[index];
+    if (value.quality?.[index]?.complete !== false || !entry.bars.some((b) => b.time === bar.time))
+      updateBar(entry, bar);
+  }
+  if (value.forming?.bar) updateBar(entry, value.forming.bar);
+  entry.revision++;
+  if (value.status) entry.status = value.status;
+  if (value.identity) entry.identity = value.identity;
+  if (Number.isFinite(value.cursor)) entry.cursor = Math.max(entry.cursor, value.cursor);
+  if (value.lastQuote && (!entry.eventTime || value.lastQuote.eventTime >= entry.eventTime))
+    processMarketEvent(symbol, entry, {
+      cursor: entry.cursor,
+      subscriptionId: entry.subscriptionId!,
+      identity: entry.identity!,
+      type: "quote",
+      eventTime: value.lastQuote.eventTime,
+      receivedAt: value.lastQuote.receivedAt,
+      payload: value.lastQuote,
+      quality: value.quoteQuality,
+    });
+}
+export async function stopMarket(subscriptionId: string) {
+  await command("market.stop", { subscription_id: subscriptionId });
+  for (const entry of series.values())
+    if (entry.subscriptionId === subscriptionId) {
+      entry.subscriptionId = undefined;
+      entry.status = "stopped";
+      entry.cursor = 0;
+    }
+  emit();
+}
+function updateBar(entry: MarketSeries, value: Bar) {
+  if (!Number.isFinite(value?.time) || !Number.isFinite(value?.close)) return;
+  if (value.volume == null) value = { ...value, volume: Number.NaN };
+  const i = entry.bars.findIndex((b) => b.time === value.time);
+  if (i >= 0) entry.bars[i] = value;
+  else {
+    entry.bars.push(value);
+    entry.bars.sort((a, b) => a.time - b.time);
+  }
+}
+function processMarketEvent(symbol: string, entry: MarketSeries, event: MarketEvent) {
+  entry.cursor = event.cursor;
+  entry.receivedAt = event.receivedAt;
+  entry.identity = event.identity;
+  const data = event.payload as Record<string, any>;
+  if (event.type === "quote" || event.type === "trade") {
+    const price = Number(data.price ?? data.p ?? data.quote?.price);
+    if (Number.isFinite(price) && price > 0) {
+      prices[symbol] = price;
+      entry.eventTime = event.eventTime;
+      entry.quoteReceivedAt = event.receivedAt;
+    }
+    const prev = Number(
+      data.previousClose ??
+        (data.change != null ? price - Number(data.change) : undefined) ??
+        data.open_24h,
+    );
+    if (Number.isFinite(prev) && prev > 0) previous[symbol] = prev;
+  }
+  if (event.type === "trade") {
+    const list = trades.get(symbol) ?? [],
+      id = String(data.trade_id ?? data.i ?? event.cursor);
+    if (!list.some((t) => t.id === id))
+      list.unshift({
+        id,
+        time: event.eventTime,
+        price: Number(data.price ?? data.p),
+        size: Number(data.size ?? data.s),
+        side: data.side,
+      });
+    trades.set(symbol, list.slice(0, 100));
+  }
+  if (["bar.update", "bar.closed", "bar.revised"].includes(event.type)) {
+    updateBar(entry, (data.bar ?? data) as Bar);
+    if (event.type === "bar.revised") entry.revision++;
+  }
+  if (event.type === "connection") {
+    if (data.status) entry.status = String(data.status);
+    if (data.error != null) entry.streamError = String(data.error);
+    else if (data.status === "connected") entry.streamError = undefined;
+  }
+  if (event.type === "gap") {
+    entry.complete = false;
+    entry.streamError = String(data.reason ?? "Market data gap detected");
+  }
+}
+async function poll() {
+  if (polling || !connected || mode === "demo") return;
+  polling = true;
+  try {
+    const selected = [...series].filter(([, value]) => value.subscriptionId && !value.subscribing);
+    for (let offset = 0; offset < selected.length; offset += 4)
+      await Promise.all(
+        selected.slice(offset, offset + 4).map(async ([key, entry]) => {
+          try {
+            const result = await command<{
+              events: MarketEvent[];
+              nextCursor: number;
+              cursorExpired?: boolean;
+            }>("market.events", {
+              subscription_id: entry.subscriptionId,
+              cursor: entry.cursor,
+              limit: 1000,
+            });
+            if (result.cursorExpired) {
+              entry.complete = false;
+              entry.streamError =
+                "Earlier stream events have expired; refreshed current bars and quote. Missed trade prints are unavailable.";
+              await hydrateMarket(key.split("|")[0], entry);
+              return;
+            }
+            for (const event of result.events)
+              if (event.cursor > entry.cursor) processMarketEvent(key.split("|")[0], entry, event);
+            entry.cursor = Math.max(entry.cursor, result.nextCursor);
+          } catch (error) {
+            entry.status = "disconnected";
+            entry.streamError = String(error);
+          }
+        }),
+      );
+  } finally {
+    polling = false;
+    emit();
+  }
+}
+export function dataPineOptions(
+  symbol: string,
+  tf: Timeframe,
+  inputs?: Record<string, unknown>,
+): PineRunOptions {
+  const primary = marketSeries(symbol, tf);
+  const chosen = new Map<string, MarketSeries>();
+  for (const entry of series.values())
+    if (
+      entry !== primary &&
+      entry.identity &&
+      entry.bars.length &&
+      entry.identity.provider === primary.identity?.provider &&
+      entry.identity.feed === primary.identity.feed &&
+      entry.identity.session === primary.identity.session &&
+      entry.identity.adjustment === primary.identity.adjustment
+    ) {
+      const key = `${entry.identity.symbol}|${entry.identity.timeframe}`;
+      if (key !== `${primary.identity.symbol}|${primary.identity.timeframe}`)
+        chosen.set(key, entry);
+    }
+  return {
+    symbol: primary.identity?.symbol ?? marketRequest(symbol, tf).symbol,
+    inputs,
+    metadata: primary.metadata as PineRunOptions["metadata"],
+    datasets: [...chosen.values()].map((e) => ({
+      symbol: e.identity!.symbol,
+      timeframe: e.identity!.timeframe,
+      bars: e.bars,
+      metadata: e.metadata as PineRunOptions["metadata"],
+    })),
+  };
+}
+export function marketSummary() {
+  return [...series].map(([key, value]) => ({
+    key,
+    ...value,
+    bars: value.bars.length,
+  }));
+}
+export async function searchMarket(query: string, provider?: string): Promise<Instrument[]> {
+  if (mode === "demo")
+    return SYMBOLS.filter((s) => (s.symbol + s.name).toLowerCase().includes(query.toLowerCase()));
+  const result = await command<{ symbols: Record<string, any>[] }>("market.search", {
+    query,
+    provider,
+  });
+  return result.symbols.map((raw) =>
+    registerInstrument({
+      symbol: `${String(raw.provider ?? "yahoo").toUpperCase()}:${raw.symbol}`,
+      provider: raw.provider ?? "yahoo",
+      providerSymbol: raw.symbol,
+      name: raw.name ?? raw.symbol,
+      exchange: raw.venue ?? raw.exchange ?? "",
+      currency: raw.currency,
+      kind:
+        String(raw.assetClass).toLowerCase() === "crypto"
+          ? "crypto"
+          : String(raw.assetClass).toLowerCase() === "etf"
+            ? "etf"
+            : "stock",
+    }),
+  );
 }

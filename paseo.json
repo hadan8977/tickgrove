@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "trading": {
+      "type": "service",
+      "command": "node scripts/paseo-preview.cjs"
+    },
+    "trading-share": {
+      "command": "node scripts/paseo-share.cjs"
+    }
+  }
+}

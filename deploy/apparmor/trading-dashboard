@@ -1,0 +1,8 @@
+# Opt-in profile for hosts that restrict unprivileged user namespaces.
+# Applied only to this application's container; does not change host sysctls.
+abi <abi/4.0>,
+include <tunables/global>
+
+profile trading-dashboard flags=(unconfined) {
+  userns,
+}

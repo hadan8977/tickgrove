@@ -11,3 +11,4 @@ export const crosshairBus = {
 export function cssVar(name: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
+export const chartControls=new Map<string,{fit:()=>void;screenshot:()=>void;focus:(time:number)=>void}>()

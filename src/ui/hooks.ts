@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { livePrice, prevClosePrice, subscribeTicks } from '../data/feed'
+import { livePrice, prevClosePrice, subscribeTicks,formatInstrumentPrice } from '../data/feed'
 import { getActivity, listCommands, subscribeActivity, subscribeCommands, commandsVersion } from '../core/commands'
 
 let tickVersion = 0
@@ -9,7 +9,7 @@ subscribeTicks(() => {
   versionListeners.forEach((l) => l())
 })
 
-/** Re-render on every simulated tick. */
+/** Re-render on delivered market events and connection-state updates. */
 export function useTick() {
   return useSyncExternalStore(
     (l) => {
@@ -24,14 +24,14 @@ export function useQuote(symbol: string) {
   useTick()
   const last = livePrice(symbol)
   const prev = prevClosePrice(symbol)
-  return { last, prev, change: last - prev, changePct: ((last - prev) / prev) * 100 }
+  return { last, prev, change: last - prev, changePct: ((last - prev) / prev) * 100,format:(value:number)=>formatInstrumentPrice(symbol,value) }
 }
 
 /** Returns 'up' | 'down' briefly after a price change, for flash animation. */
 export function useFlash(value: number) {
   const [state, setState] = useState<{ v: number; dir: 'up' | 'down' | null; k: number }>({ v: value, dir: null, k: 0 })
   useEffect(() => {
-    if (value !== state.v) setState((s) => ({ v: value, dir: value > s.v ? 'up' : 'down', k: s.k + 1 }))
+    if (!Object.is(value, state.v)) setState((s) => ({ v: value, dir: Number.isFinite(value) && Number.isFinite(s.v) ? value > s.v ? 'up' : 'down' : null, k: s.k + 1 }))
   }, [value, state.v])
   return state
 }

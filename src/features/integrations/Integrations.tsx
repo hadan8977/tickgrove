@@ -9,6 +9,8 @@ import { usePlugins } from '../../store'
 import { useActivity, useCommands } from '../../ui/hooks'
 import { Badge, Button, Input, StatusBadge, Toggle, cx } from '../../ui/primitives'
 import Shader from '../shell/Shader'
+import { isDemoData } from '../../data/feed'
+import ServerIntegrations from '../../service/ServerIntegrations'
 
 type Tab = 'commands' | 'plugins' | 'adapters' | 'permissions' | 'activity'
 
@@ -23,6 +25,7 @@ export default function Integrations() {
     { id: 'permissions', label: 'Permissions', icon: Shield },
     { id: 'activity', label: 'Agent activity', icon: ActivityIcon },
   ]
+  if(!isDemoData())return <ServerIntegrations><Plugins/></ServerIntegrations>
   return (
     <div className="h-full overflow-auto">
       <section className="relative overflow-hidden border-b border-line">
@@ -35,13 +38,13 @@ export default function Integrations() {
             </div>
             <h1 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em]">Every click is a command. Agents get the same ones.</h1>
             <p className="mt-3 text-[13.5px] leading-relaxed text-muted">
-              Open Composer has no built-in chat. Instead, a single typed command registry powers the UI, keyboard, ⌘K and external agents through MCP, CLI and REST — so an agent’s action is visible and identical to yours.
+              This page describes the offline UI demo registry. The self-hosted service workbench uses authenticated /api/command, the trading CLI and official Rust MCP bridge; browser demo permissions do not authorize server actions.
             </p>
           </div>
           <div className="grid shrink-0 grid-cols-3 gap-2">
-            <Endpoint icon={Server} name="MCP server" value="stdio · oc-mcp" />
-            <Endpoint icon={Terminal} name="CLI" value="oc <ns> <verb>" />
-            <Endpoint icon={Webhook} name="REST / WS" value="localhost:7337/v1" />
+            <Endpoint icon={Server} name="MCP server" value="stdio · trading-mcp" />
+            <Endpoint icon={Terminal} name="CLI" value="scripts/trading.cjs" />
+            <Endpoint icon={Webhook} name="REST / WS" value="127.0.0.1:8787/api/command" />
           </div>
         </div>
       </section>
@@ -302,27 +305,7 @@ function Adapters() {
 }
 
 function Permissions() {
-  const [scopes, setScopes] = useState({ read: true, workspace: true, paper: true, live: false })
-  const rows = [
-    ['read', 'Read market data, charts, scripts, backtests', 'Low'],
-    ['workspace', 'Change layouts, charts, indicators, drawings, scripts', 'Low'],
-    ['paper', 'Place and cancel paper (simulated) orders', 'Medium'],
-    ['live', 'Place real orders through a live broker', 'Locked'],
-  ] as const
-  const { commands } = useCommands()
-  return (
-    <div className="overflow-hidden rounded-xl border border-line bg-panel">
-      {rows.map(([k, d, risk]) => (
-        <div key={k} className="flex items-center gap-4 border-b border-line px-4 py-3 last:border-0">
-          <span className="num w-24 text-[12.5px] font-semibold">{k}</span>
-          <span className="flex-1 text-[12.5px] text-muted">{d}</span>
-          <span className="num text-[11px] text-faint">{commands.filter((c) => c.scope === k && !c.hidden).length} commands</span>
-          <Badge className={cx(risk === 'Locked' && '!text-live', risk === 'Medium' && '!text-demo')}>{risk}</Badge>
-          <Toggle checked={scopes[k]} disabled={k === 'live'} onChange={(v) => setScopes({ ...scopes, [k]: v })} />
-        </div>
-      ))}
-    </div>
-  )
+  return <div className="rounded-xl border border-line bg-panel p-5 text-sm text-muted">Offline demo controls are browser-local. Server authorization is enforced for every command with an instance token; configure scoped tokens and revoke them on the host. Live trading is unavailable. Use the server workbench connection to inspect actual capabilities.</div>
 }
 
 function ActivityLog() {

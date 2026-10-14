@@ -1,0 +1,208 @@
+{
+  "checkedAt": "2026-10-13T10:02:12.369Z",
+  "node": "v22.22.2",
+  "pinets": "0.11.1",
+  "wrapperSha256": "332ea09e230deb9ce1dd6c9d676e30365c3781ed8069bdf8384d3a1aa13c0cb5",
+  "limitations": [
+    "Synthetic single-timeframe data only",
+    "No TradingView oracle",
+    "Successful table execution does not verify chart rendering",
+    "No external brokerage, market data, or network calls"
+  ],
+  "probes": [
+    {
+      "id": "array",
+      "source": "//@version=6\nindicator(\"array\")\na = array.new<float>(2, close)\nplot(array.get(a, 0), \"value\")",
+      "expected": 180,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 180,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": true,
+        "error": null,
+        "outputSeries": [
+          "value"
+        ]
+      }
+    },
+    {
+      "id": "map",
+      "source": "//@version=6\nindicator(\"map\")\nm = map.new<string, float>()\nmap.put(m, \"price\", close)\nplot(map.get(m, \"price\"), \"value\")",
+      "expected": 180,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 180,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": false,
+        "error": {
+          "message": "Unsupported in this runtime: \"m = map.new<string, float>()\" — PineTS subset (no request.*, tables, matrices, UDTs).",
+          "line": 3
+        },
+        "outputSeries": []
+      }
+    },
+    {
+      "id": "matrix",
+      "source": "//@version=6\nindicator(\"matrix\")\nm = matrix.new<float>(2, 2, close)\nplot(matrix.get(m, 0, 0), \"value\")",
+      "expected": 180,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 180,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": false,
+        "error": {
+          "message": "Unsupported in this runtime: \"m = matrix.new<float>(2, 2, close)\" — PineTS subset (no request.*, tables, matrices, UDTs).",
+          "line": 3
+        },
+        "outputSeries": []
+      }
+    },
+    {
+      "id": "udt",
+      "source": "//@version=6\nindicator(\"udt\")\ntype Point\n    float price\np = Point.new(close)\nplot(p.price, \"value\")",
+      "expected": 180,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 180,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": false,
+        "error": {
+          "message": "Unsupported in this runtime: \"type Point\" — PineTS subset (no request.*, tables, matrices, UDTs).",
+          "line": 3
+        },
+        "outputSeries": []
+      }
+    },
+    {
+      "id": "table",
+      "source": "//@version=6\nindicator(\"table\")\nvar t = table.new(position.top_right, 1, 1)\nif barstate.islast\n    table.cell(t, 0, 0, \"probe\")\nplot(close, \"value\")",
+      "expected": 180,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 180,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": false,
+        "error": {
+          "message": "Unsupported in this runtime: \"var t = table.new(position.top_right, 1, 1)\" — PineTS subset (no request.*, tables, matrices, UDTs).",
+          "line": 3
+        },
+        "outputSeries": []
+      }
+    },
+    {
+      "id": "while",
+      "source": "//@version=6\nindicator(\"while\")\nint i = 0\nfloat n = 0.0\nwhile i < 3\n    n += 1\n    i += 1\nplot(n, \"value\")",
+      "expected": 3,
+      "direct": {
+        "ok": true,
+        "plotKeys": [
+          "value",
+          "__labels__",
+          "__lines__",
+          "__boxes__",
+          "__linefills__",
+          "__polylines__",
+          "__tables__"
+        ],
+        "lastValue": 3,
+        "warnings": [],
+        "expectedValuePass": true
+      },
+      "projectWrapper": {
+        "ok": true,
+        "error": null,
+        "outputSeries": [
+          "value"
+        ]
+      }
+    }
+  ],
+  "timing": {
+    "pineSignalsExtractedFromFills": [
+      {
+        "bar": 2,
+        "action": "long"
+      },
+      {
+        "bar": 5,
+        "action": "flat"
+      }
+    ],
+    "downstreamTrades": [
+      {
+        "id": 1,
+        "side": "long",
+        "entryBar": 3,
+        "exitBar": 6,
+        "entryTime": 1700259200,
+        "exitTime": 1700518400,
+        "entryPrice": 103,
+        "exitPrice": 106,
+        "qty": 92.233,
+        "pnl": 276.699,
+        "pnlPct": 2.912621359223301,
+        "reason": "signal"
+      }
+    ]
+  }
+}

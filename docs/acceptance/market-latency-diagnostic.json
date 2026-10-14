@@ -1,0 +1,17 @@
+{
+  "readOnly": true,
+  "service": "root review instance on 127.0.0.1:18879",
+  "observedAt": "2026-10-14T05:43:21Z",
+  "activeSubscriptions": 6,
+  "subscriptions": ["Coinbase BTC-USD 1m", "Coinbase LTC-USD 1m", "Coinbase LTC-USD 1D", "Yahoo NVDA 1D", "Yahoo VOO 1D", "Yahoo VOO 1m"],
+  "sequentialBtcSourceToPersistMs": [41, 963, 39, 89, 67, 60],
+  "sequentialStatusApiMs": [3775.4, 1098.0, 1239.3, 1361.6, 1147.8, 1495.5],
+  "directCoinbaseSocket": {"durationSeconds": 15, "messages": 52, "ordinaryAgeMs": [41, 43, 41, 48, 50, 65, 61, 47, 57], "maxAgeMs": 346},
+  "coinbaseTime": {"serverEpoch": 1791956601.263, "localMidpointMinusServerMs": -132, "roundtripMs": 365, "cacheBustUsed": true},
+  "coinbaseV2Time": {"serverEpoch": 1791956601, "localMidpointMinusServerMs": 394, "roundtripMs": 160},
+  "persistedBacklogEvidence": {"worstQuoteCursor": 100968, "quoteEventTime": 1791956189298, "quoteReceivedAt": 1791956312362, "lagMs": 123064, "shape": "source lag increased progressively, then queued messages caught up to sub-second latency"},
+  "conclusion": "Real temporary service consumption backlog, not a 60-second clock offset or persistent provider delay. Six subscriptions do not exhaust the configured budget. Serialized per-message database work and expensive status scans share the sole database connection; the status query alone consumed about 768ms in a same-data benchmark.",
+  "minimalFix": "Migration 0021 adds quote-only covering indexes for the two MAX timestamp queries. No source timestamp rewriting, dropping queued trades, unsafe SQLite durability change, or host adapter modification.",
+  "benchmarkEvidence": "docs/acceptance/market-status-index.json",
+  "remaining": "Indexes address the proven hot read path; they do not prove bounded latency under arbitrary subscription count or exchange bursts. Per-trade multi-statement writes and one socket per symbol/timeframe remain throughput limits. Receive timestamps are currently processing/persistence times, so an explicit socket-read timestamp would improve future attribution."
+}

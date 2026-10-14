@@ -1,0 +1,386 @@
+{
+  "ok": true,
+  "fixtureOnly": true,
+  "cachedBeforeDeployment": 2,
+  "newWebsocketEvents": 0,
+  "sessions": [
+    {
+      "error": null,
+      "last_job_id": "03b37738-0e77-4a36-bbc8-6cb443816f68",
+      "name": "Composer live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "8064d41c-2267-49d2-b131-07fe11bba784",
+      "snapshot_id": "1a369672-765b-4cd3-b227-4cebba74efbd",
+      "status": "active",
+      "stream_cursor": 12,
+      "subscription_id": "fixture",
+      "version_id": "6948f337-281d-432c-bb7d-bcd73c126e2c"
+    },
+    {
+      "error": null,
+      "last_job_id": "6caedf1e-7592-473c-8b68-63417e8a4ea2",
+      "name": "Pine live fixture",
+      "pending_job_id": null,
+      "pending_job_status": null,
+      "session_id": "b6023b4d-4c17-41a2-bc49-677e1d137610",
+      "snapshot_id": "14f5a95a-4d2a-4c13-a174-113f65eb4119",
+      "status": "active",
+      "stream_cursor": 12,
+      "subscription_id": "fixture",
+      "version_id": "324132fa-3835-459d-9a3e-fae042d1c311"
+    }
+  ],
+  "reports": [
+    {
+      "error": null,
+      "job_id": "03b37738-0e77-4a36-bbc8-6cb443816f68",
+      "manifest": {
+        "adapter_hash": "6690e27c0c9136c0285cb2e93ac83055f1f0c967af0f7d153d1e7197128218c1",
+        "continuous": true,
+        "engine": "pinets@0.11.1 / composer-v1",
+        "event_id": "market:1791951420:3",
+        "execution": "closed_bar_native",
+        "inputs": {},
+        "library_lock": null,
+        "paper_session": "8064d41c-2267-49d2-b131-07fe11bba784",
+        "previous_job_id": "64d4c78f-b82d-429a-a9ea-18095ae3a95a",
+        "snapshot_hash": "5c8506f032244c324f75b4218b04aa587a0684daf24a711da7f60842719f94f2",
+        "snapshot_id": "1a369672-765b-4cd3-b227-4cebba74efbd",
+        "strategy_hash": "2ee0ee41fa3574a9d1cbb7a78b72e0494c593ea95d12402d5ee582607fe9c3ff",
+        "version_id": "6948f337-281d-432c-bb7d-bcd73c126e2c"
+      },
+      "result": {
+        "contract": "closed-bar targets \u2192 next open fractional shares; no forced liquidation",
+        "equity": [
+          {
+            "time": 1791951300,
+            "value": 1000
+          },
+          {
+            "time": 1791951360,
+            "value": 1000
+          },
+          {
+            "time": 1791951420,
+            "value": 1090.909090909091
+          }
+        ],
+        "frames": [
+          {
+            "cash": 1000,
+            "equity": 1000,
+            "orders": [],
+            "positions": {},
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791951300,
+            "weights": {
+              "TEST-USD": 1
+            }
+          },
+          {
+            "cash": 0,
+            "equity": 1000,
+            "orders": [
+              {
+                "commission": 0,
+                "price": 11,
+                "qty": 90.9090909090909,
+                "symbol": "TEST-USD"
+              }
+            ],
+            "positions": {
+              "TEST-USD": 90.9090909090909
+            },
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791951360,
+            "weights": {
+              "TEST-USD": 1
+            }
+          },
+          {
+            "cash": 0,
+            "equity": 1090.909090909091,
+            "orders": [],
+            "positions": {
+              "TEST-USD": 90.9090909090909
+            },
+            "reason": [
+              "Target scheduled for next bar open"
+            ],
+            "time": 1791951420,
+            "weights": {
+              "TEST-USD": 1
+            }
+          }
+        ],
+        "kind": "composer",
+        "metrics": {
+          "netProfit": 90.909090909091,
+          "netProfitPct": 9.090909090909104
+        },
+        "ok": true,
+        "pendingWeights": {
+          "TEST-USD": 1
+        },
+        "title": "Composer portfolio"
+      },
+      "status": "succeeded"
+    },
+    {
+      "error": null,
+      "job_id": "6caedf1e-7592-473c-8b68-63417e8a4ea2",
+      "manifest": {
+        "adapter_hash": "446d9745adfe70beb686e17d4c192bff1699cb0704e8a61fa99a27d6918c24a7",
+        "continuous": true,
+        "engine": "pinets@0.11.1 / composer-v1",
+        "event_id": "market:1791951420:2",
+        "execution": "closed_bar_native",
+        "inputs": {},
+        "library_lock": {
+          "lockHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "modules": []
+        },
+        "paper_session": "b6023b4d-4c17-41a2-bc49-677e1d137610",
+        "previous_job_id": "d29e02be-5358-4c98-9d91-5b5f2289766d",
+        "snapshot_hash": "5c8506f032244c324f75b4218b04aa587a0684daf24a711da7f60842719f94f2",
+        "snapshot_id": "14f5a95a-4d2a-4c13-a174-113f65eb4119",
+        "strategy_hash": "22567998e1f1a90aa2b59b6edf4eb946982760c82a6d64b45028e2ef610916e6",
+        "version_id": "324132fa-3835-459d-9a3e-fae042d1c311"
+      },
+      "result": {
+        "alerts": [],
+        "backtest": {
+          "config": {
+            "capital": 1000,
+            "commissionBps": 0,
+            "sizePct": 0,
+            "slippageBps": 0
+          },
+          "drawdown": [
+            {
+              "time": 1791951300,
+              "value": 0
+            },
+            {
+              "time": 1791951360,
+              "value": 0
+            },
+            {
+              "time": 1791951420,
+              "value": 0
+            }
+          ],
+          "engine": "pinets",
+          "equity": [
+            {
+              "time": 1791951300,
+              "value": 1000
+            },
+            {
+              "time": 1791951360,
+              "value": 1000
+            },
+            {
+              "time": 1791951420,
+              "value": 1002
+            }
+          ],
+          "metrics": {
+            "avgTradePct": 9.090909090909092,
+            "buyHoldPct": 19.999999999999996,
+            "cagr": "NaN",
+            "exposurePct": 33.33333333333333,
+            "maxDrawdownPct": 0,
+            "netProfit": 2,
+            "netProfitPct": 0.20000000000000015,
+            "profitFactor": "Infinity",
+            "sharpe": 0,
+            "sortino": 0,
+            "trades": 1,
+            "winRate": 100
+          },
+          "monthly": [
+            {
+              "m": 9,
+              "r": 0.20000000000000015,
+              "y": 2026
+            }
+          ],
+          "nativeConfig": {
+            "commissionType": "cash_per_order",
+            "commissionValue": 0,
+            "sizeType": "fixed",
+            "sizeValue": 1,
+            "slippageTicks": 0
+          },
+          "openPositions": [],
+          "pendingOrders": [],
+          "replayFrames": [
+            {
+              "closedTrades": 0,
+              "equity": 1000,
+              "positionSize": 0,
+              "time": 1791951300
+            },
+            {
+              "closedTrades": 0,
+              "equity": 1000,
+              "positionSize": 2,
+              "time": 1791951360
+            },
+            {
+              "closedTrades": 1,
+              "equity": 1002,
+              "positionSize": 0,
+              "time": 1791951420
+            }
+          ],
+          "trades": [
+            {
+              "commission": 0,
+              "entryBar": 1,
+              "entryId": "L",
+              "entryPrice": 11,
+              "entryTime": 1791951360,
+              "exitBar": 2,
+              "exitId": "Close entry(s) order L",
+              "exitPrice": 12,
+              "exitTime": 1791951420,
+              "id": 1,
+              "pnl": 2,
+              "pnlPct": 9.090909090909092,
+              "qty": 2,
+              "reason": "pine",
+              "side": "long"
+            }
+          ]
+        },
+        "kind": "strategy",
+        "libraryLock": {
+          "lockHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "modules": []
+        },
+        "ms": 289.0575689999996,
+        "ok": true,
+        "overlay": false,
+        "plots": [],
+        "signals": [
+          {
+            "action": "long",
+            "bar": 1
+          },
+          {
+            "action": "flat",
+            "bar": 2
+          }
+        ],
+        "title": "Fixture",
+        "visuals": {
+          "__boxes__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_box"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_box"
+            },
+            "title": "__boxes__"
+          },
+          "__labels__": {
+            "data": [
+              {
+                "options": {
+                  "style": "label"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "label"
+            },
+            "title": "__labels__"
+          },
+          "__linefills__": {
+            "data": [
+              {
+                "options": {
+                  "style": "linefill"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "linefill"
+            },
+            "title": "__linefills__"
+          },
+          "__lines__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_line"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_line"
+            },
+            "title": "__lines__"
+          },
+          "__polylines__": {
+            "data": [
+              {
+                "options": {
+                  "style": "drawing_polyline"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": false,
+              "style": "drawing_polyline"
+            },
+            "title": "__polylines__"
+          },
+          "__tables__": {
+            "data": [
+              {
+                "options": {
+                  "style": "table"
+                },
+                "time": 1791951300000,
+                "value": []
+              }
+            ],
+            "options": {
+              "overlay": true,
+              "style": "table"
+            },
+            "title": "__tables__"
+          }
+        },
+        "warnings": []
+      },
+      "status": "succeeded"
+    }
+  ]
+}

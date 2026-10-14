@@ -1,0 +1,3160 @@
+{
+  "checkedAt": "2026-10-14T05:44:13.440Z",
+  "pinets": "0.11.1",
+  "sourceCommit": "7ad36e247768993238e2e14342ef2872aa99c933",
+  "adapterHashes": {
+    "src/pine/runtime.ts": "6549fb36426ae3c3ec88450f12a8108352f657c42561a5caae9fa724b0c549b8",
+    "src/pine/data.ts": "5b183884320e01f3618adc84da3ad41b7dc43ba59108b773ad1e4b47f97fa0ea",
+    "src/pine/report.ts": "6508e7ce4b33120d3e7d142a8f6227803a3ed77f56afa5fcaab81bf9096bd07d",
+    "src/pine/compat.ts": "b61864c9961f92a82906e2dcb8792febf008931c105c68a6b1b94725914a65a0",
+    "src/pine/library.ts": "ae56908fb45fb562f245c319d4d492125d606293a71268abfb82926b42f3e0a1"
+  },
+  "test": "Unmodified public source on 256 deterministic synthetic bars (15m for request scripts, 60m otherwise), with a consistent synthetic 1m tape",
+  "limitations": [
+    "Execution coverage only; not TradingView equivalence",
+    "No browser rendering assertion",
+    "No real brokerage",
+    "Missing datasets remain explicit failures",
+    "Initial batch passed 311/312; one case hit its 5-second worker deadline and passed an isolated rerun using identical source/data/adapter hashes. This aggregate is not a single-batch all-pass result."
+  ],
+  "total": 312,
+  "passed": 312,
+  "withWarnings": 1,
+  "withClosedTrades": 225,
+  "results": [
+    {
+      "file": "analyzer-anvil-percent-costs-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1355.3469179999997,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-cashflow-cash-costs-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1153.314864,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-parity-choch-bos-isolator-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1359.4908619999997,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-parity-edge-margin-50-pct-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 960.8069590000014,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-parity-percent-of-equity-sizing-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1109.2158220000001,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-parity-small-equity-fraction-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 979.340827,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-parity-stop-limit-timing-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 16,
+      "ms": 1238.442160999999,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "analyzer-self-test-multi-mode-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1069.0493549999992,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "anomaly-equity-mirror-strategy-equity-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1008.4838909999999,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "array-atlas-momentum-rotation-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1520.2346539999999,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "array-spectrum-deque-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1520.6509149999983,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bands-constellation-mean-reversion-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 3,
+      "ms": 1668.8997150000032,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "barstate-isconfirmed-magnifier-off-01b.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1230.8411190000006,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "barstate-isconfirmed-magnifier-on-01a.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1360.5983979999983,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "barstate-lattice-confirmed-pivot-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1953.3950210000003,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-atr-trail-series-int-points-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1137.0286969999943,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-atr-trailing-stop-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 11,
+      "ms": 1038.7273169999971,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-aurora-market-atr-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 7,
+      "ms": 1307.6485249999969,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-compass-partial-ladder-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 10,
+      "ms": 1658.0717119999972,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-entry-exit-same-pass-attach-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1080.247411000004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-exit-stop-limit-trail-same-bar-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 631.4853930000027,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-exit-three-way-set-once-entry-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 726.2410459999955,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-exit-tp-sl-fixed-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 685.2917089999974,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-narrow-stop-limit-with-trail8-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 12,
+      "ms": 844.0049720000025,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-partial-exit-qty-percent-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 828.6133190000037,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-revision-exit-replace-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1239.4452020000026,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-rivet-calc-on-fill-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1342.5386570000046,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-same-id-exit-replace-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 850.9807260000016,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-tp-sl-oca-reduce-isolate-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 20,
+      "ms": 1510.7119779999994,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-trail-points-no-offset-explicit-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 19,
+      "ms": 1265.601788,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-trail-points-with-offset-only-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1003.5347590000019,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "bracket-trailing-activation-offset-path-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1361.4556410000005,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "calendar-waypoint-weekday-macd-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 7,
+      "ms": 1862.3867630000022,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "cap-gatekeeper-intraday-risk-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 2,
+      "ms": 4038.9285059999966,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "cap-max-intraday-filled-orders-isolate-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1032.8086769999936,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "cap-risk-gates-allow-max-intraday-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1137.2388420000061,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-4emarsi-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1722.3631269999896,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-4emarsi-quad-ema-stack-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 2207.381930000003,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-4emarsi-rsi-pullback-latch-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1113.8306240000093,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-4emarsi-session-window-nbar-exit-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 1239.441090999986,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-boscurv-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1909.0178200000082,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-boscurv-linreg-slope-channel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 8,
+      "ms": 1061.7768030000007,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-boscurv-pivot-bos-trigger-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1188.4799519999942,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-bracket-cap-range-pending-stop-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1311.3015789999918,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-adx-regime-classify-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 942.2184190000116,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-bb-kc-squeeze-release-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 1568.734110999998,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-cooldown-daily-cap-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1130.862948000009,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-equity-feedback-sizing-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1439.7612930000032,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1745.168994000007,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-pivot-liquidity-sweep-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1000.5686309999874,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-pressure-gauge-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1336.9889009999897,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-rsi-macd-momentum-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 950.9120230000117,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-ies-three-ema-bias-score-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 984.8413389999914,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kanuck-calc-on-every-tick-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1746.098960000003,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kanuck-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 0,
+      "ms": 1251.5923439999897,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kanuck-kama-state-recurrence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 29,
+      "ms": 1200.2466339999955,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kanuck-max-bars-back-500-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1369.7938160000049,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-keystone-udf-tuple-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 5,
+      "ms": 1216.3349230000022,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kkb-ema-atr-breakout-band-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 905.3038909999887,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kkb-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1069.8741630000004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kkb-kalman-filter-1d-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 13,
+      "ms": 650.4936860000016,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-kkb-margin-100-pct-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 977.1008280000096,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-liqsweep-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 865.3430439999938,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-liqsweep-pivot-hh-ll-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 648.2300669999968,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-liqsweep-wait-one-continuation-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 1268.7205029999895,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-liqsweep-wick-pierce-close-back-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 964.5691619999998,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-marketshift-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 996.5948829999979,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-marketshift-pivot-state-machine-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 831.577449000004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-marketshift-rolling-highest-lowest-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 761.9588760000042,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-marketshift-state-edge-detector-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 707.5914810000104,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-scalping-fast-ma-cross-trigger-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1029.3740229999967,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-scalping-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 11,
+      "ms": 1044.1726250000065,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-scalping-tight-tp-sl-points-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 11,
+      "ms": 1539.9258210000116,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-trendmaster-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1927.5239090000105,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-trendmaster-line-new-projection-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1515.6489410000213,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-trendmaster-pivot-anchored-bracket-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1710.6446649999998,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-trendmaster-three-tier-ema-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1006.4974090000032,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-trendmaster-trend-momentum-structure-gate-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1473.2273850000056,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-cumulative-volume-delta-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 37,
+      "ms": 1146.6319539999822,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-fvg-active-zones-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1472.5409150000196,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 2488.5125070000067,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-manual-adx-regime-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1554.782892999996,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-pivot-strength-5-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1113.2523680000158,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-rsi-smooth-divergence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 2099.658220000012,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-session-tz-newyork-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 2002.8455910000193,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-vcp-vol-zscore-anomaly-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 1192.3829719999922,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-wunderscalper-alert-templates-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1745.9638189999969,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-wunderscalper-explicit-reverse-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 2515.3998929999943,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "composite-wunderscalper-integration-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 2084.5743070000026,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "control-heliograph-while-channel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 2900.410945999989,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-box-zone-reentry.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1136.7609289999818,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-chartpoint-trendline.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1088.7327750000113,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-delete-halt.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1144.634315000003,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-line-level-breakout.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 961.2884320000012,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-udt-alias-identity.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1635.8745509999862,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "drawing-visual-noise-geometry.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1042.4846419999958,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "enum-relay-regime-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 2636.2543270000024,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "input-source-runtime-override-high-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 2260.3098119999922,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "input-source-subscript-hl2-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1912.4743169999856,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ltf-bool-array-bull-majority-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 20,
+      "ms": 3137.1727459999966,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "ltf-numeric-float-ratio15-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1661.1347280000045,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "magnifier-tick-dist-endpoints-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1026.7051039999933,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "magnifier-tick-dist-endpoints-rsi-cross-08a.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1713.8292359999905,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "magnifier-tick-dist-volume-weighted-on-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1230.215325999976,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "map-archive-presence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1849.4112920000043,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "map-mosaic-regime-weight-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 5,
+      "ms": 2662.1812389999977,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "math-forge-log-channel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1954.5393859999895,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "math-kiln-power-efficiency-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1743.4265620000078,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-bool-mask-explicit-utc-tz-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 2839.289668000012,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-bool-mask-no-transpose-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1904.8764399999927,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-bool-mask-transpose-roundtrip-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1689.509166999982,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-bool-regime-mask-24x7-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 2346.957595999993,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-cadence-transpose-pairs-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 2,
+      "ms": 2362.464964999992,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-covariance-eigen-pca-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 136,
+      "ms": 2270.4294759999902,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-eigen-covariance-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 2262.7439870000235,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-eigen-rank-deficient-cov-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1228.2758109999995,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "matrix-prism-factor-vote-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1978.659136000002,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-cascade-tuple-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1671.3060270000133,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-daily-array-median-percentrank-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1114.7195099999954,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-daily-ema26-warmup-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1596.1704169999866,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-daily-prev-high-break-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 1876.181298999989,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-dual-tf-60-240-rising-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 3338.917117999983,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-close-change-baseline-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 62,
+      "ms": 2009.7365819999832,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-close-roll-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 62,
+      "ms": 1984.0959609999845,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-gaps-on-roll-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1457.4329290000023,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-rsi14-inside-security-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 3328.5429019999574,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-sma20-inside-security-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 2256.619285999972,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-60-volume-spike-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 2592.659586999973,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-confluence-manual-trail-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1611.7206590000005,
+      "timeframe": "15",
+      "finiteEquity": true,
+      "initialAttempt": {
+        "ok": false,
+        "error": {
+          "message": "5 second execution deadline"
+        }
+      }
+    },
+    {
+      "file": "mtf-htf-confluence-static-bracket-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1726.7125600000145,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-htf-weekly-sma-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1656.0202769999742,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-orbit-trend-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 2,
+      "ms": 2180.677466000023,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-rangefinder-daily-reference-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 1,
+      "ms": 1800.4693780000089,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-roll-state-60-240-d-minimal-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1840.3321979999891,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-triple-tf-close-confluence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 2218.5643430000055,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "mtf-triple-tf-macd-hist-confluence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 2305.426459999988,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "na-deep-history-int-na-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 2878.997634999978,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "na-ledger-history-anchor-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 2227.1290869999793,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "na-nz-fixnan-history-chain-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1450.4241350000375,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "oca-exit-bracket-internal-cancel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1708.6526569999987,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "oca-multi-bracket-isolation-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1549.9566950000008,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "oca-raw-strategy-order-reduce-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 991.2841469999985,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-close-all-cancel-all-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1035.0395770000177,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-close-immediate-vs-next-bar-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1239.2700560000376,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-cross-entry-cancel-same-pass-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1399.456135000044,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-cross-entry-close-same-pass-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1671.5566260000342,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-cross-exit-close-same-pass-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1423.8780319999787,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-crosscurrent-opposite-market-pair-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 10,
+      "ms": 1927.5115449999576,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-deferred-flip-guaranteed-gap-stops-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 21,
+      "ms": 2137.2327309999964,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-deferred-flip-pooc-cross-bar-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 21,
+      "ms": 1203.7426250000135,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-four-bar-stop-no-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1119.0841069999733,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-side-same-id-stop-no-cancel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1386.7395870000473,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-both-touch-priority-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1158.1902079999563,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-cancel-rotation-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 16,
+      "ms": 1003.2306069999468,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-far-only-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1145.2942420000327,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-near-only-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1203.4497340000235,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-open-high-first-path-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1159.3506000000052,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-open-low-first-path-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1132.0809289999888,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-open-tie-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1062.3336579999886,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-source-order-long-first-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1131.7793809999712,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-dual-stop-source-order-short-first-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1041.0904340000125,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-entry-implicit-reversal-exit-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1023.7586139999912,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-flashpoint-immediate-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 1,
+      "ms": 1427.2031070000376,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-flip-stop-no-paired-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1085.4351610000012,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-harbor-stop-limit-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1706.2820099999662,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-horizon-next-bar-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 5,
+      "ms": 1534.1115250000148,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-keystone-limit-replace-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1382.2710589999915,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-market-close-fill-basis-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 798.5080460000318,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-one-side-four-bar-far-opposite-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1101.695492000028,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-opposite-entry-close-same-pass-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1195.814270999981,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-percent-equity-cash-commission-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1108.1411889999872,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-process-on-close-false-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1247.2654420000035,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-process-on-close-true-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1245.689440999995,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-range-expansion-pending-stop-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1326.5450420000125,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-entry-close-same-bar-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 645.1219409999903,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-market-entry-repeat-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 782.8438979999628,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-after-flat-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 752.569055000029,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-cross-before-modify-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 871.5751699999673,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-minute-zero-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1145.6206300000194,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-modification-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1376.8251880000462,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-raise-only-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1194.1223940000054,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-same-id-stop-window-four-bars-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1046.8573120000074,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-stale-stop-after-close-no-cancel-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 3071.526945999998,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-stop-cancel-no-regime-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1170.1668120000395,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-stop-entry-cancel-opposite-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 925.82001700002,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-stop-entry-reversal-grouping-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 918.9491869999911,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-stop-entry-touch-boundary-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 809.2205320000066,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-switchback-all-in-reversal-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1081.497205999971,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-tranche-partial-market-close-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 8,
+      "ms": 1230.0092750000185,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "order-vector-stop-breakout-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 0,
+      "ms": 1110.8801610000082,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "pyramid-cash-fractional-commission-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1166.895921999996,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "pyramid-close-id-grouping-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 979.496325999964,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "pyramid-deferred-flip-close-all-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1275.6900439999881,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "pyramid-flip-stop-pyramiding-2-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1050.31195199996,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "pyramid-terrace-staged-entry-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1603.9322019999963,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "recompute-alma-sar-corr-magnifier-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 1363.2899310000357,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "recompute-mtf-rsi-macd-bb-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 3,
+      "ms": 1676.1046389999683,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "risk-max-contracts-held-gate-pyramid-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1076.5921569999773,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "session-borough-new-york-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 4,
+      "ms": 2874.53616899997,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "session-compass-utc-market-window-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1187.33939800004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "session-hour-minute-pulse-filter-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1006.8108720000018,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "session-ny-spring-forward-dst-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1432.9379330000374,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "stats-eventrades-zero-pnl-count-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 10,
+      "ms": 998.2792130000307,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "stats-ledger-outcome-throttle-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 5,
+      "ms": 1217.6867549999733,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "syntax-caliper-scalar-switch-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1462.2702189999982,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "syntax-glyph-string-regex-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1153.1726260000141,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-accdist-ema-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 73,
+      "ms": 937.7308210000047,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-aperture-cog-linreg-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1158.5397450000164,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-bb-kc-squeeze-breakout-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 4,
+      "trades": 0,
+      "ms": 996.6009900000063,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-bb-rsi-mean-reversion-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 6,
+      "ms": 1251.2118790000095,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-cci-threshold-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 4,
+      "trades": 10,
+      "ms": 1415.098651999957,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-chandelier-exit-direction-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 10,
+      "ms": 1601.389737999998,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-closedtrades-risk-introspection-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1126.1813180000172,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-cmo-9-zero-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 900.0656480000471,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-cog-10-signal-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 932.8039940000162,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-conduit-obv-accdist-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 17,
+      "ms": 1225.5277590000187,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-dmi-adx-di-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1824.4854129999876,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-donchian-channel-breakout-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 10,
+      "ms": 1273.7225190000026,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-dual-ma-switch-dispatch-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 9,
+      "ms": 2292.8590829999885,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-dual-thrust-open-anchored-range-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1446.3843689999776,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-elder-ray-bull-bear-power-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 2,
+      "ms": 1436.5610190000152,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-ema-ribbon-stack-transition-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 8,
+      "ms": 1681.0845679999911,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-engulfing-candle-pattern-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 3,
+      "ms": 1456.418451000005,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-gyroscope-cmo-median-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 0,
+      "ms": 1453.677611000021,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-highestbars-lowestbars-breakout-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 9,
+      "ms": 1554.6332089999923,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-hma-55-close-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 8,
+      "ms": 1307.997704999987,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-hma-fast-slow-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 16,
+      "ms": 1722.9411170000094,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-inside-bar-engulfing-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 923.4203589999815,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-kama-style-efficiency-ratio-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 31,
+      "ms": 1782.1550799999968,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-keltner-channel-break-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1843.7356240000227,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-linreg-stdev-channel-revert-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 0,
+      "ms": 1508.2529290000093,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-macd-12-26-9-line-signal-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1228.1971480000066,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-macd-histogram-reversal-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 9,
+      "ms": 1706.2370119999978,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-macd-line-gt-signal-continuous-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 982.6151909999899,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-mantle-keltner-regime-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 1,
+      "ms": 1111.779326000018,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-map-regime-threshold-lookup-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 847.2403560000239,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-median-vs-ema-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 15,
+      "ms": 1048.3584960000007,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-meridian-dmi-regime-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 1,
+      "ms": 1117.3697680000332,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-mfi-14-bands-20-80-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 682.9489670000039,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-momentum-roc-zero-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 10,
+      "ms": 762.0871530000004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-multi-indicator-score-composite-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 10,
+      "ms": 807.4881290000048,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-nvi-pvi-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 745.7385789999971,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-obv-ema-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 13,
+      "ms": 824.8045389999752,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pendulum-sar-rotation-01.pine",
+      "ok": true,
+      "warnings": [
+        "Plot style cross uses a line fallback in this chart renderer."
+      ],
+      "plots": 2,
+      "trades": 0,
+      "ms": 973.5978080000496,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-percentrank-mean-reversion-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 5,
+      "trades": 9,
+      "ms": 1033.369560000021,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pivot-array-unshift-pop-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 2,
+      "ms": 1029.2111180000356,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pivot-atr-stop-target-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1049.1380739999586,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pivot-confirmed-break-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 2,
+      "ms": 1035.749261000019,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pivot-point-levels-break-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1005.2837160000345,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-plumbline-pvt-vwma-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1279.4735489999875,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-pvt-ema-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1007.3957760000485,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-quarry-alma-correlation-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1481.0025850000093,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-range-filter-var-band-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 4,
+      "ms": 1273.4036659999983,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rci-14-zero-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 937.8934119999758,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi-bb-self-bands-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 4,
+      "trades": 0,
+      "ms": 1015.3475430000108,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi-ema-signal-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 5,
+      "trades": 9,
+      "ms": 1149.7413419999648,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi-macd-and-continuous-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1090.1599940001033,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi14-bands-30-70-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 941.2888199998997,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi14-cross-50-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1069.655746000004,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi14-gt-50-continuous-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 905.9768410000252,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-rsi14-gt60-lt45-no-matrix-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1052.8341639999999,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-sar-flip-entry-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 12,
+      "ms": 1120.5285879999865,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-sextant-cci-hma-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1414.5812360000564,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-sma-152-close-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 4,
+      "ms": 947.3394229999976,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-sma-dual-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 811.0041350000538,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-stdev-sma-expansion-break-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1207.7080790000036,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-stoch-slow-k-d-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 20,
+      "ms": 1286.8247320000082,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-stochastic-rsi-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 10,
+      "ms": 1080.176814999897,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-str-match-regex-filter-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1142.1940300000133,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-supertrend-adx-filter-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 9,
+      "ms": 1302.1765310000628,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-supertrend-direction-flip-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1356.481676000054,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-tally-volume-index-roc-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 1,
+      "ms": 2337.024963999982,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-torque-tsi-signal-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 0,
+      "ms": 1396.0004069999559,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-triple-sma-stack-latch-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 9,
+      "ms": 1216.080675000092,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-tsi-25-13-signal-cross-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 8,
+      "ms": 791.233726000064,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-volume-spike-atr-breakout-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1209.016883000033,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-vwma-vs-sma-divergence-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 10,
+      "ms": 1235.035874000052,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-wpr-14-bands-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 11,
+      "ms": 1118.7329309999477,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "ta-zenith-rci-wpr-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1289.3760389999952,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "timeframe-dial-main-period-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 5,
+      "ms": 1110.6880110000493,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "timeframe-main-period-self-adaptive-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1027.8826069999486,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-breaker-method-while-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 3,
+      "ms": 1408.4553730000043,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-courier-return-method-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 5,
+      "ms": 1409.8105360000627,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-loopback-method-for-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 2,
+      "ms": 1641.286770000006,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-calls-sibling-cumulative-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1124.3004440000514,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-default-param-kwargs-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1800.8888030000962,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-drives-strategy-entry-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1363.341875999933,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-extra-primitive-args-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1349.9006240000017,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-feeds-strategy-exit-prices-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 869.0240319999866,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-in-for-loop-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 1,
+      "ms": 1061.2891669999808,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-in-if-else-branch-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1112.202808000031,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-in-switch-arms-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1537.5065249999752,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-in-while-loop-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1288.6178739999887,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-mutating-self-ref-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 40,
+      "ms": 924.7107040000847,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-on-array-element-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1364.3306340000127,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-reads-strategy-state-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1251.5258040000917,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-receives-ta-series-param-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1481.0190100000473,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-scalar-return-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1281.3004819999915,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-tuple-return-destructure-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 6,
+      "ms": 1259.137791999965,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-udt-return-from-func-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1358.3144130000146,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-uses-history-globals-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1428.0857639999595,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-uses-math-funcs-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1165.4971509999596,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-uses-na-nz-fixnan-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1190.5932199999224,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-var-instance-streak-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 1467.4823630000465,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-method-windowed-method-chain-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 0,
+      "ms": 1371.6411729999818,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-regime-stack-stress-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 4,
+      "trades": 10,
+      "ms": 2037.31160799996,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-sentinel-method-regime-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 4,
+      "ms": 1408.670650999993,
+      "timeframe": "15",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-switchboard-method-arms-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 2,
+      "trades": 4,
+      "ms": 1317.5782670000335,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "udt-tessellate-tuple-method-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 3,
+      "trades": 4,
+      "ms": 1354.6264329999685,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "volume-tide-vwap-mfi-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 1,
+      "trades": 1,
+      "ms": 1493.1694710000884,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "vwap-bands-breakout-1sigma-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 9,
+      "ms": 1318.1649019999895,
+      "timeframe": "60",
+      "finiteEquity": true
+    },
+    {
+      "file": "vwap-bands-mean-reversion-2sigma-01.pine",
+      "ok": true,
+      "warnings": [],
+      "plots": 0,
+      "trades": 5,
+      "ms": 878.8925990000134,
+      "timeframe": "60",
+      "finiteEquity": true
+    }
+  ],
+  "attempts": {
+    "initialBatch": "docs/acceptance/pine-public-batch.json",
+    "initialPassed": 311,
+    "retry": "docs/acceptance/pine-public-retry.json",
+    "retryPassed": 1
+  }
+}

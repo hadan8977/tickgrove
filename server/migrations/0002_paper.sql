@@ -1,0 +1,2 @@
+CREATE TABLE paper_sessions(id TEXT PRIMARY KEY, version_id TEXT NOT NULL REFERENCES strategy_versions(id), snapshot_id TEXT NOT NULL REFERENCES snapshots(id), inputs TEXT NOT NULL, status TEXT NOT NULL, last_job_id TEXT REFERENCES jobs(id), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE paper_events(session_id TEXT NOT NULL REFERENCES paper_sessions(id), event_id TEXT NOT NULL, fingerprint TEXT NOT NULL, job_id TEXT NOT NULL REFERENCES jobs(id), snapshot_id TEXT NOT NULL REFERENCES snapshots(id), PRIMARY KEY(session_id,event_id));

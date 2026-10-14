@@ -1,0 +1,87 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const checks=[]; const errors=[]; const calls=[]; const out=process.env.TRADING_BROWSER_OUTPUT || '/tmp/tradingdashboard-browser-acceptance';
+fs.mkdirSync(out,{recursive:true});
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function main(){
+ if(!process.env.TRADING_TOKEN)throw Error('TRADING_TOKEN for an isolated test instance is required');
+ const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE || undefined,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const browserVersion=browser.version();
+ const page=await browser.newPage({viewport:{width:1600,height:1080}});
+ page.setDefaultTimeout(15000);
+ await page.addInitScript(()=>{window.__auditDrawnTexts=[];const fill=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(text==='BROWSER-PINE-TABLE')window.__auditDrawnTexts.push(text);return fill.call(this,text,...args)};});
+ page.on('pageerror',e=>errors.push(String(e)));
+ page.on('response',async r=>{if(r.url().endsWith('/api/command')){try{calls.push({request:r.request().postDataJSON(),status:r.status(),body:await r.json()});}catch{}}});
+ const check=(name,detail)=>{checks.push({check:name,ok:true,detail});console.log(JSON.stringify(checks.at(-1)));};
+ const api=async(method,params={})=>{const response=await fetch((process.env.TRADING_URL || 'http://127.0.0.1:8471')+'/api/command',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+process.env.TRADING_TOKEN},body:JSON.stringify({method,params})});const value=await response.json();if(!response.ok)throw Error(JSON.stringify(value));return value;};
+ const latestCall=method=>[...calls].reverse().find(c=>c.request.method===method);
+ async function waitFor(fn,ms=20000){for(let t=0;t<ms;t+=100){const r=await fn();if(r)return r;await delay(100);}throw Error('waitFor timed out');}
+ async function setSource(src){const editor=page.locator('.cm-content[contenteditable=true]').first();await editor.click();await page.keyboard.press('ControlOrMeta+A');await page.keyboard.insertText(src);await delay(150);}
+ try{
+  await page.goto((process.env.TRADING_URL || 'http://127.0.0.1:8471'));
+  await page.getByPlaceholder('Instance token (var/auth-token)').fill(process.env.TRADING_TOKEN);
+  await page.getByRole('button',{name:'Connect',exact:true}).click();
+  const buttonStyle=await page.getByRole('button',{name:'Save new version',exact:true}).evaluate(el=>({text:getComputedStyle(el).color,background:getComputedStyle(el).backgroundColor})); assert.notEqual(buttonStyle.text,buttonStyle.background); assert.equal(buttonStyle.text,'rgb(12, 12, 13)'); check('Primary action labels have contrasting theme text',buttonStyle);
+  await page.getByRole('button',{name:'Import deterministic ETF example',exact:true}).click();
+  await waitFor(()=>latestCall('data.import'));
+  const dataCall=latestCall('data.import');const snapshotId=dataCall.body.id;
+  const source='//@version=6\nstrategy("Browser audit", overlay=true, initial_capital=10000)\nq = input.int(2, "Quantity")\nif bar_index == 1\n    strategy.entry("L", strategy.long, qty=q)\nif bar_index == 4\n    strategy.close("L")\nplot(ta.sma(close, 5), color=color.orange)\nvar t = table.new(position.top_right, 1, 1)\nif barstate.islast\n    table.cell(t, 0, 0, "BROWSER-PINE-TABLE")';
+  await page.getByRole('textbox',{name:'Strategy name'}).fill('Browser audit');await setSource(source);
+  await page.getByRole('textbox',{name:'Pine inputs JSON'}).fill('{"Quantity":7}');
+  await page.getByRole('button',{name:'Save new version',exact:true}).click();
+  await waitFor(()=>latestCall('strategy.createVersion'));
+  await page.getByRole('button',{name:'Run saved version',exact:true}).click();
+  await waitFor(()=>latestCall('backtest.start'));
+  const firstJob=latestCall('backtest.start').body.job_id;
+  const report=await waitFor(async()=>{const r=await api('backtest.results',{job_id:firstJob});if(['failed','cancelled','interrupted'].includes(r.status))throw Error(JSON.stringify(r));return r.status==='succeeded'?r:null;});
+  assert.equal(report.result.backtest.trades[0].qty,7);assert.equal(report.manifest.snapshot_id,snapshotId);
+  assert.equal(latestCall('strategy.createVersion').request.params.source,source);
+  await page.getByText(firstJob.slice(0,8),{exact:true}).locator('..').getByRole('button',{name:'Open report'}).click();
+  await page.getByRole('heading',{name:'Browser audit · succeeded'}).waitFor();
+  await waitFor(()=>page.evaluate(()=>window.__auditDrawnTexts.includes('BROWSER-PINE-TABLE')));
+  assert.ok(await page.locator('canvas').count()>=4);
+  assert.ok(await page.getByRole('cell',{name:'7.0000',exact:true}).count());
+  check('Web save, run, inputs and native chart rendering',{job:firstJob,qty:7,snapshot:snapshotId,canvasCount:await page.locator('canvas').count(),pineTable:true});
+  await page.getByLabel('Snapshot candles and original Pine rendering',{exact:true}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:out+'/pine-report.png',fullPage:true});
+  const paperSource=source.split('\nvar t =')[0];
+  await page.getByRole('textbox',{name:'Strategy name'}).fill('Browser paper');await setSource(paperSource);
+  const beforeSave=calls.filter(c=>c.request.method==='strategy.createVersion').length;
+  await page.getByRole('button',{name:'Save new version',exact:true}).click();await waitFor(()=>calls.filter(c=>c.request.method==='strategy.createVersion').length>beforeSave);
+  await page.getByRole('button',{name:'Deploy selected snapshot and inputs',exact:true}).click();await waitFor(()=>latestCall('paper.deploy'));
+  const deploy=latestCall('paper.deploy');assert.equal(deploy.request.params.snapshot_id,snapshotId);assert.deepEqual(deploy.request.params.inputs,{Quantity:7});
+  const paperReport=await waitFor(async()=>{const r=await api('backtest.results',{job_id:deploy.body.job_id});if(r.status==='failed')throw Error(r.error);return r.status==='succeeded'?r:null;});assert.equal(paperReport.result.backtest.trades[0].qty,7);
+  await page.getByRole('button',{name:'Committed ledger',exact:true}).first().waitFor();
+  check('Web paper deployment preserves selected data and inputs',{session:deploy.body.session_id,qty:7,snapshot:snapshotId});
+  await page.getByRole('button',{name:'Pause',exact:true}).first().click();await waitFor(()=>latestCall('paper.pause'));
+  await page.getByRole('button',{name:'Resume',exact:true}).first().click();await waitFor(()=>latestCall('paper.resume'));
+  check('Web session pause and resume',{});
+  await page.locator('select').first().selectOption('composer');await page.getByRole('button',{name:'balanced example',exact:true}).click();
+  await page.getByLabel('Asset symbol',{exact:true}).first().waitFor();
+  const weightInputs=page.getByRole('spinbutton',{name:'Weight',exact:true}); assert.equal(await weightInputs.count(),2); await weightInputs.nth(0).fill('0.7'); await weightInputs.nth(0).blur(); assert.equal(await weightInputs.count(),2); await weightInputs.nth(1).fill('0.3'); await weightInputs.nth(1).blur(); assert.equal(await weightInputs.count(),2); check('Composer invalid intermediate weights remain visually editable',{weights:[0.7,0.3]});
+  const beforeComp=calls.filter(c=>c.request.method==='strategy.createVersion').length;
+  await page.getByRole('button',{name:'Save new version',exact:true}).click();await waitFor(()=>calls.filter(c=>c.request.method==='strategy.createVersion').length>beforeComp);
+  const beforeRun=calls.filter(c=>c.request.method==='backtest.start').length;
+  await page.getByRole('button',{name:'Run saved version',exact:true}).click();await waitFor(()=>calls.filter(c=>c.request.method==='backtest.start').length>beforeRun);
+  const compJob=latestCall('backtest.start').body.job_id;
+  const comp=await waitFor(async()=>{const r=await api('backtest.results',{job_id:compJob});if(r.status==='failed')throw Error(r.error);return r.status==='succeeded'?r:null;});
+  assert.equal(comp.result.kind,'composer');assert.ok(comp.result.frames.some(x=>x.orders.length));
+  await page.getByText(compJob.slice(0,8),{exact:true}).locator('..').getByRole('button',{name:'Open report'}).click();
+  await page.getByRole('heading',{name:'Allocation decisions and fills'}).waitFor();
+  check('Web Composer visual editor and native allocation ledger',{job:compJob,frames:comp.result.frames.length});
+  await page.getByRole('heading',{name:'Allocation decisions and fills'}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:out+'/composer-report.png',fullPage:true});
+  await page.getByText('Allocation JSON',{exact:true}).click();await setSource('{"tree":{"type":"weight","children":null}}');
+  await page.getByRole('alert').filter({hasText:/Invalid Composer (specification|structure)/}).waitFor();
+  assert.ok(await page.getByRole('button',{name:'Save new version',exact:true}).isVisible());
+  check('Malformed Composer source displays an error without a React crash',{});
+  await page.reload();await page.getByRole('button',{name:'Connect',exact:true}).click();
+  await page.getByRole('button',{name:/Browser audit · pine/}).first().waitFor();
+  await page.getByText(firstJob.slice(0,8),{exact:true}).waitFor();
+  check('Web reload retains authenticated access and immutable history',{});
+  assert.deepEqual(errors,[]);check('No uncaught browser page errors',{});
+ }catch(e){checks.push({check:'Browser workflow',ok:false,error:String(e),stack:e.stack});console.log(String(e));await page.screenshot({path:out+'/failure.png',fullPage:true});process.exitCode=1;}
+ finally{fs.writeFileSync(out+'/report.json',JSON.stringify({browserVersion,checks,errors,passed:checks.filter(x=>x.ok).length,total:checks.length},null,2));await browser.close();}
+}
+main().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,0 +1,24 @@
+services:
+  trading:
+    build: .
+    ports:
+      - "127.0.0.1:${TRADING_PORT:-8787}:8787"
+    volumes:
+      - trading-data:/app/var
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    environment:
+      TRADING_BIND: 0.0.0.0:8787
+    # Bubblewrap uses unprivileged user namespaces. Host must enable these.
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:${TRADING_APPARMOR_PROFILE:-unconfined}
+      # Nested unprivileged PID namespaces must mount their own /proc.
+      - systempaths:unconfined
+      - no-new-privileges:true
+    restart: unless-stopped
+volumes:
+  trading-data:

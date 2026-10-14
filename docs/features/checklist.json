@@ -1,0 +1,1295 @@
+{
+  "schema": "trading.feature-acceptance.v1",
+  "updated": "2026-10-14",
+  "scope": "用户确认只对齐看盘、Pine、回测、提醒、交易核心，原demo和现前端功能均纳入；不含资讯/财报/社交生态；交易会话日历仍属于必做基础。",
+  "statusPolicy": {
+    "verified": "完整功能通过本次验收且有证据",
+    "partial": "已有部分实现/历史测试，尚未通过本轮完整路径",
+    "planned": "缺失，需要实现",
+    "blocked_external": "仍为必做但缺专用凭据、许可或外部条件，不能当完成"
+  },
+  "references": {
+    "tradingview": "https://www.tradingview.com/support/solutions/43000746464-getting-started-with-supercharts/",
+    "paper": "https://www.tradingview.com/support/solutions/43000516466-paper-trading-main-functionality/",
+    "pine": "https://www.tradingview.com/pine-script-docs/language/execution-model/",
+    "composer": "https://help.composer.trade/article/18-symphony-editor-assign-weights"
+  },
+  "features": [
+    {
+      "id": "D01",
+      "group": "Data",
+      "feature": "真实美股与ETF历史数据",
+      "origins": [
+        "用户",
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "动态发现任意提供商覆盖的股票/ETF并取真实OHLCV、来源、时区、复权和可追溯快照；多交易所样本验证；失败不生成替代价格",
+      "evidence": [
+        "docs/acceptance/market-network.json",
+        "docs/acceptance/market-session-network.json",
+        "docs/acceptance/real-workspace-browser.json"
+      ]
+    },
+    {
+      "id": "D02",
+      "group": "Data",
+      "feature": "真实加密货币历史与实时行情",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "动态products覆盖所有提供商支持的加密货币交易对；任意选择样本的历史+实际WS消息进入图表；身份不混同",
+      "evidence": [
+        "docs/acceptance/market-network.json",
+        "docs/acceptance/real-workspace-browser.json",
+        "docs/acceptance/mobile-workspace.json"
+      ]
+    },
+    {
+      "id": "D03",
+      "group": "Data",
+      "feature": "美股实时/延迟行情订阅",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "美股实时推送进入产品并标明权限和来源，延迟行情/仅历史轮询不算实时验收；关闭网页服务继续运行",
+      "evidence": []
+    },
+    {
+      "id": "D04",
+      "group": "Data",
+      "feature": "盘前、正常、盘后、隔夜时段",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "支持会话选择、纽约时区和跨日归属，隔夜源权限失败明确显示",
+      "evidence": []
+    },
+    {
+      "id": "D05",
+      "group": "Data",
+      "feature": "行情权限、来源、延迟、最后更新时间",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "各图表/报价能看到provider/feed/session/eventTime/receivedAt和连接状态",
+      "evidence": [
+        "docs/acceptance/pine-host-browser.json",
+        "docs/acceptance/market-latency-current.json"
+      ]
+    },
+    {
+      "id": "D06",
+      "group": "Data",
+      "feature": "历史范围、分页、预热、缺口",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "跨页历史完整去重，时间有序，缺口与预热范围有记录",
+      "evidence": []
+    },
+    {
+      "id": "D07",
+      "group": "Data",
+      "feature": "时间周期与聚合",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "1m/5m/15m/1H/4H/1D/1W切换同源；日周使用会话时间不伪造休市bar",
+      "evidence": []
+    },
+    {
+      "id": "D08",
+      "group": "Data",
+      "feature": "形成中K线与收盘事件",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "tick更新forming，收盘只提交一次；新bar可持续形成",
+      "evidence": []
+    },
+    {
+      "id": "D09",
+      "group": "Data",
+      "feature": "断线、重连、补数、陈旧数据",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "强制断网后显示stale/reconnecting，恢复补数且不重复决策",
+      "evidence": [
+        "docs/acceptance/market-status-index.json",
+        "docs/acceptance/market-latency-current.json"
+      ]
+    },
+    {
+      "id": "D10",
+      "group": "Data",
+      "feature": "迟到成交与数据修订",
+      "origins": [
+        "TradingView",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "保留接收时间和修订版本，不静默改写已成交历史",
+      "evidence": []
+    },
+    {
+      "id": "D11",
+      "group": "Data",
+      "feature": "标的搜索、唯一身份、精度",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "动态源搜索和注册表，无固定股票/币白名单；未知标的不得退回AAPL；交易所/资产类别/货币/精度来自提供商",
+      "evidence": []
+    },
+    {
+      "id": "D12",
+      "group": "Data",
+      "feature": "CSV/JSON导入与导出",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "错误行有诊断，真实文件可回测，导出保持元数据与快照hash",
+      "evidence": []
+    },
+    {
+      "id": "D13",
+      "group": "Data",
+      "feature": "多标的、多周期数据请求",
+      "origins": [
+        "用户",
+        "Pine"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "request.security所需数据显式取得；缺失报错，不把主图数据冒充其他标的",
+      "evidence": []
+    },
+    {
+      "id": "D14",
+      "group": "Data",
+      "feature": "交易日、夏令时、提前收盘",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "会话信息由provider/日历获得，节假日/半日/夏令时固定案例通过",
+      "evidence": []
+    },
+    {
+      "id": "D15",
+      "group": "Data",
+      "feature": "复权、拆股、股息与口径",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "快照记录调整方式，不能调整价后重复记同一股息",
+      "evidence": []
+    },
+    {
+      "id": "W01",
+      "group": "Workspace",
+      "feature": "1/2/4/6图与研究/策略/交易预设",
+      "origins": [
+        "demo",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "每个预设在真实数据模式可用，图表独立且切换不丢状态",
+      "evidence": []
+    },
+    {
+      "id": "W02",
+      "group": "Workspace",
+      "feature": "面板拖拽停靠、尺寸、最大化",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "所有现有panel可增加关闭重排，重载布局一致",
+      "evidence": []
+    },
+    {
+      "id": "W03",
+      "group": "Workspace",
+      "feature": "布局创建、重命名、删除和服务器保存",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "清除浏览器缓存后从服务恢复；多端版本冲突不能静默覆盖",
+      "evidence": []
+    },
+    {
+      "id": "W04",
+      "group": "Workspace",
+      "feature": "标的、周期、十字光标联动组",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "同步只作用于所选组，非联动图不变",
+      "evidence": []
+    },
+    {
+      "id": "W05",
+      "group": "Workspace",
+      "feature": "主题、可访问性和小屏布局",
+      "origins": [
+        "demo",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "四套主题可读；窄屏可进入关键功能，不白屏或遮挡提交按钮",
+      "evidence": [
+        "docs/acceptance/mobile-workspace.json"
+      ]
+    },
+    {
+      "id": "W06",
+      "group": "Workspace",
+      "feature": "命令面板与快捷键",
+      "origins": [
+        "demo",
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "命令有参数验证和错误反馈，与UI相同效果",
+      "evidence": []
+    },
+    {
+      "id": "W07",
+      "group": "Workspace",
+      "feature": "状态导出、恢复与服务连接",
+      "origins": [
+        "demo",
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "结构化状态导出可恢复；连接失效不继续写入另一套假账户",
+      "evidence": []
+    },
+    {
+      "id": "C01",
+      "group": "Charts",
+      "feature": "蜡烛、OHLC、折线、面积图",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "四种样式使用同一真实数据，切换不改变策略成交",
+      "evidence": []
+    },
+    {
+      "id": "C02",
+      "group": "Charts",
+      "feature": "成交量、十字光标、OHLC数据窗",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "hover数值与服务器相应bar一致，缺数据用空态",
+      "evidence": []
+    },
+    {
+      "id": "C03",
+      "group": "Charts",
+      "feature": "SMA/EMA/BB/VWAP/RSI/MACD/ATR",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "现有七类指标在真实bar更新；参数、隐藏、删除、主副窗格均有效",
+      "evidence": []
+    },
+    {
+      "id": "C04",
+      "group": "Charts",
+      "feature": "Pine绘图和交易标记",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "plots/fills/labels/lines/boxes/tables更新删除与真实snapshot相符",
+      "evidence": []
+    },
+    {
+      "id": "C05",
+      "group": "Charts",
+      "feature": "趋势线/水平线/矩形/斐波那契/文字",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "创建选择编辑删除并服务器保存，不跨无关标的串图",
+      "evidence": []
+    },
+    {
+      "id": "C06",
+      "group": "Charts",
+      "feature": "绘图撤销重做、显隐、锁定与对象管理",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "撤销/重做不破坏数据；对象列表可定位与编辑",
+      "evidence": []
+    },
+    {
+      "id": "C07",
+      "group": "Charts",
+      "feature": "缩放、自动适配、时间与价格刻度",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "真实数据长度改变仍可缩放定位，支持对数/线性尺度",
+      "evidence": []
+    },
+    {
+      "id": "C08",
+      "group": "Charts",
+      "feature": "图表截图与行情CSV导出",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "导出可独立打开，包含标的周期来源，不泄露凭据",
+      "evidence": []
+    },
+    {
+      "id": "C09",
+      "group": "Charts",
+      "feature": "逐bar回放、暂停、步进、速度、重置",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "只暴露可见前缀；指标/策略不读未来；明确区分历史回放和实时账户",
+      "evidence": []
+    },
+    {
+      "id": "C10",
+      "group": "Charts",
+      "feature": "多标的比较与基准",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "按相同可见区间归一比较，缺失数据明确报告",
+      "evidence": []
+    },
+    {
+      "id": "L01",
+      "group": "Watchlists",
+      "feature": "自选分组增删改、排序、添加删除标的",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "操作持久化并可通过API恢复",
+      "evidence": []
+    },
+    {
+      "id": "L02",
+      "group": "Watchlists",
+      "feature": "最新价、涨跌、真实前收盘、迷你图",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "使用真实前收盘及历史序列；未知数据不显示合成数",
+      "evidence": []
+    },
+    {
+      "id": "L03",
+      "group": "Watchlists",
+      "feature": "标的详情与统计",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "日范围/52周/YTD/均量来自有足够跨度的数据；无数据不编造",
+      "evidence": []
+    },
+    {
+      "id": "L04",
+      "group": "Watchlists",
+      "feature": "真实盘口与价差",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "至少加密货币真实book；快照/L1/L2能力与时间明确，不造随机深度",
+      "evidence": []
+    },
+    {
+      "id": "L05",
+      "group": "Watchlists",
+      "feature": "真实逐笔成交",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "显示实际成交ID/时间/价格/数量，不能按报价随机生成成交",
+      "evidence": []
+    },
+    {
+      "id": "L06",
+      "group": "Watchlists",
+      "feature": "板块热力图和仓位计算插件",
+      "origins": [
+        "demo",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "热力图使用真实涨跌，仓位计算基于所选数据和明确风险参数",
+      "evidence": []
+    },
+    {
+      "id": "P01",
+      "group": "Pine",
+      "feature": "编辑器高亮、补全、错误行、运行取消",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "语法与运行错误定位、超时、取消在服务模式可操作",
+      "evidence": []
+    },
+    {
+      "id": "P02",
+      "group": "Pine",
+      "feature": "输入类型、默认值、范围与图表覆盖",
+      "origins": [
+        "demo",
+        "Pine"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "所有已支持input类型编辑后正确传入运行且不修改源码",
+      "evidence": []
+    },
+    {
+      "id": "P03",
+      "group": "Pine",
+      "feature": "指标/策略库与不可变版本",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "草稿与运行版本区分；保存打开改名复制删除持久化",
+      "evidence": []
+    },
+    {
+      "id": "P04",
+      "group": "Pine",
+      "feature": "复杂v5/v6语言与容器",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "公开语料及关键语义数值断言执行；不只统计可解析",
+      "evidence": [
+        "docs/acceptance/pine-public-current.json",
+        "docs/acceptance/unit-tests-current.json"
+      ]
+    },
+    {
+      "id": "P05",
+      "group": "Pine",
+      "feature": "本地库import、版本与依赖锁",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "导出函数/方法/UDT/枚举、别名、嵌套依赖、循环/缺失错误有测试",
+      "evidence": [
+        "docs/acceptance/pine-libraries.json",
+        "docs/acceptance/pine-library-browser.json"
+      ]
+    },
+    {
+      "id": "P06",
+      "group": "Pine",
+      "feature": "跨标的、跨周期、预热与可见性",
+      "origins": [
+        "用户",
+        "Pine"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "多周期不读取尚未收盘的未来数据，低周期数据缺失报错",
+      "evidence": [
+        "docs/acceptance/pine-request-data.json"
+      ]
+    },
+    {
+      "id": "P07",
+      "group": "Pine",
+      "feature": "历史原生订单语义",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "long/short/reverse/pyramid/partial/stop/limit/trailing/OCA与费用按固定案例核对",
+      "evidence": []
+    },
+    {
+      "id": "P08",
+      "group": "Pine",
+      "feature": "实时tick与rollback/varip",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "forming多次更新、收盘、恢复、成交重算与状态语义通过固定事件带",
+      "evidence": [
+        "docs/acceptance/pine-event-service.json",
+        "docs/acceptance/pine-event-host-boundaries.json",
+        "docs/acceptance/pine-host-browser.json"
+      ]
+    },
+    {
+      "id": "P09",
+      "group": "Pine",
+      "feature": "外部订单Host和成交反馈",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "关闭内部重复撮合，外部部分成交/费用/拒单/取消进入strategy账户读数",
+      "evidence": [
+        "docs/acceptance/pine-event-service.json",
+        "docs/api/pine-event-host.md"
+      ]
+    },
+    {
+      "id": "P10",
+      "group": "Pine",
+      "feature": "脚本alerts/alertcondition事件",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "运行结果产生可持久化提醒事件，频率/收盘条件可验证",
+      "evidence": [
+        "server/src/pine_host.rs",
+        "server/src/alerts.rs"
+      ]
+    },
+    {
+      "id": "P11",
+      "group": "Pine",
+      "feature": "隔离、资源限制、取消、错误传播",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "无宿主密钥/网络/写入，超时/OOM/取消不记成功",
+      "evidence": []
+    },
+    {
+      "id": "P12",
+      "group": "Pine",
+      "feature": "固定公开脚本与兼容性矩阵",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "每次引擎改动后固定公开集执行，分别报告解析/计算/绘图/回测/实时/外部执行",
+      "evidence": [
+        "docs/acceptance/pine-public-current.json",
+        "docs/acceptance/unit-tests-current.json"
+      ]
+    },
+    {
+      "id": "P13",
+      "group": "Pine",
+      "feature": "TradingView同数据数值/成交对照",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "planned",
+      "acceptance": "相同源码/输入/行情/时区/撮合设置对照；无对照不能标等价",
+      "evidence": []
+    },
+    {
+      "id": "B01",
+      "group": "StrategyBuilder",
+      "feature": "原条件树、比较、AND/OR、指标条件",
+      "origins": [
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "节点新增修改删除、嵌套与可视反馈均真实影响执行",
+      "evidence": []
+    },
+    {
+      "id": "B02",
+      "group": "StrategyBuilder",
+      "feature": "原仓位、止损、止盈、生成Pine",
+      "origins": [
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "原构建器经生成Pine进入同一服务器引擎，风控不丢失",
+      "evidence": []
+    },
+    {
+      "id": "B03",
+      "group": "StrategyBuilder",
+      "feature": "Pine到构建器受支持子集",
+      "origins": [
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "支持的生成脚本可往返；不支持的源码明确诊断不误转换",
+      "evidence": []
+    },
+    {
+      "id": "B04",
+      "group": "StrategyBuilder",
+      "feature": "Composer资产、现金、分组",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "组合节点能计算真实目标权重并保留决策原因",
+      "evidence": []
+    },
+    {
+      "id": "B05",
+      "group": "StrategyBuilder",
+      "feature": "等权、指定权重、逆波动率",
+      "origins": [
+        "用户",
+        "Composer"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "权重归一、预热、零波动/空集/重复资产有确定性规则",
+      "evidence": []
+    },
+    {
+      "id": "B06",
+      "group": "StrategyBuilder",
+      "feature": "条件分支、排序和筛选",
+      "origins": [
+        "用户",
+        "Composer"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "条件/排名由当时可见真实数据计算；并列稳定",
+      "evidence": []
+    },
+    {
+      "id": "B07",
+      "group": "StrategyBuilder",
+      "feature": "按bar/日/周/月/偏离阈值再平衡",
+      "origins": [
+        "用户",
+        "Composer"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "闭bar决策、下个可交易开盘执行；成本、可用现金正确",
+      "evidence": []
+    },
+    {
+      "id": "B08",
+      "group": "StrategyBuilder",
+      "feature": "组合回测、持续模拟与解释报告",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "同一分配内核驱动历史与持续运行，展示target/qty/cash/fills/reason",
+      "evidence": []
+    },
+    {
+      "id": "R01",
+      "group": "Backtest",
+      "feature": "Pine和构建器服务器回测",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "原界面与API创建同一持久任务，不再浏览器第二次撮合",
+      "evidence": []
+    },
+    {
+      "id": "R02",
+      "group": "Backtest",
+      "feature": "日期、预热、本金、费用、滑点",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "运行参数与manifest及计算一致，不能改输入却展示旧结果",
+      "evidence": []
+    },
+    {
+      "id": "R03",
+      "group": "Backtest",
+      "feature": "权益、回撤、月收益、完整指标",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "图表与交易账本核对，空交易/未平仓/破产等边界明确",
+      "evidence": []
+    },
+    {
+      "id": "R04",
+      "group": "Backtest",
+      "feature": "交易明细、多空、成本、开放订单",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "筛选/导出保持原生数量、价格、时间和ID；样本末尾不强平",
+      "evidence": []
+    },
+    {
+      "id": "R05",
+      "group": "Backtest",
+      "feature": "持久任务、取消、重试、进度、恢复",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "重复请求幂等，running重启不记成功，错误可见",
+      "evidence": []
+    },
+    {
+      "id": "R06",
+      "group": "Backtest",
+      "feature": "源码/输入/引擎/行情快照清单",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "每个结果可追溯输入版本，代码变化不能冒用旧运行",
+      "evidence": []
+    },
+    {
+      "id": "R07",
+      "group": "Backtest",
+      "feature": "报告CSV/JSON导出和版本比较",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "同口径对比版本，导出独立可读取",
+      "evidence": []
+    },
+    {
+      "id": "E01",
+      "group": "Trading",
+      "feature": "服务器手动模拟账户",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "真实行情驱动账户，清缓存/关网页/重启不丢现金持仓",
+      "evidence": [
+        "docs/acceptance/real-workspace-browser.json",
+        "docs/acceptance/backup-restore.json"
+      ]
+    },
+    {
+      "id": "E02",
+      "group": "Trading",
+      "feature": "市价/限价/止损委托",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "订单参数验证、可用资金、触发规则、手续费和状态持久化",
+      "evidence": []
+    },
+    {
+      "id": "E03",
+      "group": "Trading",
+      "feature": "撤单、改单、平仓、部分退出",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "有效状态转换，重试不重复成交，操作留事件",
+      "evidence": []
+    },
+    {
+      "id": "E04",
+      "group": "Trading",
+      "feature": "多空、仓位、权益和风险限制",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "持仓方向、已实现/未实现损益、暴露限制与费用一致",
+      "evidence": []
+    },
+    {
+      "id": "E05",
+      "group": "Trading",
+      "feature": "订单/成交/持仓历史和导出",
+      "origins": [
+        "demo",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "UI/API来自同一服务器账本，有事件时间和行情来源",
+      "evidence": []
+    },
+    {
+      "id": "E06",
+      "group": "Trading",
+      "feature": "Pine从回测部署到真实行情本地模拟",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "绑定版本/输入/数据源持续运行，关闭网页仍运行，历史前缀不改写",
+      "evidence": [
+        "docs/acceptance/paper-market-stream.json",
+        "docs/acceptance/paper-cached-deploy.json",
+        "docs/acceptance/paper-public-stream.json"
+      ]
+    },
+    {
+      "id": "E07",
+      "group": "Trading",
+      "feature": "Composer真实多标的持续模拟",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "完整bar集合/缺数处理/周期决策/目标权重/重启恢复验证",
+      "evidence": []
+    },
+    {
+      "id": "E08",
+      "group": "Trading",
+      "feature": "暂停、恢复、停止、pending失败处理",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "未确认事件不推进已确认账本，操作可恢复",
+      "evidence": []
+    },
+    {
+      "id": "E09",
+      "group": "Trading",
+      "feature": "Alpaca Paper联网闭环",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "blocked_external",
+      "acceptance": "专用凭据下账户/数据/提交/部分成交/撤单/核对实际验收",
+      "evidence": []
+    },
+    {
+      "id": "E10",
+      "group": "Trading",
+      "feature": "图上订单/持仓与交易操作",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "订单线/标记关联服务器订单，修改或关闭不会静默改本地假账",
+      "evidence": []
+    },
+    {
+      "id": "E11",
+      "group": "Trading",
+      "feature": "DEMO、真实行情、本地模拟、券商模拟区分",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "行情连接不等于实盘交易，模式和能力状态准确且失败关闭",
+      "evidence": []
+    },
+    {
+      "id": "A01",
+      "group": "Alerts",
+      "feature": "价格above/below/cross提醒",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "后台运行，真实价格触发，重复消息不重复通知",
+      "evidence": []
+    },
+    {
+      "id": "A02",
+      "group": "Alerts",
+      "feature": "指标/策略提醒与收盘触发",
+      "origins": [
+        "用户",
+        "TradingView"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "绑定策略版本和参数，触发时点与对应计算一致",
+      "evidence": [
+        "server/src/alerts.rs"
+      ]
+    },
+    {
+      "id": "A03",
+      "group": "Alerts",
+      "feature": "创建、暂停、恢复、删除、到期、频率",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "UI/API生命周期一致并持久化",
+      "evidence": []
+    },
+    {
+      "id": "A04",
+      "group": "Alerts",
+      "feature": "提醒历史、失败状态、站内通知",
+      "origins": [
+        "TradingView核心"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "关闭网页不丢触发历史，重启不重发旧提醒",
+      "evidence": []
+    },
+    {
+      "id": "I01",
+      "group": "Extensions",
+      "feature": "统一API、CLI、MCP命令",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "同参数在各入口有同结果/权限/错误语义；真实官方MCP客户端验证",
+      "evidence": []
+    },
+    {
+      "id": "I02",
+      "group": "Extensions",
+      "feature": "工作区与图表外部控制",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "外部命令的标的/布局/脚本变化在前端可见并持久化",
+      "evidence": []
+    },
+    {
+      "id": "I03",
+      "group": "Extensions",
+      "feature": "TS/Python SDK和schema发现",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "调用示例可运行，文档参数与实现一致",
+      "evidence": []
+    },
+    {
+      "id": "I04",
+      "group": "Extensions",
+      "feature": "插件清单、启停、版本与权限",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "独立插件可安装，拒绝不支持权限和越界路径",
+      "evidence": []
+    },
+    {
+      "id": "I05",
+      "group": "Extensions",
+      "feature": "数据/指标/面板/命令插件示例",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "原热图/仓位/VWAP及进程CSV/均线/报告插件在真实数据路径可用",
+      "evidence": []
+    },
+    {
+      "id": "I06",
+      "group": "Extensions",
+      "feature": "可替换Data/Chart/Runtime/Backtest/Broker接口",
+      "origins": [
+        "用户",
+        "demo"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "能力发现与真实适配器匹配，占位提供商不能冒充已连接",
+      "evidence": []
+    },
+    {
+      "id": "I07",
+      "group": "Extensions",
+      "feature": "不内置AI聊天与模型账户",
+      "origins": [
+        "用户明确"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "扩展经MCP/CLI/API，产品核心无内置聊天/模型配置",
+      "evidence": [
+        "src/App.tsx"
+      ]
+    },
+    {
+      "id": "O01",
+      "group": "Operations",
+      "feature": "React+Rust本地/服务器自托管",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "干净锁定安装构建启动，完整流程不依赖其它项目",
+      "evidence": [
+        "docs/acceptance/docker-runtime.json",
+        "docs/acceptance/backup-restore.json"
+      ]
+    },
+    {
+      "id": "O02",
+      "group": "Operations",
+      "feature": "令牌、权限、撤销、敏感信息保护",
+      "origins": [
+        "用户",
+        "设计"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "未授权拒绝，撤销立即生效，浏览器不保管券商私钥",
+      "evidence": []
+    },
+    {
+      "id": "O03",
+      "group": "Operations",
+      "feature": "SQLite迁移、单实例、备份与恢复",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "verified",
+      "acceptance": "独立恢复可继续查询/执行，数据目录竞争受控",
+      "evidence": [
+        "docs/acceptance/backup-restore.json",
+        "server/src/bin/trading-admin.rs",
+        "scripts/acceptance/backup-restore.cjs"
+      ]
+    },
+    {
+      "id": "O04",
+      "group": "Operations",
+      "feature": "服务健康、数据健康、日志与诊断",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "任务失败/数据断流/版本信息可见，日志不输出密钥",
+      "evidence": []
+    },
+    {
+      "id": "O05",
+      "group": "Operations",
+      "feature": "Docker/Compose实际运行",
+      "origins": [
+        "用户自托管"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "构建镜像并跑核心验收，不把Dockerfile存在当作通过",
+      "evidence": [
+        "docs/acceptance/docker-runtime.json"
+      ]
+    },
+    {
+      "id": "O06",
+      "group": "Operations",
+      "feature": "依赖锁、许可和开源发布",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "blocked_external",
+      "acceptance": "原前端授权与第三方LICENSE/NOTICE清单齐全",
+      "evidence": []
+    },
+    {
+      "id": "O07",
+      "group": "Operations",
+      "feature": "端到端真实数据验收与功能门禁",
+      "origins": [
+        "用户最新要求"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "必做项均有证据；缺失/外部阻塞不算完成，不以demo截图验收",
+      "evidence": [
+        "scripts/check-release.cjs",
+        "docs/acceptance/pine-host-browser.json",
+        "docs/acceptance/real-workspace-browser.json"
+      ]
+    },
+    {
+      "id": "O08",
+      "group": "Operations",
+      "feature": "Paseo远程访问与持久服务",
+      "origins": [
+        "用户"
+      ],
+      "required": true,
+      "status": "partial",
+      "acceptance": "完成后可从远端HTTPS访问；登录保护；能独立启停",
+      "evidence": []
+    }
+  ]
+}

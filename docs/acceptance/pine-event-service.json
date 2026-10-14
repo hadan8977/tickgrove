@@ -1,0 +1,298 @@
+{
+  "ok": true,
+  "eventDeadlineTerminal": {
+    "error": "Pine host event deadline exceeded",
+    "execution": "indicator",
+    "marketCursor": 17,
+    "result": null,
+    "session_id": "d9c22b8f-72a6-4dfa-be80-5926fbabe826",
+    "snapshot_id": "e3e5c852-e710-42b0-b71f-87831bae236a",
+    "status": "failed",
+    "subscription_id": "fixture",
+    "version_id": "8c27486b-1da1-4f4e-aed2-914d0ab9b924"
+  },
+  "faultTerminal": {
+    "error": "{\"message\":\"Loop exceeded maximum iterations (__lg0)\"}",
+    "execution": "indicator",
+    "marketCursor": 13,
+    "result": null,
+    "session_id": "3b7ed2b8-ca9d-4727-9e0f-d123f60d8a68",
+    "snapshot_id": "2f7bb5cc-4b26-4fcc-90dc-798c90772ff2",
+    "status": "failed",
+    "subscription_id": "fixture",
+    "version_id": "2e41028a-2e94-4c09-b96a-bde2f44ab00d"
+  },
+  "fixtureOnly": true,
+  "externalOrders": false,
+  "persistentRustService": true,
+  "actualHostCpuLimit": "Max cpu time              unlimited            unlimited            seconds   ",
+  "externalPartialFillAndPausedFeedback": true,
+  "externalRecovered": {
+    "error": null,
+    "execution": "external_broker",
+    "marketCursor": 10,
+    "result": {
+      "account": {
+        "cash": 978.98,
+        "equity": 999.98,
+        "last": 10.5,
+        "positionSize": 2
+      },
+      "alerts": [],
+      "barIndex": 1,
+      "duplicate": false,
+      "ok": true,
+      "openTrades": [
+        {
+          "commission": 0.01,
+          "entry_bar_index": 1,
+          "entry_id": "L",
+          "entry_price": 10.5,
+          "entry_time": 1791956161000,
+          "id": "external-part-1",
+          "size": 1,
+          "status": "open"
+        },
+        {
+          "commission": 0.01,
+          "entry_bar_index": 1,
+          "entry_id": "L",
+          "entry_price": 10.5,
+          "entry_time": 1791956161000,
+          "id": "external-part-2",
+          "size": 1,
+          "status": "open"
+        }
+      ],
+      "pendingOrders": [],
+      "plots": {
+        "position": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 0
+        },
+        "ticks": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 1
+        }
+      }
+    },
+    "session_id": "15eae987-0948-4bc7-94ff-c0c8fa79ed08",
+    "snapshot_id": "aa83a5b2-32dc-432f-9a80-69ffd7b70da0",
+    "status": "paused",
+    "subscription_id": "fixture",
+    "version_id": "981b6cf8-2f83-4f10-ab86-fb314c19c4f1"
+  },
+  "renderBars": 2,
+  "initialIntent": {
+    "error": null,
+    "execution": "local_broker",
+    "marketCursor": 4,
+    "result": {
+      "account": {
+        "cash": 1000,
+        "equity": 1000,
+        "last": 10,
+        "positionSize": 0
+      },
+      "alerts": [],
+      "barIndex": 1,
+      "duplicate": false,
+      "ok": true,
+      "openTrades": [],
+      "pendingOrders": [
+        {
+          "_base_qty": 2,
+          "_isReversalEntry": false,
+          "bar": 1,
+          "category": "entry",
+          "direction": 1,
+          "id": "L",
+          "qty": 2,
+          "status": "pending",
+          "time": 1791956160000,
+          "type": "market"
+        }
+      ],
+      "plots": {
+        "position": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 0
+        },
+        "ticks": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 1
+        }
+      }
+    },
+    "session_id": "cc1385ed-7b61-4a9a-9366-7a41c23bdfc3",
+    "snapshot_id": "ddd47041-bd2f-4ad3-b31b-f8ed525b8487",
+    "status": "active",
+    "subscription_id": "fixture",
+    "version_id": "981b6cf8-2f83-4f10-ab86-fb314c19c4f1"
+  },
+  "actualRustQuoteFill": {
+    "error": null,
+    "execution": "local_broker",
+    "marketCursor": 4,
+    "result": {
+      "account": {
+        "cash": 979.7899,
+        "equity": 999.9899,
+        "last": 10.1,
+        "positionSize": 2
+      },
+      "alerts": [],
+      "barIndex": 1,
+      "duplicate": false,
+      "ok": true,
+      "openTrades": [
+        {
+          "commission": 0.0101,
+          "entry_bar_index": 1,
+          "entry_id": "L",
+          "entry_price": 10.1,
+          "entry_time": 1791956217672,
+          "id": "beba278e-d5d3-41c6-8778-33a5e05ee50f",
+          "size": 2,
+          "status": "open"
+        }
+      ],
+      "pendingOrders": [],
+      "plots": {
+        "position": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 0
+        },
+        "ticks": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 1
+        }
+      }
+    },
+    "session_id": "cc1385ed-7b61-4a9a-9366-7a41c23bdfc3",
+    "snapshot_id": "ddd47041-bd2f-4ad3-b31b-f8ed525b8487",
+    "status": "active",
+    "subscription_id": "fixture",
+    "version_id": "981b6cf8-2f83-4f10-ab86-fb314c19c4f1"
+  },
+  "updated": {
+    "error": null,
+    "execution": "local_broker",
+    "marketCursor": 6,
+    "result": {
+      "account": {
+        "cash": 979.7899,
+        "equity": 1000.7899,
+        "last": 10.5,
+        "positionSize": 2
+      },
+      "alerts": [],
+      "barIndex": 1,
+      "duplicate": false,
+      "ok": true,
+      "openTrades": [
+        {
+          "commission": 0.0101,
+          "entry_bar_index": 1,
+          "entry_id": "L",
+          "entry_price": 10.1,
+          "entry_time": 1791956217672,
+          "id": "beba278e-d5d3-41c6-8778-33a5e05ee50f",
+          "size": 2,
+          "status": "open"
+        }
+      ],
+      "pendingOrders": [],
+      "plots": {
+        "position": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 2
+        },
+        "ticks": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 2
+        }
+      }
+    },
+    "session_id": "cc1385ed-7b61-4a9a-9366-7a41c23bdfc3",
+    "snapshot_id": "ddd47041-bd2f-4ad3-b31b-f8ed525b8487",
+    "status": "active",
+    "subscription_id": "fixture",
+    "version_id": "981b6cf8-2f83-4f10-ab86-fb314c19c4f1"
+  },
+  "recovered": {
+    "error": null,
+    "execution": "local_broker",
+    "marketCursor": 6,
+    "result": {
+      "account": {
+        "cash": 979.7899,
+        "equity": 1000.7899,
+        "last": 10.5,
+        "positionSize": 2
+      },
+      "alerts": [],
+      "barIndex": 1,
+      "duplicate": false,
+      "ok": true,
+      "openTrades": [
+        {
+          "commission": 0.0101,
+          "entry_bar_index": 1,
+          "entry_id": "L",
+          "entry_price": 10.1,
+          "entry_time": 1791956217672,
+          "id": "beba278e-d5d3-41c6-8778-33a5e05ee50f",
+          "size": 2,
+          "status": "open"
+        }
+      ],
+      "pendingOrders": [],
+      "plots": {
+        "position": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 2
+        },
+        "ticks": {
+          "options": {
+            "color": "#2962ff"
+          },
+          "time": 1791956160000,
+          "value": 2
+        }
+      }
+    },
+    "session_id": "cc1385ed-7b61-4a9a-9366-7a41c23bdfc3",
+    "snapshot_id": "ddd47041-bd2f-4ad3-b31b-f8ed525b8487",
+    "status": "active",
+    "subscription_id": "fixture",
+    "version_id": "981b6cf8-2f83-4f10-ab86-fb314c19c4f1"
+  }
+}

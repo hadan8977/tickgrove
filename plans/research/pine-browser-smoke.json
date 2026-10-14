@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-13T16:22:56.602Z",
+  "mode": "production Vite preview, browser Worker through command registry",
+  "test": {
+    "errors": [],
+    "result": "Backtest 1 trades · net -0.53%"
+  },
+  "tradeRows": [
+    "1\tLONG\t2024/4/29\t572.08\t2024/5/2\t531.06\t13.00\t-$533.26\t-7.17%\tpine"
+  ],
+  "hasThirteenPlot": true
+}

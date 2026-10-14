@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "fixtureOnly": true,
+  "cases": [
+    {
+      "provider": "coinbase",
+      "feed": "public-websocket",
+      "session": "24x7",
+      "roundtrip": true,
+      "mismatchedSubscriptionRejected": true,
+      "mismatchedHistoryRejected": true
+    },
+    {
+      "provider": "yahoo",
+      "feed": "public-pricing-websocket",
+      "session": "regular",
+      "roundtrip": true,
+      "mismatchedSubscriptionRejected": true,
+      "mismatchedHistoryRejected": true
+    },
+    {
+      "provider": "yahoo",
+      "feed": "public-pricing-websocket",
+      "session": "extended",
+      "roundtrip": true,
+      "mismatchedSubscriptionRejected": true,
+      "mismatchedHistoryRejected": true
+    },
+    {
+      "provider": "alpaca",
+      "feed": "iex",
+      "session": "regular",
+      "roundtrip": true,
+      "mismatchedSubscriptionRejected": true,
+      "mismatchedHistoryRejected": true
+    },
+    {
+      "provider": "alpaca",
+      "feed": "overnight",
+      "session": "overnight",
+      "roundtrip": true,
+      "mismatchedSubscriptionRejected": true,
+      "mismatchedHistoryRejected": true
+    }
+  ]
+}

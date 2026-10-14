@@ -1,0 +1,1 @@
+CREATE TABLE broker_events(cursor INTEGER PRIMARY KEY AUTOINCREMENT, client_order_id TEXT NOT NULL REFERENCES broker_orders(client_order_id), state TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);

@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "scopedAuthorization": true,
+  "revocation": true,
+  "undeclaredPermissionDenied": true,
+  "namespace": {
+    "hostRead": false,
+    "symlinkRead": false,
+    "hostWrite": false,
+    "secretEnvironment": false,
+    "hostNetwork": false
+  },
+  "outputLimitSeconds": 0.171,
+  "timeoutSeconds": 5.006
+}

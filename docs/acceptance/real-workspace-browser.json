@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-14T04:01:54.400Z",
+  "passed": true,
+  "base": "http://127.0.0.1:18879",
+  "browser": "148.0.7778.96",
+  "checks": [
+    {
+      "name": "Generic real history and live Coinbase workspace",
+      "ok": true,
+      "detail": {
+        "symbol": "LTC-USD",
+        "provider": "coinbase",
+        "feed": "public-websocket",
+        "subscription": "3d7fbb2a-ed2f-495d-859f-bf32145cd17f",
+        "quoteAgeMs": 12511
+      }
+    },
+    {
+      "name": "Provider discovery outside initial watchlist",
+      "ok": true,
+      "detail": {
+        "symbol": "SOL-USD"
+      }
+    },
+    {
+      "name": "Original Pine interface runs a persistent native job on real ETF history",
+      "ok": true,
+      "detail": {
+        "symbol": "VOO",
+        "bars": 311,
+        "job": "58dd8565-779d-4311-bfe9-bd3516d3bccb",
+        "tradeQty": 2,
+        "snapshotHash": "ddbcd816fba5ca13da632c9225fb5068398d3e78dd3b45cf8e40483562963e53"
+      }
+    },
+    {
+      "name": "Chart replay prefix and return to live controls work",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "name": "Workspace manual order uses real-quote server ledger",
+      "ok": true,
+      "detail": {
+        "fill": "122c34bf-bd84-4ccc-94f0-58a63118c961",
+        "qty": 0.02,
+        "fee": 0.00062046,
+        "event": 20074
+      }
+    },
+    {
+      "name": "Server alert triggered by actual quote",
+      "ok": true,
+      "detail": {
+        "alert": "a65dffc4-28d5-49e1-97cc-f09f1d0589a2",
+        "event": 20363
+      }
+    },
+    {
+      "name": "Clean browser restores server workspace",
+      "ok": true,
+      "detail": {
+        "revision": 30,
+        "charts": 1
+      }
+    },
+    {
+      "name": "No browser runtime or command errors",
+      "ok": true,
+      "detail": {
+        "count": 0
+      }
+    }
+  ],
+  "errors": [],
+  "failures": []
+}

@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-14T03:42:39.148Z",
+  "runtime": "Rust trading-admin + trading-cli",
+  "checks": [
+    "online consistent SQLite backup",
+    "private token mode 0600",
+    "checksum and integrity-checked restore",
+    "nonempty destination refuses overwrite",
+    "cash and fills survive independent service startup",
+    "saved report restored",
+    "new native job executes after restore",
+    "second service using the same data directory is rejected"
+  ],
+  "databaseSha256": "ded2cf89e0012eeeef7678383b2496caf3539113433d6c36ac13e42456ea5260",
+  "restoredJob": "33bfe6d6-19d9-46ca-9c25-360654546ca7",
+  "sourceJob": "a26be88e-74f8-46f6-a049-e01a00f2d0d5",
+  "lockCheck": {
+    "exit": 1,
+    "error": "Error: Data directory already in use"
+  }
+}

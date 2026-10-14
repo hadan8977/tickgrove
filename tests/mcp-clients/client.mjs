@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import path from 'node:path';
+const transport = new StdioClientTransport({command:path.resolve('server/target/debug/trading-mcp'),args:[],env:{PATH:process.env.PATH,TRADING_TOKEN:process.env.TRADING_TOKEN,TRADING_URL:process.env.TRADING_URL}});
+const client = new Client({name:'trading-ts-acceptance',version:'1.0.0'},{capabilities:{}});
+await client.connect(transport);
+const tools=await client.listTools();assert.ok(tools.tools.some(t=>t.name==='trading_command'));
+const response=await client.callTool({name:'trading_command',arguments:{method:'system.capabilities',params:{}}});assert.ok(!response.isError);const result=JSON.parse(response.content[0].text);assert.equal(result.protocol,'trading.commands.v1');
+const denied=await client.callTool({name:'trading_command',arguments:{method:'does.not.exist',params:{}}});assert.equal(denied.isError,true);
+console.log(JSON.stringify({client:'official-typescript-sdk@1.32.1',toolsList:true,toolsCall:true,errorPropagation:true,protocol:'negotiated by SDK'}));await client.close();

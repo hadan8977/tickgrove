@@ -30,17 +30,23 @@ react(),
         '@': path.resolve(__dirname, './src'),
       },
     },
+    optimizeDeps: { entries: ['index.html'] },
     server: {
+      proxy: { "/api": process.env.TRADING_URL || "http://127.0.0.1:8787" },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
       watch: {
         ignored: [
           '**/.figma/**',
+          '**/var/**',
+          '**/server/target/**',
+          '**/backups/**',
 ],
       },
     },
     preview: {
+      proxy: { "/api": process.env.TRADING_URL || "http://127.0.0.1:8787" },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
     },

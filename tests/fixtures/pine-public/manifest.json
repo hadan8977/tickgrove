@@ -1,0 +1,1568 @@
+{
+  "repository": "https://github.com/pineforge-4pass/pineforge-corpus",
+  "commit": "7ad36e247768993238e2e14342ef2872aa99c933",
+  "license": "Apache-2.0",
+  "scope": "Unmodified Pine source only. No generated C++ or TradingView trade exports.",
+  "scripts": [
+    {
+      "file": "analyzer-anvil-percent-costs-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-anvil-percent-costs-01/strategy.pine",
+      "sha256": "937b08da51a53e5280b73f7ed8f0f267c098649eed84026b498bb3a7a5a84473"
+    },
+    {
+      "file": "analyzer-cashflow-cash-costs-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-cashflow-cash-costs-01/strategy.pine",
+      "sha256": "b476822b787d5fedef6168ee21738957ba4838b1db715730b464a8e89f2316ba"
+    },
+    {
+      "file": "analyzer-parity-choch-bos-isolator-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-parity-choch-bos-isolator-01/strategy.pine",
+      "sha256": "0619acb486516f0b37fdf51891e2115df04994d2cbe14e384dfe2d6946dfa4ca"
+    },
+    {
+      "file": "analyzer-parity-edge-margin-50-pct-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-parity-edge-margin-50-pct-01/strategy.pine",
+      "sha256": "87b451adee455586d279f3368657bce40f83322d1e0c3f8c872bdef613f7d1c1"
+    },
+    {
+      "file": "analyzer-parity-percent-of-equity-sizing-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-parity-percent-of-equity-sizing-01/strategy.pine",
+      "sha256": "46a9eb3bdba723f0c8e8c6babf77e1e479a039f01c76588ee5dafe90ae9f829b"
+    },
+    {
+      "file": "analyzer-parity-small-equity-fraction-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-parity-small-equity-fraction-01/strategy.pine",
+      "sha256": "d88446d7e2cd01a41a60ac754bbed623f5c438fe18771f97a1ebc27c0340a38e"
+    },
+    {
+      "file": "analyzer-parity-stop-limit-timing-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-parity-stop-limit-timing-01/strategy.pine",
+      "sha256": "008190734e36db331b4eae83a3057577d69a356aac6af76728bcbaaa46eeee00"
+    },
+    {
+      "file": "analyzer-self-test-multi-mode-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/analyzer-self-test-multi-mode-01/strategy.pine",
+      "sha256": "0e65d2fd26778a4ac8133b4bcc0b3ca2259ef0acd2956ecd0d63f91d1b723aab"
+    },
+    {
+      "file": "anomaly-equity-mirror-strategy-equity-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/anomaly-equity-mirror-strategy-equity-01/strategy.pine",
+      "sha256": "2e3d948c81e594a44bace8d43260b77be1e6bf3461cdc127fd97912194ce0bb8"
+    },
+    {
+      "file": "array-atlas-momentum-rotation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/array-atlas-momentum-rotation-01/strategy.pine",
+      "sha256": "e756e6cb068a00f5ee9cc84efbd6055490366cfbf047d52bd46e99c103fb7ab3"
+    },
+    {
+      "file": "array-spectrum-deque-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/array-spectrum-deque-01/strategy.pine",
+      "sha256": "056df893ca930c6c30b0162943f52ac608b5eb568b12a46b27b4c871c31f2072"
+    },
+    {
+      "file": "bands-constellation-mean-reversion-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bands-constellation-mean-reversion-01/strategy.pine",
+      "sha256": "5a6b66c88dd3b7b2918328db31105aebad22f49d9e064a69eb409f40f35db497"
+    },
+    {
+      "file": "barstate-isconfirmed-magnifier-off-01b.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/barstate-isconfirmed-magnifier-off-01b/strategy.pine",
+      "sha256": "2cab7b4708a55d66f7b7b80f8d96ca93aa442e411c5126ec1ebb339e4c994911"
+    },
+    {
+      "file": "barstate-isconfirmed-magnifier-on-01a.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/barstate-isconfirmed-magnifier-on-01a/strategy.pine",
+      "sha256": "662eb762203a322512f33c732492b4bceb1569f5d45514700befb67469f27567"
+    },
+    {
+      "file": "barstate-lattice-confirmed-pivot-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/barstate-lattice-confirmed-pivot-01/strategy.pine",
+      "sha256": "f6d84d7937b7547e68204e9e0952a77a15de1185cd11c210c60304565595846a"
+    },
+    {
+      "file": "bracket-atr-trail-series-int-points-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-atr-trail-series-int-points-01/strategy.pine",
+      "sha256": "c91efd71112cd0e699f1821cd7ab4af058728d417e7d4b323dc99053c71e5afc"
+    },
+    {
+      "file": "bracket-atr-trailing-stop-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-atr-trailing-stop-state-01/strategy.pine",
+      "sha256": "e3e19264cb10199364191cda7c4d6b04a90f312362425f410c681cc89fd9bafc"
+    },
+    {
+      "file": "bracket-aurora-market-atr-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-aurora-market-atr-01/strategy.pine",
+      "sha256": "5552cf9e44cb57e9c99b3621f40bf4e66c74d34f7bddbc55c0255306ffc5fa3f"
+    },
+    {
+      "file": "bracket-compass-partial-ladder-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-compass-partial-ladder-01/strategy.pine",
+      "sha256": "04d18ba75cd60b74f7be747cf65a509d12d247367dd364d71c0734ee6860ed13"
+    },
+    {
+      "file": "bracket-entry-exit-same-pass-attach-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-entry-exit-same-pass-attach-01/strategy.pine",
+      "sha256": "9e33f9eb3b5fe918ade83e44ddbc4253d772e276578dab9d22710a0f3be8e679"
+    },
+    {
+      "file": "bracket-exit-stop-limit-trail-same-bar-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-exit-stop-limit-trail-same-bar-01/strategy.pine",
+      "sha256": "53257969d0e988e5200ead6f37977a7706a682ce955f6f9595e81615dc5dbb39"
+    },
+    {
+      "file": "bracket-exit-three-way-set-once-entry-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-exit-three-way-set-once-entry-01/strategy.pine",
+      "sha256": "5754aaf7960163a9f1483ba2513bffa1f46bb226276c4948a5b177c2e3b9c22f"
+    },
+    {
+      "file": "bracket-exit-tp-sl-fixed-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-exit-tp-sl-fixed-01/strategy.pine",
+      "sha256": "03ab42803f2d4e2b696c38d4456e53a6fe2b46d68363abe3b0f6bcf749a21ae0"
+    },
+    {
+      "file": "bracket-narrow-stop-limit-with-trail8-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-narrow-stop-limit-with-trail8-01/strategy.pine",
+      "sha256": "59ea334304b89897d95e6c914e8a42900e6049a7a74d3e85d5a2ef0caebbbf33"
+    },
+    {
+      "file": "bracket-partial-exit-qty-percent-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-partial-exit-qty-percent-01/strategy.pine",
+      "sha256": "10e773bc7d2e6dd23af44d67ec84956226c44762d6cd58f76fb9eae923fa48b9"
+    },
+    {
+      "file": "bracket-revision-exit-replace-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-revision-exit-replace-01/strategy.pine",
+      "sha256": "28fd97aae2478fce353c1cbf1ead86f445d3eb6c8da342ae622381dbf9ea0726"
+    },
+    {
+      "file": "bracket-rivet-calc-on-fill-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-rivet-calc-on-fill-01/strategy.pine",
+      "sha256": "5dfb96e28b923ef40bc26da198ae17164b08254633e3fa9e25adf32121337b1e"
+    },
+    {
+      "file": "bracket-same-id-exit-replace-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-same-id-exit-replace-01/strategy.pine",
+      "sha256": "177b40c4e04b4233ee8253a66be4e5d074fcd699f200923e45db060cb6b006c7"
+    },
+    {
+      "file": "bracket-tp-sl-oca-reduce-isolate-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-tp-sl-oca-reduce-isolate-01/strategy.pine",
+      "sha256": "db1d78c193b2f1ca88b65d9976ee4fd5af14e2e94c16be23e34c2fc6116b220c"
+    },
+    {
+      "file": "bracket-trail-points-no-offset-explicit-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-trail-points-no-offset-explicit-01/strategy.pine",
+      "sha256": "4a47cdbf9d1141f03b697cb11c2ce7be216a8e691c8d471a4d0a307dd5138f2e"
+    },
+    {
+      "file": "bracket-trail-points-with-offset-only-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-trail-points-with-offset-only-01/strategy.pine",
+      "sha256": "0cd93c592d550b5b7a56ac5086f854c4ebd804c6ab4963c83e4b73813ecfe93f"
+    },
+    {
+      "file": "bracket-trailing-activation-offset-path-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/bracket-trailing-activation-offset-path-01/strategy.pine",
+      "sha256": "f0a2dee2d0899b8755dadbfe8e72422d0f3db3b3868ff6f6782f9e5be98145d0"
+    },
+    {
+      "file": "calendar-waypoint-weekday-macd-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/calendar-waypoint-weekday-macd-01/strategy.pine",
+      "sha256": "04ccf8738454434a408e83428502397f5c31cf10d890b0a40c3d95063512d63b"
+    },
+    {
+      "file": "cap-gatekeeper-intraday-risk-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/cap-gatekeeper-intraday-risk-01/strategy.pine",
+      "sha256": "f41e854bd7a086f5893e5a9d53545cbe9fd395a2e768adf7f342034a001ca350"
+    },
+    {
+      "file": "cap-max-intraday-filled-orders-isolate-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/cap-max-intraday-filled-orders-isolate-01/strategy.pine",
+      "sha256": "38f0435a9e0497ccacf61a36cc300fbdf5de59ee01f8042bb31907036c8d3281"
+    },
+    {
+      "file": "cap-risk-gates-allow-max-intraday-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/cap-risk-gates-allow-max-intraday-01/strategy.pine",
+      "sha256": "c49db611b70ea34afb07af413be89cc7b8985040df4faeccee0f8a8aa7725a89"
+    },
+    {
+      "file": "composite-4emarsi-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-4emarsi-integration-01/strategy.pine",
+      "sha256": "be86502fd237254f56b65909d53d4c1e55728354d3d3f4fd3abbf77dcd9050fe"
+    },
+    {
+      "file": "composite-4emarsi-quad-ema-stack-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-4emarsi-quad-ema-stack-01/strategy.pine",
+      "sha256": "fc9427bef1fadaa5efca0445769dc193a96e0a2f1d9266a0fa9d496bff9876fd"
+    },
+    {
+      "file": "composite-4emarsi-rsi-pullback-latch-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-4emarsi-rsi-pullback-latch-01/strategy.pine",
+      "sha256": "9cf43f76ecc6179694f6c5f0a70abe34dc1b9c24caff90a7a718adc1d323a5d4"
+    },
+    {
+      "file": "composite-4emarsi-session-window-nbar-exit-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-4emarsi-session-window-nbar-exit-01/strategy.pine",
+      "sha256": "ce3986c6a434d22a962e0ea07dcf3ce041fe22752282dc559c6aa69b74099e0c"
+    },
+    {
+      "file": "composite-boscurv-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-boscurv-integration-01/strategy.pine",
+      "sha256": "ea8ce1e46a45834023bf45f962a4892995646fb0fbae4686db342671c056f867"
+    },
+    {
+      "file": "composite-boscurv-linreg-slope-channel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-boscurv-linreg-slope-channel-01/strategy.pine",
+      "sha256": "e76f6ae47741678950c2820a2f512798a51d594eac20533269114251892a0c07"
+    },
+    {
+      "file": "composite-boscurv-pivot-bos-trigger-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-boscurv-pivot-bos-trigger-01/strategy.pine",
+      "sha256": "b91107e3a4ddedb60591272c745d36215fce886e6024365f9839de84e9356397"
+    },
+    {
+      "file": "composite-bracket-cap-range-pending-stop-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-bracket-cap-range-pending-stop-01/strategy.pine",
+      "sha256": "f2070649524a5dc301b5fad8a8c2089179992ca03b1926644ba4be705c91748e"
+    },
+    {
+      "file": "composite-ies-adx-regime-classify-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-adx-regime-classify-01/strategy.pine",
+      "sha256": "fbf75e79238424e893098673b2f31465e79dc904607141f22e6997607a10c0fe"
+    },
+    {
+      "file": "composite-ies-bb-kc-squeeze-release-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-bb-kc-squeeze-release-01/strategy.pine",
+      "sha256": "e1cdd2686d5c94ca2d208be257f7da534eb79421784214fb8f44ca7ec2628fe1"
+    },
+    {
+      "file": "composite-ies-cooldown-daily-cap-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-cooldown-daily-cap-01/strategy.pine",
+      "sha256": "237b8ce13ec6466b5cc439a5a2558e343aa35683515d53e3ab8bbbe7c545ec20"
+    },
+    {
+      "file": "composite-ies-equity-feedback-sizing-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-equity-feedback-sizing-01/strategy.pine",
+      "sha256": "e270f86ba904955b45fcee24dc37c160732fdb0787ff53a8e818314684883882"
+    },
+    {
+      "file": "composite-ies-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-integration-01/strategy.pine",
+      "sha256": "80f234d5e1b5f9c82c922f3f3f8f1ea8d0a005e7ae69971c84dad45ee9fe35f3"
+    },
+    {
+      "file": "composite-ies-pivot-liquidity-sweep-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-pivot-liquidity-sweep-01/strategy.pine",
+      "sha256": "464baf0245cc0de8eb71d5e86ee31d217d93758f1d66492429c3a6726f95a2bc"
+    },
+    {
+      "file": "composite-ies-pressure-gauge-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-pressure-gauge-01/strategy.pine",
+      "sha256": "8e943e3869d64a1d6760a25d5010a770faa4ae57cc765a388c88f14b58fe64ea"
+    },
+    {
+      "file": "composite-ies-rsi-macd-momentum-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-rsi-macd-momentum-01/strategy.pine",
+      "sha256": "bac2e7bf775c4d0bbe1252d6065cbb9f77ad37961ec4d77d77744243ef15553a"
+    },
+    {
+      "file": "composite-ies-three-ema-bias-score-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-ies-three-ema-bias-score-01/strategy.pine",
+      "sha256": "dbcd8cf383abbf21d95d30073957a4a92ad4293b60485678ca4362f6aa15140e"
+    },
+    {
+      "file": "composite-kanuck-calc-on-every-tick-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kanuck-calc-on-every-tick-01/strategy.pine",
+      "sha256": "b3e366fc41a1ebcfe3afb83cd60fe49d9e3043d9d8b1dbc39baaa5fd2222083c"
+    },
+    {
+      "file": "composite-kanuck-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kanuck-integration-01/strategy.pine",
+      "sha256": "f1ad54b5ba25b64c5510bd0fe7e34249fddfc64b70a248e78c83b472edaed6aa"
+    },
+    {
+      "file": "composite-kanuck-kama-state-recurrence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kanuck-kama-state-recurrence-01/strategy.pine",
+      "sha256": "27e232b509fdb85d24a5c7132727b9b13bd0165230cae540acd2fc5565201abb"
+    },
+    {
+      "file": "composite-kanuck-max-bars-back-500-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kanuck-max-bars-back-500-01/strategy.pine",
+      "sha256": "707a36aa2c59088bce864aa03624dd7edca60f19b90141227eadf0348f4d5ebf"
+    },
+    {
+      "file": "composite-keystone-udf-tuple-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-keystone-udf-tuple-01/strategy.pine",
+      "sha256": "8d28a8ad26881e896d33cf4efbdd3290eebbc1ae33037fa75eee58e053fff69a"
+    },
+    {
+      "file": "composite-kkb-ema-atr-breakout-band-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kkb-ema-atr-breakout-band-01/strategy.pine",
+      "sha256": "a490731d8d87d662897aed27bc2746d59021a9fbe394574bf8ec5be77f7ac1a3"
+    },
+    {
+      "file": "composite-kkb-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kkb-integration-01/strategy.pine",
+      "sha256": "d269196993ba91469bdcb1c11e25b310c5771542025530d33f9612f85b0e402f"
+    },
+    {
+      "file": "composite-kkb-kalman-filter-1d-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kkb-kalman-filter-1d-01/strategy.pine",
+      "sha256": "a4badcdc641b81081a679600df881c605d882f97a1119469d4e813599ae901cf"
+    },
+    {
+      "file": "composite-kkb-margin-100-pct-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-kkb-margin-100-pct-01/strategy.pine",
+      "sha256": "24a2b17a48619b05f4df8f4affc7923c693b82492418700d645e11a6a7cb89d2"
+    },
+    {
+      "file": "composite-liqsweep-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-liqsweep-integration-01/strategy.pine",
+      "sha256": "c58b3ae0e1a31bfaab5efbd30435f28317672461457af91c29e215fe052552bd"
+    },
+    {
+      "file": "composite-liqsweep-pivot-hh-ll-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-liqsweep-pivot-hh-ll-01/strategy.pine",
+      "sha256": "282a4565e2e2636f70ff9e6e3cfb067b085c88c179627be1b34714f8031a5616"
+    },
+    {
+      "file": "composite-liqsweep-wait-one-continuation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-liqsweep-wait-one-continuation-01/strategy.pine",
+      "sha256": "71203448601630c091278ec38e76156ae23b2a9b0409c8624678ee48aefa998c"
+    },
+    {
+      "file": "composite-liqsweep-wick-pierce-close-back-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-liqsweep-wick-pierce-close-back-01/strategy.pine",
+      "sha256": "3f68579c4d092de1ec190c2c6173ea6019ed1cbcf65b92378336d563d3635a1c"
+    },
+    {
+      "file": "composite-marketshift-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-marketshift-integration-01/strategy.pine",
+      "sha256": "6422dfa3e106f29ed51a6743e6f63575cb031abf8c122a160a2bf89388ab9ae6"
+    },
+    {
+      "file": "composite-marketshift-pivot-state-machine-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-marketshift-pivot-state-machine-01/strategy.pine",
+      "sha256": "16977b156ce9e7239d75699ddd74a0b86faf75e3903f680a0270d58c095f7332"
+    },
+    {
+      "file": "composite-marketshift-rolling-highest-lowest-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-marketshift-rolling-highest-lowest-01/strategy.pine",
+      "sha256": "9ea502435046e1976fe1e7ec4445a7a66818c486784bf594073ae1e7b4906a5f"
+    },
+    {
+      "file": "composite-marketshift-state-edge-detector-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-marketshift-state-edge-detector-01/strategy.pine",
+      "sha256": "5a2f730040e75d06e3d2127b95c62925a0418e6f1b29b40952c02a157923d9e0"
+    },
+    {
+      "file": "composite-scalping-fast-ma-cross-trigger-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-scalping-fast-ma-cross-trigger-01/strategy.pine",
+      "sha256": "bc6a0c3c4f99cc08e1b3b37fa4d8734bf592b14f2275d7ec44e35889fc845401"
+    },
+    {
+      "file": "composite-scalping-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-scalping-integration-01/strategy.pine",
+      "sha256": "be75a300a91161a97082a9212b2be63a657c1726948ea04b7f623f4a2baa9f58"
+    },
+    {
+      "file": "composite-scalping-tight-tp-sl-points-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-scalping-tight-tp-sl-points-01/strategy.pine",
+      "sha256": "f1953aa2df9821542f2341359d0b0c7e2e5f8648c05905da2cfea4f817f1e9ea"
+    },
+    {
+      "file": "composite-trendmaster-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-trendmaster-integration-01/strategy.pine",
+      "sha256": "7bfabdb2eb59d8f9ee7dcefd246a9bd859b3a5b81b8bc08c94ed9ecd1d2c99c7"
+    },
+    {
+      "file": "composite-trendmaster-line-new-projection-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-trendmaster-line-new-projection-01/strategy.pine",
+      "sha256": "87f1f446ff03fcf58d9cc6ea2b482865c25008f7e1c0ee3c336b25e3b81cbe45"
+    },
+    {
+      "file": "composite-trendmaster-pivot-anchored-bracket-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-trendmaster-pivot-anchored-bracket-01/strategy.pine",
+      "sha256": "ab7c15b2f48d9fff7281c79993c539c20ed21330550d0a4f2689e4adcd8c7b53"
+    },
+    {
+      "file": "composite-trendmaster-three-tier-ema-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-trendmaster-three-tier-ema-state-01/strategy.pine",
+      "sha256": "a0e9ea19de7b0bb5f43524d4003f1872eee0868214124e56ad69f8db4776ccda"
+    },
+    {
+      "file": "composite-trendmaster-trend-momentum-structure-gate-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-trendmaster-trend-momentum-structure-gate-01/strategy.pine",
+      "sha256": "362bf9c9def810dca7450f7725216be6f2c7db037959a167881fe042f75f2b7d"
+    },
+    {
+      "file": "composite-vcp-cumulative-volume-delta-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-cumulative-volume-delta-01/strategy.pine",
+      "sha256": "9818167763d41944842fea7dbfe8302c83a3de0ef474fe427c819a1ca9c3c9c4"
+    },
+    {
+      "file": "composite-vcp-fvg-active-zones-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-fvg-active-zones-01/strategy.pine",
+      "sha256": "f2fbd03ba9d7e3094bb2c0fc9b3e482b6926127bb40b5abafa10e22e8e730621"
+    },
+    {
+      "file": "composite-vcp-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-integration-01/strategy.pine",
+      "sha256": "950912655b8ea77af3c6ed7116fd1899f02581a4154012d427f6f4e4bc7e1281"
+    },
+    {
+      "file": "composite-vcp-manual-adx-regime-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-manual-adx-regime-01/strategy.pine",
+      "sha256": "d28f02c9c9ea7d7be7e49660c744d1bf35a818d2a7882cf66028bee2be9cd454"
+    },
+    {
+      "file": "composite-vcp-pivot-strength-5-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-pivot-strength-5-01/strategy.pine",
+      "sha256": "4f6f3a3179a5b17432f13c23fd6299047a276cedd8218320dd2e3cd6bf9b6b66"
+    },
+    {
+      "file": "composite-vcp-rsi-smooth-divergence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-rsi-smooth-divergence-01/strategy.pine",
+      "sha256": "6628ba684d50948680a53d66d7db321ac3c75198a8252812c24aabad2cf56b83"
+    },
+    {
+      "file": "composite-vcp-session-tz-newyork-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-session-tz-newyork-01/strategy.pine",
+      "sha256": "753023c6a4fe877d337f0614a9a2307c83a784c41bb63507a4c14269f4b176df"
+    },
+    {
+      "file": "composite-vcp-vol-zscore-anomaly-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-vcp-vol-zscore-anomaly-01/strategy.pine",
+      "sha256": "79ca1fc855701926bc4c73bdcd7ef821a376658c52b7f7dd0371be6b80e8db7c"
+    },
+    {
+      "file": "composite-wunderscalper-alert-templates-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-wunderscalper-alert-templates-01/strategy.pine",
+      "sha256": "033d0fd27be889a24b208a1c7c7b24962bca4a51a9bcc88d853871631f3b1717"
+    },
+    {
+      "file": "composite-wunderscalper-explicit-reverse-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-wunderscalper-explicit-reverse-01/strategy.pine",
+      "sha256": "b9a8a6a97a8dfe0541c4c1b51e4e52181de5cdca782b6b03f12750af75da2568"
+    },
+    {
+      "file": "composite-wunderscalper-integration-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/composite-wunderscalper-integration-01/strategy.pine",
+      "sha256": "ae0d2b4cb224133c7cfde12786092a86a3b6227822efc26347b75f454b47c602"
+    },
+    {
+      "file": "control-heliograph-while-channel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/control-heliograph-while-channel-01/strategy.pine",
+      "sha256": "bfc1ee65c33ecb4cee03f6ce95e1be00f73997375bcd87eb8b28693c82a390fe"
+    },
+    {
+      "file": "drawing-box-zone-reentry.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-box-zone-reentry/strategy.pine",
+      "sha256": "0dd9d31f622a905ebf242d9deae5260d2e6af0c8bf24112b9e23e37808d23e7d"
+    },
+    {
+      "file": "drawing-chartpoint-trendline.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-chartpoint-trendline/strategy.pine",
+      "sha256": "dac035d162c3209e9f44e90cc3b4c6aeef507efd585071af5ffe51e2cd6e3bcb"
+    },
+    {
+      "file": "drawing-delete-halt.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-delete-halt/strategy.pine",
+      "sha256": "c183713975a18caf5da377882c9f8d2af93d7a959deefe78119d1cf969df1a93"
+    },
+    {
+      "file": "drawing-line-level-breakout.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-line-level-breakout/strategy.pine",
+      "sha256": "f5906081396f35f05cd4d6b174f4f322ad057536d5073b320e1065a1837874c1"
+    },
+    {
+      "file": "drawing-udt-alias-identity.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-udt-alias-identity/strategy.pine",
+      "sha256": "4e3545cce0e62105b0db02a3c370972fdcbf9573623607ef9235177204e27035"
+    },
+    {
+      "file": "drawing-visual-noise-geometry.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/drawing-visual-noise-geometry/strategy.pine",
+      "sha256": "60fd0839b7a6c9ff6b2763f0073a123299d87f48ddc29d98ab2ed55f5334fe3d"
+    },
+    {
+      "file": "enum-relay-regime-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/enum-relay-regime-01/strategy.pine",
+      "sha256": "f48fa31e3c66ba51a90a1621c0fb759b2d2aaaa7e0dbcd0ec0e5be5eb26b1050"
+    },
+    {
+      "file": "input-source-runtime-override-high-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/input-source-runtime-override-high-01/strategy.pine",
+      "sha256": "8686a2fdc884ff4264cd71691112a863e51719e0866db24d49d177d626889af1"
+    },
+    {
+      "file": "input-source-subscript-hl2-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/input-source-subscript-hl2-01/strategy.pine",
+      "sha256": "5479d3e6b662e0305cf8328efa92b0ab3ded180c62e4d42b3d50fc8b5452f770"
+    },
+    {
+      "file": "ltf-bool-array-bull-majority-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ltf-bool-array-bull-majority-01/strategy.pine",
+      "sha256": "8f70458dd575c41784dacc99b31fe8065943bfe026ce41899cbde8f201820c7d"
+    },
+    {
+      "file": "ltf-numeric-float-ratio15-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ltf-numeric-float-ratio15-01/strategy.pine",
+      "sha256": "1aa0fdaccde0eeb5272f3a90eafb9cad58b6bc1f8a38c71efa67b8dc54843b78"
+    },
+    {
+      "file": "magnifier-tick-dist-endpoints-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/magnifier-tick-dist-endpoints-01/strategy.pine",
+      "sha256": "86b12b6ccbb7265ccdc6a713ed1ab3000e7afc86f9169a701fda423ed5b6f318"
+    },
+    {
+      "file": "magnifier-tick-dist-endpoints-rsi-cross-08a.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/magnifier-tick-dist-endpoints-rsi-cross-08a/strategy.pine",
+      "sha256": "2b8d51196f5c20579780f4a1a8bb46ecec6ce82f43ecac4ec2b891918c93db08"
+    },
+    {
+      "file": "magnifier-tick-dist-volume-weighted-on-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/magnifier-tick-dist-volume-weighted-on-01/strategy.pine",
+      "sha256": "52aa09845f5f1c39ac4f2dc69c52c7edeb738b427b0c0e5705a50650ee4c6233"
+    },
+    {
+      "file": "map-archive-presence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/map-archive-presence-01/strategy.pine",
+      "sha256": "89989c026ce8379b65400c70adc81cb606b57b4f3afe85e6ce05522047f0cced"
+    },
+    {
+      "file": "map-mosaic-regime-weight-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/map-mosaic-regime-weight-01/strategy.pine",
+      "sha256": "117e68d14fbb0cdeb4bcb8431a478aef27439ceddab28c53c2e952e670974f7a"
+    },
+    {
+      "file": "math-forge-log-channel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/math-forge-log-channel-01/strategy.pine",
+      "sha256": "6fbf506117b5dac3a359b4ae54d60e910d8cc88813556195a35bf9442454ebd0"
+    },
+    {
+      "file": "math-kiln-power-efficiency-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/math-kiln-power-efficiency-01/strategy.pine",
+      "sha256": "5137c952b1bae97768523b48348fed226dbc74e7a75c9272c54a2de27b00d9dd"
+    },
+    {
+      "file": "matrix-bool-mask-explicit-utc-tz-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-bool-mask-explicit-utc-tz-01/strategy.pine",
+      "sha256": "292411250950fd999753adf306cb93c4d5dd96e9d5e61b3edb91c19fb8ea6a70"
+    },
+    {
+      "file": "matrix-bool-mask-no-transpose-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-bool-mask-no-transpose-01/strategy.pine",
+      "sha256": "5ee40cdaab4da86d5370766e4fa4a49e7ea3af0e2d8d6d4240bcbf77d2d4adef"
+    },
+    {
+      "file": "matrix-bool-mask-transpose-roundtrip-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-bool-mask-transpose-roundtrip-01/strategy.pine",
+      "sha256": "1340f165af2d8420e561d9461497e06b14aef69b78f6cc167a1a58b6132a524d"
+    },
+    {
+      "file": "matrix-bool-regime-mask-24x7-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-bool-regime-mask-24x7-01/strategy.pine",
+      "sha256": "a5958bb6edb1a35a82a516f9263134d9d8da22aec45928f8e8b15462acbc43d3"
+    },
+    {
+      "file": "matrix-cadence-transpose-pairs-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-cadence-transpose-pairs-01/strategy.pine",
+      "sha256": "0a273411083d3ad8bdbbf6e8c8021b09d9181ec72fc617eaf9a19184ff74adf9"
+    },
+    {
+      "file": "matrix-covariance-eigen-pca-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-covariance-eigen-pca-01/strategy.pine",
+      "sha256": "c0febaa534508ed91c103395db59859b4076e2fe96567e72eb1ecefaf677b82c"
+    },
+    {
+      "file": "matrix-eigen-covariance-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-eigen-covariance-01/strategy.pine",
+      "sha256": "89d5ab548eb075771a0a40555d0ad8eb398b4093b26625b031d86a49d6fc886c"
+    },
+    {
+      "file": "matrix-eigen-rank-deficient-cov-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-eigen-rank-deficient-cov-01/strategy.pine",
+      "sha256": "1c954c18eb3a86b6fa26e50693c07757c5e4b1a76135633571d68afd8e09477c"
+    },
+    {
+      "file": "matrix-prism-factor-vote-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/matrix-prism-factor-vote-01/strategy.pine",
+      "sha256": "48d6691c591e4286abd4bd3ee852434774a97781f019f432f42cd046e23dde1c"
+    },
+    {
+      "file": "mtf-cascade-tuple-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-cascade-tuple-01/strategy.pine",
+      "sha256": "a9560ed865dca0b2322ad29105f6b9943c8671967c9d2168213e75e84c335c62"
+    },
+    {
+      "file": "mtf-daily-array-median-percentrank-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-daily-array-median-percentrank-01/strategy.pine",
+      "sha256": "426a56919e57f1cee66c9ff217a64efa748ca599557607fc8bf24263b16e490e"
+    },
+    {
+      "file": "mtf-daily-ema26-warmup-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-daily-ema26-warmup-01/strategy.pine",
+      "sha256": "875223354d7edbdd88413ac9c49c078448581394a5b913f16424a17bad6564f2"
+    },
+    {
+      "file": "mtf-daily-prev-high-break-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-daily-prev-high-break-01/strategy.pine",
+      "sha256": "58456e108757a1813a09bb4a0a1e7d4199789f9500b6138e327059003968c5f5"
+    },
+    {
+      "file": "mtf-dual-tf-60-240-rising-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-dual-tf-60-240-rising-01/strategy.pine",
+      "sha256": "8161539d92a1c044a5099866b9e774403e787b567ff72eeb8e1fb38a4b68cbfb"
+    },
+    {
+      "file": "mtf-htf-60-close-change-baseline-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-close-change-baseline-01/strategy.pine",
+      "sha256": "6eba1488fa0f804c004737ebb295217660214067e26b7cad4e2ee211578c3ca5"
+    },
+    {
+      "file": "mtf-htf-60-close-roll-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-close-roll-01/strategy.pine",
+      "sha256": "158277c523f1fe068ebe3021f20f1e9f73abd4d9fa9453c88ed545331d955065"
+    },
+    {
+      "file": "mtf-htf-60-gaps-on-roll-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-gaps-on-roll-01/strategy.pine",
+      "sha256": "0326b8b107ee8f636900343e9421c363338fe776c3a485fb566ae95f79beec11"
+    },
+    {
+      "file": "mtf-htf-60-rsi14-inside-security-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-rsi14-inside-security-01/strategy.pine",
+      "sha256": "58d601b530a348983e01106003b7e938eec191a5e93fdb559e30b85bf5b2bb78"
+    },
+    {
+      "file": "mtf-htf-60-sma20-inside-security-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-sma20-inside-security-01/strategy.pine",
+      "sha256": "e75afc310ab95541469eb041187ff866cedda0d603b62707653c95f481442263"
+    },
+    {
+      "file": "mtf-htf-60-volume-spike-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-60-volume-spike-01/strategy.pine",
+      "sha256": "29e24e2e5a001daeb4c85b870f1ba746e7e2901d9e4272f2023eda35a7853f36"
+    },
+    {
+      "file": "mtf-htf-confluence-manual-trail-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-confluence-manual-trail-01/strategy.pine",
+      "sha256": "f8abc16d15f6766143c6a5016e40cfc9556c41ebdf6878a4938352e0ebb28271"
+    },
+    {
+      "file": "mtf-htf-confluence-static-bracket-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-confluence-static-bracket-01/strategy.pine",
+      "sha256": "1cdb56861788632ef8566fecd514f8b20ae546f2b2d6f77192e430a9dec02575"
+    },
+    {
+      "file": "mtf-htf-weekly-sma-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-htf-weekly-sma-cross-01/strategy.pine",
+      "sha256": "66dd0c2026b05f575cca2bc6aa0d613320b397c015b83e6cc87dc445cb1b550e"
+    },
+    {
+      "file": "mtf-orbit-trend-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-orbit-trend-01/strategy.pine",
+      "sha256": "6f17e2c33ef1e69e553d02d9025b168f9bfce6ddf9ae6cbc77c1a6e3ff224e31"
+    },
+    {
+      "file": "mtf-rangefinder-daily-reference-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-rangefinder-daily-reference-01/strategy.pine",
+      "sha256": "36cc7703c6f249e76a35d3306254f55ef50054fe9cc41336ada9f77fe1283154"
+    },
+    {
+      "file": "mtf-roll-state-60-240-d-minimal-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-roll-state-60-240-d-minimal-01/strategy.pine",
+      "sha256": "04e6f3af75fe2395cd6511b90e8f50e48e19fbd5a61d652f7ad66248f0ddc8d7"
+    },
+    {
+      "file": "mtf-triple-tf-close-confluence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-triple-tf-close-confluence-01/strategy.pine",
+      "sha256": "635153986edb47d2b6a0cd74bd76c8dd04fd0516c852c47f46863419f026d9f9"
+    },
+    {
+      "file": "mtf-triple-tf-macd-hist-confluence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/mtf-triple-tf-macd-hist-confluence-01/strategy.pine",
+      "sha256": "8d61a9fdf42c0fa4cdc0f4ad6990cdd1406eed079de1c7eb11690bcf02e44c57"
+    },
+    {
+      "file": "na-deep-history-int-na-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/na-deep-history-int-na-01/strategy.pine",
+      "sha256": "c0875b976e546e228b2d42a345110b7edd837e0ee74ec2f5967bc4374a036f84"
+    },
+    {
+      "file": "na-ledger-history-anchor-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/na-ledger-history-anchor-01/strategy.pine",
+      "sha256": "16ff648758a1b3bfcf78fbd77cbc37662974c35ef10438429d0172a98601f4f5"
+    },
+    {
+      "file": "na-nz-fixnan-history-chain-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/na-nz-fixnan-history-chain-01/strategy.pine",
+      "sha256": "e18d254ffa5cf9753af110893760ea0eb19f25a9c8c05df94bdaabf65d718f0d"
+    },
+    {
+      "file": "oca-exit-bracket-internal-cancel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/oca-exit-bracket-internal-cancel-01/strategy.pine",
+      "sha256": "603c6de11c16421e37ea34c6d5deda5bc1f0dccd26c0ed8e77273bbc8b39c034"
+    },
+    {
+      "file": "oca-multi-bracket-isolation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/oca-multi-bracket-isolation-01/strategy.pine",
+      "sha256": "07b9a035cbdb1912bc6aba962ec77fe164943a8451200f44a106c2a9a4e7afef"
+    },
+    {
+      "file": "oca-raw-strategy-order-reduce-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/oca-raw-strategy-order-reduce-01/strategy.pine",
+      "sha256": "efab3fcdd5dca5e40869947903d3a253a29f2ba4e511a67a8e53f7c5433c3276"
+    },
+    {
+      "file": "order-close-all-cancel-all-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-close-all-cancel-all-01/strategy.pine",
+      "sha256": "d356e4dca8723f9da52c592f35f2f38bb9a4531daaf56e55610968e58410eda5"
+    },
+    {
+      "file": "order-close-immediate-vs-next-bar-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-close-immediate-vs-next-bar-01/strategy.pine",
+      "sha256": "81cd8eec8bd4290f4f76bef2a20a694fb7df078ca896dbd010bffd1489a72531"
+    },
+    {
+      "file": "order-cross-entry-cancel-same-pass-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-cross-entry-cancel-same-pass-01/strategy.pine",
+      "sha256": "f88ecbcf0303c59a9c20ec674e18f6259128132df91636350836a5beac4e4886"
+    },
+    {
+      "file": "order-cross-entry-close-same-pass-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-cross-entry-close-same-pass-01/strategy.pine",
+      "sha256": "84a1d18888d2d70bd71890137862239105b3f2deb80e18b38ac00c4ae100e7cc"
+    },
+    {
+      "file": "order-cross-exit-close-same-pass-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-cross-exit-close-same-pass-01/strategy.pine",
+      "sha256": "517ad5960fa2b8d21169a99f30053cdd9ba6b1c8c45bf98329e96ca818ab5d0d"
+    },
+    {
+      "file": "order-crosscurrent-opposite-market-pair-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-crosscurrent-opposite-market-pair-01/strategy.pine",
+      "sha256": "3d830885bb46ca90c26aff37992151352d304d0b1c0c5e339f4b9a6424ab08fc"
+    },
+    {
+      "file": "order-deferred-flip-guaranteed-gap-stops-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-deferred-flip-guaranteed-gap-stops-01/strategy.pine",
+      "sha256": "727012cc5ed780460137fca7d24f1dc9843870785c23e1b6858e7fca09f634a0"
+    },
+    {
+      "file": "order-deferred-flip-pooc-cross-bar-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-deferred-flip-pooc-cross-bar-01/strategy.pine",
+      "sha256": "0bf0a82079b8c41baf6a4dcb3e5294c95986c4f89d92d4c2e83f92a1954b108e"
+    },
+    {
+      "file": "order-dual-four-bar-stop-no-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-four-bar-stop-no-close-01/strategy.pine",
+      "sha256": "36152f1368f6fc4ce3c98217b6c9c842b5fdb4aa61b64b72584fe214aa02e720"
+    },
+    {
+      "file": "order-dual-side-same-id-stop-no-cancel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-side-same-id-stop-no-cancel-01/strategy.pine",
+      "sha256": "b9731fa44acea1f372d26e064d4390396e564dcfb41765d46e24ffb117845532"
+    },
+    {
+      "file": "order-dual-stop-both-touch-priority-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-both-touch-priority-01/strategy.pine",
+      "sha256": "5ba53224f146135ede18af7640f4c0bdc276c840fef150092eb4bf19b0b06705"
+    },
+    {
+      "file": "order-dual-stop-cancel-rotation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-cancel-rotation-01/strategy.pine",
+      "sha256": "7d69ae8c2ca43aef1c7561ee67a89b46f0ae51edae7ef0f8a56954cdc3d21a48"
+    },
+    {
+      "file": "order-dual-stop-far-only-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-far-only-01/strategy.pine",
+      "sha256": "36ef00526947d6a286340396ad3afa3c6fa8d93f9e989c21ce8746b67624a417"
+    },
+    {
+      "file": "order-dual-stop-near-only-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-near-only-01/strategy.pine",
+      "sha256": "49e02dbb5443310de1a0c551cd3ac6155b05b7a347adf578e4755f860bd8c692"
+    },
+    {
+      "file": "order-dual-stop-open-high-first-path-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-open-high-first-path-01/strategy.pine",
+      "sha256": "3ad0a7edf579842d307ee8333e62fdf834c91e6f74ccf4cce06f83430e58c3b3"
+    },
+    {
+      "file": "order-dual-stop-open-low-first-path-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-open-low-first-path-01/strategy.pine",
+      "sha256": "7efeb15aeb131ec25a50328022162b3cd7503c0ccd3f2bfabb2f4b0b714d90f9"
+    },
+    {
+      "file": "order-dual-stop-open-tie-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-open-tie-01/strategy.pine",
+      "sha256": "07f19e3ffc12e20918141575d86ca7dd77f6f15b65776e6d99c2e078cac14838"
+    },
+    {
+      "file": "order-dual-stop-source-order-long-first-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-source-order-long-first-01/strategy.pine",
+      "sha256": "d79bacf2d16534b39941c1764732b9f09ad8e0e2ca4bcca2cea6e73c989905b0"
+    },
+    {
+      "file": "order-dual-stop-source-order-short-first-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-dual-stop-source-order-short-first-01/strategy.pine",
+      "sha256": "c598a3f98437877d5344e9c0c6d98908f35e9cfa39115437316481c5844bc664"
+    },
+    {
+      "file": "order-entry-implicit-reversal-exit-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-entry-implicit-reversal-exit-01/strategy.pine",
+      "sha256": "a83360a1312ab466a214efd78dfd87bd3131f016b80596ca85fb71bf3be1551b"
+    },
+    {
+      "file": "order-flashpoint-immediate-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-flashpoint-immediate-close-01/strategy.pine",
+      "sha256": "3ca55a64813b11d01f71c5b534c122b59fed6b7ff529fa946cbad4f5ee9d4761"
+    },
+    {
+      "file": "order-flip-stop-no-paired-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-flip-stop-no-paired-close-01/strategy.pine",
+      "sha256": "177cbfa4ccf98cb77e707417ad950cde45ad88987d3074fe943c2f86614e4ce2"
+    },
+    {
+      "file": "order-harbor-stop-limit-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-harbor-stop-limit-01/strategy.pine",
+      "sha256": "854e3620fc8950ca78a59d59ff31777f91fea234e966a33fd013780b3a1d3719"
+    },
+    {
+      "file": "order-horizon-next-bar-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-horizon-next-bar-close-01/strategy.pine",
+      "sha256": "dc2134bb794d89de7594271ef7b24c01f391726ddda2577985033f1bbed26bc7"
+    },
+    {
+      "file": "order-keystone-limit-replace-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-keystone-limit-replace-01/strategy.pine",
+      "sha256": "bb45529bc91947a5b13359c44486e630e193c08e2c0b7425d50643d8e25cdb40"
+    },
+    {
+      "file": "order-market-close-fill-basis-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-market-close-fill-basis-01/strategy.pine",
+      "sha256": "a7d8963c17db0fa893ca9b5dbab48ea5d89a479b55eb561d2fa0e9dec490da98"
+    },
+    {
+      "file": "order-one-side-four-bar-far-opposite-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-one-side-four-bar-far-opposite-01/strategy.pine",
+      "sha256": "b92a47a0bfe3e6908829f9458689822ba30ff297ef463940910752ba4b1bcbac"
+    },
+    {
+      "file": "order-opposite-entry-close-same-pass-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-opposite-entry-close-same-pass-01/strategy.pine",
+      "sha256": "a245bf84ccd749efa343897504b6007cc22fd1c442152b7f8491e0bd147472d8"
+    },
+    {
+      "file": "order-percent-equity-cash-commission-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-percent-equity-cash-commission-01/strategy.pine",
+      "sha256": "09afd6aba2144720a8ec7b3b5d43f8b5715df8d1d0fa23a3567571e4f63b0330"
+    },
+    {
+      "file": "order-process-on-close-false-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-process-on-close-false-01/strategy.pine",
+      "sha256": "26b0d110d738eda244209bed809b37c8dc6aa8a2e011e62f12d79e01ab199c6a"
+    },
+    {
+      "file": "order-process-on-close-true-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-process-on-close-true-01/strategy.pine",
+      "sha256": "f5a0713ce3cf916f3e88f725fee861fb613ffe6a4bb5d7e6fe757fcc11d1aaca"
+    },
+    {
+      "file": "order-range-expansion-pending-stop-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-range-expansion-pending-stop-01/strategy.pine",
+      "sha256": "a4d326bceaab55da0a80d3f4799b96064c9d00746f15cdc13aa4feee20e8d35c"
+    },
+    {
+      "file": "order-same-id-entry-close-same-bar-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-entry-close-same-bar-01/strategy.pine",
+      "sha256": "92b450bab95d36a41ac9384936553f4f407dca8305647240ed42da2eeaebf284"
+    },
+    {
+      "file": "order-same-id-market-entry-repeat-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-market-entry-repeat-01/strategy.pine",
+      "sha256": "35d9efc0b815df48016e1a6cdae60d5f6b682ff85a9fd245ab5a903bbeba9241"
+    },
+    {
+      "file": "order-same-id-stop-after-flat-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-after-flat-01/strategy.pine",
+      "sha256": "bab39361d665f4d7f35222d0b557f2e783bab2498209c1de4af8d1f95ff0f268"
+    },
+    {
+      "file": "order-same-id-stop-cross-before-modify-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-cross-before-modify-01/strategy.pine",
+      "sha256": "6884501e433978dc66c2a4ae3572e64b62afca0fcd29679d9e532fb6b65e36c4"
+    },
+    {
+      "file": "order-same-id-stop-minute-zero-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-minute-zero-01/strategy.pine",
+      "sha256": "f6845a0b64d228c2fc21ae0ac0eb099d886e4276869d46d21656f7416a8f4807"
+    },
+    {
+      "file": "order-same-id-stop-modification-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-modification-01/strategy.pine",
+      "sha256": "ece2212939eaa48e9d23906c233c7a06fc953628a57e6666d9d2da3db29ca293"
+    },
+    {
+      "file": "order-same-id-stop-raise-only-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-raise-only-01/strategy.pine",
+      "sha256": "97cdd312cb7e35d4335b680e0ace680d343a00c7be18f3ac70a4ee8b40d7502e"
+    },
+    {
+      "file": "order-same-id-stop-window-four-bars-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-same-id-stop-window-four-bars-01/strategy.pine",
+      "sha256": "8b5234e3555b2c0e224969bbfd42cffe9d2a964644d2cbae46c330135b2f3e0e"
+    },
+    {
+      "file": "order-stale-stop-after-close-no-cancel-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-stale-stop-after-close-no-cancel-01/strategy.pine",
+      "sha256": "a7aa1d82ba889ef60158af645f347031863e23c8fc69986ecd5723a818307c5e"
+    },
+    {
+      "file": "order-stop-cancel-no-regime-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-stop-cancel-no-regime-close-01/strategy.pine",
+      "sha256": "214e114108883966ab8f48e621ec52db7a61cca2c031c90f7b8ac91721262804"
+    },
+    {
+      "file": "order-stop-entry-cancel-opposite-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-stop-entry-cancel-opposite-01/strategy.pine",
+      "sha256": "c67ba15cd255e156daf10d34c21c935c94e28e284f8277440251f63629cef0d2"
+    },
+    {
+      "file": "order-stop-entry-reversal-grouping-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-stop-entry-reversal-grouping-01/strategy.pine",
+      "sha256": "2777345294950c2701f702f0200ae42eba1e5413eb5515c609edd225eef61d7b"
+    },
+    {
+      "file": "order-stop-entry-touch-boundary-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-stop-entry-touch-boundary-01/strategy.pine",
+      "sha256": "52834e81268aae7b92f7171ec7c4b56aa4a835a0cc55fb7a219fa629f8770d49"
+    },
+    {
+      "file": "order-switchback-all-in-reversal-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-switchback-all-in-reversal-01/strategy.pine",
+      "sha256": "98f1e3f4bfad5ecd6cd5315919d9857030d096956585470d50b44353a5eb28d0"
+    },
+    {
+      "file": "order-tranche-partial-market-close-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-tranche-partial-market-close-01/strategy.pine",
+      "sha256": "65d2372fcbdcaa7fb061f96390b7354a32d9f8012e5c25a4503871a04969e431"
+    },
+    {
+      "file": "order-vector-stop-breakout-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/order-vector-stop-breakout-01/strategy.pine",
+      "sha256": "679a5bfe4b00fc22b6c57c97fff5824d1a812597e2121ad0712fd29b7005fe8b"
+    },
+    {
+      "file": "pyramid-cash-fractional-commission-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/pyramid-cash-fractional-commission-01/strategy.pine",
+      "sha256": "fc59d333327cd108b9debd15eea2e4b4d8a61c05e542b17db6aa9339ce82065c"
+    },
+    {
+      "file": "pyramid-close-id-grouping-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/pyramid-close-id-grouping-01/strategy.pine",
+      "sha256": "1e2fee26532e0b9d22999fe89e53de7744e773000c1845387867467011c8efc5"
+    },
+    {
+      "file": "pyramid-deferred-flip-close-all-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/pyramid-deferred-flip-close-all-01/strategy.pine",
+      "sha256": "03c587f133f79c6375af9c4c15738c351cb29b1b9ae555b572d96bcc7f145508"
+    },
+    {
+      "file": "pyramid-flip-stop-pyramiding-2-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/pyramid-flip-stop-pyramiding-2-01/strategy.pine",
+      "sha256": "bd2d4f68f088bdfa522e62150e000e335b0372a10c1599af272d7ca28378faf1"
+    },
+    {
+      "file": "pyramid-terrace-staged-entry-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/pyramid-terrace-staged-entry-01/strategy.pine",
+      "sha256": "ff5f74437f895292f6f6da4d17b034fd7f7c2a3845eadde0013b8a3dd68fb184"
+    },
+    {
+      "file": "recompute-alma-sar-corr-magnifier-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/recompute-alma-sar-corr-magnifier-01/strategy.pine",
+      "sha256": "063ae158e0540a2b18b5833457fb0cbace1c09670d76b31c7e81cbcd91e387ee"
+    },
+    {
+      "file": "recompute-mtf-rsi-macd-bb-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/recompute-mtf-rsi-macd-bb-01/strategy.pine",
+      "sha256": "440ffd29544c108004f3e5d0cc655548d57cb4fce6dd331a8327f0d527a1eddc"
+    },
+    {
+      "file": "risk-max-contracts-held-gate-pyramid-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/risk-max-contracts-held-gate-pyramid-01/strategy.pine",
+      "sha256": "526b1db6febb41863fb19c7315c297c81eddadc7fc0fb022bd721605cef5ba19"
+    },
+    {
+      "file": "session-borough-new-york-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/session-borough-new-york-01/strategy.pine",
+      "sha256": "c6f3168334d5a03addef829e1d6ce08024d53c443db1fb049b14cf580e92df9e"
+    },
+    {
+      "file": "session-compass-utc-market-window-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/session-compass-utc-market-window-01/strategy.pine",
+      "sha256": "39b293e6b1b064008b65150638c8f3f4b8a6441e983325c03160e8e3e486e7f6"
+    },
+    {
+      "file": "session-hour-minute-pulse-filter-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/session-hour-minute-pulse-filter-01/strategy.pine",
+      "sha256": "f1de87e4600386ec9c010b0e0c96415b2441ee3ab7e85c1a8900d89e58c594b7"
+    },
+    {
+      "file": "session-ny-spring-forward-dst-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/session-ny-spring-forward-dst-01/strategy.pine",
+      "sha256": "ec3b98500e2bccf333521108b00c7a1e6bc401772196361cac30a81b040305ee"
+    },
+    {
+      "file": "stats-eventrades-zero-pnl-count-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/stats-eventrades-zero-pnl-count-01/strategy.pine",
+      "sha256": "80d13932f5b0cb250d3d89dbe032ea7eca533b19e37aa245e4cc73f455d85319"
+    },
+    {
+      "file": "stats-ledger-outcome-throttle-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/stats-ledger-outcome-throttle-01/strategy.pine",
+      "sha256": "716c1960cefce907470b4fe8999f7ee769b44705b558669d86fc0dc6e559d2d5"
+    },
+    {
+      "file": "syntax-caliper-scalar-switch-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/syntax-caliper-scalar-switch-01/strategy.pine",
+      "sha256": "9ba3226eed8f28ad00c5067fd860e5165a9fa1616930408436f6f8bf96d0a557"
+    },
+    {
+      "file": "syntax-glyph-string-regex-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/syntax-glyph-string-regex-01/strategy.pine",
+      "sha256": "f0debdac23fe35dfe0f891f98486ec10ca1256ecbf9ddfd24b52a6c2a7de2671"
+    },
+    {
+      "file": "ta-accdist-ema-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-accdist-ema-cross-01/strategy.pine",
+      "sha256": "1ae28a7ded6f65a1e2149f053f0aa040c2b306792dd8daea5dd221c68efeb482"
+    },
+    {
+      "file": "ta-aperture-cog-linreg-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-aperture-cog-linreg-01/strategy.pine",
+      "sha256": "7f456cc0e31d388624c6f9fabc007a05d44c4ae8f6fc55182e1fa668fc93c451"
+    },
+    {
+      "file": "ta-bb-kc-squeeze-breakout-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-bb-kc-squeeze-breakout-01/strategy.pine",
+      "sha256": "6f300a93c1f69733bd2793b15fe5a49babbacb375000df6ebb77bcef9926f05c"
+    },
+    {
+      "file": "ta-bb-rsi-mean-reversion-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-bb-rsi-mean-reversion-01/strategy.pine",
+      "sha256": "70ca9dfb3281828d9881614deeb7f0873ce2331a51bb8b044c644ffc8ff8ca00"
+    },
+    {
+      "file": "ta-cci-threshold-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-cci-threshold-cross-01/strategy.pine",
+      "sha256": "481be39d18f8fe1cca181ef5d83e6bb946488943a0fe627716ac7ab8e9032f67"
+    },
+    {
+      "file": "ta-chandelier-exit-direction-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-chandelier-exit-direction-01/strategy.pine",
+      "sha256": "73ff78fbb6dfe64609449af9be5e3fccebeaaa3b98d8b120fa5f4a67936d6bfd"
+    },
+    {
+      "file": "ta-closedtrades-risk-introspection-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-closedtrades-risk-introspection-01/strategy.pine",
+      "sha256": "9f4d7a1e318c38708fdc051dd443d73637f37bd55f4e8de52f1b49e234d76d1f"
+    },
+    {
+      "file": "ta-cmo-9-zero-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-cmo-9-zero-cross-01/strategy.pine",
+      "sha256": "984f2b2e8b577356300009ab15d0e149a0bfbaeb38b00b2f489f15177a1b591d"
+    },
+    {
+      "file": "ta-cog-10-signal-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-cog-10-signal-cross-01/strategy.pine",
+      "sha256": "119dea93818194cd2499985cb7d33f1f6da4ae700ebb8a2fa75dec1a03b86727"
+    },
+    {
+      "file": "ta-conduit-obv-accdist-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-conduit-obv-accdist-01/strategy.pine",
+      "sha256": "454ff937908bb5e0831ea519adf53a9e0bec4582b1a4f22e1aceddcc6f6459e2"
+    },
+    {
+      "file": "ta-dmi-adx-di-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-dmi-adx-di-cross-01/strategy.pine",
+      "sha256": "0023c979c193250a9089c1071ec44bd2c3ce45237bc809842eaf12f4150f216c"
+    },
+    {
+      "file": "ta-donchian-channel-breakout-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-donchian-channel-breakout-01/strategy.pine",
+      "sha256": "ef7d32822ef456d94b47a998c684beeaf3df8e45bfb99902486819a4b20daca9"
+    },
+    {
+      "file": "ta-dual-ma-switch-dispatch-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-dual-ma-switch-dispatch-01/strategy.pine",
+      "sha256": "206b3d25acfc3a3fb27cf7db3d9366b7a303b65984244c522f386e0f4b24fe45"
+    },
+    {
+      "file": "ta-dual-thrust-open-anchored-range-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-dual-thrust-open-anchored-range-01/strategy.pine",
+      "sha256": "072ab3bff556b6e69cb55489b976e0e176e66eea84054e4a27620506328b3b87"
+    },
+    {
+      "file": "ta-elder-ray-bull-bear-power-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-elder-ray-bull-bear-power-01/strategy.pine",
+      "sha256": "c3e209d39f32a00f2bc6df43ca0f6c3940dc7eade50582d911f7cc9de7e88d93"
+    },
+    {
+      "file": "ta-ema-ribbon-stack-transition-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-ema-ribbon-stack-transition-01/strategy.pine",
+      "sha256": "c3152905c99e47d5d76d30b0aca5d95537c0694b930a8018a9aade8302cda78a"
+    },
+    {
+      "file": "ta-engulfing-candle-pattern-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-engulfing-candle-pattern-01/strategy.pine",
+      "sha256": "c80ca6f0b8c59533bd06d6a44ba77085ccd7820b49ac614c6eccfc6a4946103b"
+    },
+    {
+      "file": "ta-gyroscope-cmo-median-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-gyroscope-cmo-median-01/strategy.pine",
+      "sha256": "877c3cbcd21d8bd9ea0a4f64c855d455f24c54215f312adb9618e3341aff9311"
+    },
+    {
+      "file": "ta-highestbars-lowestbars-breakout-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-highestbars-lowestbars-breakout-01/strategy.pine",
+      "sha256": "d6c5d890e831e6186933cac7374544235933c508702c5ee6ef3d024ad12d2b59"
+    },
+    {
+      "file": "ta-hma-55-close-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-hma-55-close-cross-01/strategy.pine",
+      "sha256": "32d524fdea31fd49eec4a67524d54d12bc369bd4f338c3dcb3f5a374fb7590d5"
+    },
+    {
+      "file": "ta-hma-fast-slow-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-hma-fast-slow-cross-01/strategy.pine",
+      "sha256": "4ba8798767835eaae356edee796234d934ff3e2f63ca901e51155709a36bdbf1"
+    },
+    {
+      "file": "ta-inside-bar-engulfing-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-inside-bar-engulfing-01/strategy.pine",
+      "sha256": "7accbf10efb6838725cff5917585e9ae3ec486ed169b0e950bb66aa3d5987a6d"
+    },
+    {
+      "file": "ta-kama-style-efficiency-ratio-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-kama-style-efficiency-ratio-01/strategy.pine",
+      "sha256": "23b89a4ec37c78c51c2344592dab608ecb40dc9dbfd657eb61df1c3f37740cad"
+    },
+    {
+      "file": "ta-keltner-channel-break-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-keltner-channel-break-01/strategy.pine",
+      "sha256": "06ea017b92d432fbc37cd859670ece954628ebeb31a4905016710c326ead4604"
+    },
+    {
+      "file": "ta-linreg-stdev-channel-revert-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-linreg-stdev-channel-revert-01/strategy.pine",
+      "sha256": "7b7722641868c9683ce59ae796fd181e2fdc0920d8cb14d9a2c63a9fe0738b4c"
+    },
+    {
+      "file": "ta-macd-12-26-9-line-signal-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-macd-12-26-9-line-signal-cross-01/strategy.pine",
+      "sha256": "50ac5a9c20c3098841bd31190cdbeca0ceaa2bf8a85dc1e5af7a5b6fa8415c80"
+    },
+    {
+      "file": "ta-macd-histogram-reversal-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-macd-histogram-reversal-01/strategy.pine",
+      "sha256": "769c17896c9b9d516001f458154967ea6d210f771a2a626422638752be2e8303"
+    },
+    {
+      "file": "ta-macd-line-gt-signal-continuous-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-macd-line-gt-signal-continuous-state-01/strategy.pine",
+      "sha256": "491cccc7a5dc4d65c9f42c896eab7dc8abffdf36dbb651390193d9c219975fb1"
+    },
+    {
+      "file": "ta-mantle-keltner-regime-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-mantle-keltner-regime-01/strategy.pine",
+      "sha256": "b119ac701e21900e13ed5351db849187f912a7619e4a04655ec1453b914a6ddc"
+    },
+    {
+      "file": "ta-map-regime-threshold-lookup-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-map-regime-threshold-lookup-01/strategy.pine",
+      "sha256": "0689c615e98f75620f277f188455b6784ed772d8e190387582be976533385db7"
+    },
+    {
+      "file": "ta-median-vs-ema-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-median-vs-ema-cross-01/strategy.pine",
+      "sha256": "fb6f04a585c88a4dfad77b2d12475b0683785deb3a2fa266e3e8b3c6898b51b2"
+    },
+    {
+      "file": "ta-meridian-dmi-regime-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-meridian-dmi-regime-01/strategy.pine",
+      "sha256": "066cfa272315731db187ffcc02d55d083454e7e54b30781cd11d45a119dfab4d"
+    },
+    {
+      "file": "ta-mfi-14-bands-20-80-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-mfi-14-bands-20-80-01/strategy.pine",
+      "sha256": "31fc0ce18ffc1a23d5f476891abf575dac2b5068de26451f61b0b8475d477589"
+    },
+    {
+      "file": "ta-momentum-roc-zero-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-momentum-roc-zero-cross-01/strategy.pine",
+      "sha256": "ac3219991e85c1cfa11696d6372147b0f0b5b8ac4a08514baf5e8a39666989e2"
+    },
+    {
+      "file": "ta-multi-indicator-score-composite-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-multi-indicator-score-composite-01/strategy.pine",
+      "sha256": "9ce0ee12452e1f403f6c64b8d9776a04eb0705a6534dbb51f53e6bfac6cd3835"
+    },
+    {
+      "file": "ta-nvi-pvi-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-nvi-pvi-cross-01/strategy.pine",
+      "sha256": "08d5a9f7e5e24f9f7f44cd1948c9f277d1b5e695ab048c59cfc1c6335e545197"
+    },
+    {
+      "file": "ta-obv-ema-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-obv-ema-cross-01/strategy.pine",
+      "sha256": "b51684da65434e5e579d20f187c1088a6b332d9b6e62f805e1ca3e313f4534c0"
+    },
+    {
+      "file": "ta-pendulum-sar-rotation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pendulum-sar-rotation-01/strategy.pine",
+      "sha256": "ba5be9f961156beb03871f993086a074f597240298893f4f3b427fc959d1c758"
+    },
+    {
+      "file": "ta-percentrank-mean-reversion-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-percentrank-mean-reversion-01/strategy.pine",
+      "sha256": "a3c0303ce10e5f382a749c0ebddac38db9a7c9e40320de5915180da039110be8"
+    },
+    {
+      "file": "ta-pivot-array-unshift-pop-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pivot-array-unshift-pop-01/strategy.pine",
+      "sha256": "8d3c58f08a9bdc15465f1333d5db7c85ee166c3fee2871abc828f26072488de5"
+    },
+    {
+      "file": "ta-pivot-atr-stop-target-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pivot-atr-stop-target-01/strategy.pine",
+      "sha256": "7c0b028981524698b55f986af1d650eaf71ddfb5566a335cfefaf134aa33dc26"
+    },
+    {
+      "file": "ta-pivot-confirmed-break-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pivot-confirmed-break-01/strategy.pine",
+      "sha256": "40196ae55a61b7f302cd6052c9e5a98170c7467a5c0b4550c304328c8d37c4da"
+    },
+    {
+      "file": "ta-pivot-point-levels-break-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pivot-point-levels-break-01/strategy.pine",
+      "sha256": "5eadb30244257efe2a1ee13b5c6460df30dc6cc99d11ab33781dc9707acf94cb"
+    },
+    {
+      "file": "ta-plumbline-pvt-vwma-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-plumbline-pvt-vwma-01/strategy.pine",
+      "sha256": "cde69f0aeda78bd0ef732eb65da309ea11ddebe7beeae67923ff09b64150efb2"
+    },
+    {
+      "file": "ta-pvt-ema-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-pvt-ema-cross-01/strategy.pine",
+      "sha256": "a5072ce270005c5210cc8739af163405e97cae2e1fb2a372ee5ac09f74ad7d88"
+    },
+    {
+      "file": "ta-quarry-alma-correlation-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-quarry-alma-correlation-01/strategy.pine",
+      "sha256": "27960c57e7db93d0c6848216a96eb41a4627b343076c65125d5a037f15f2adb6"
+    },
+    {
+      "file": "ta-range-filter-var-band-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-range-filter-var-band-01/strategy.pine",
+      "sha256": "77104bd1a544e56cbfa09de0767147dde1865b8e29f0b96d5354dbd05b129b40"
+    },
+    {
+      "file": "ta-rci-14-zero-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rci-14-zero-cross-01/strategy.pine",
+      "sha256": "bd1f71065b6c2daf63a69762a9675329d05fd1cc72d5ef3b2b47dd29dc7b5a35"
+    },
+    {
+      "file": "ta-rsi-bb-self-bands-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi-bb-self-bands-01/strategy.pine",
+      "sha256": "8a5ff95c2543b2051d90f9125da1aed01211728f75c53a4f098874519360849f"
+    },
+    {
+      "file": "ta-rsi-ema-signal-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi-ema-signal-cross-01/strategy.pine",
+      "sha256": "32d8c92d5fab288ac61bd1ad0c906d98c9cb061dc105c85c89e5905ecfbf1155"
+    },
+    {
+      "file": "ta-rsi-macd-and-continuous-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi-macd-and-continuous-state-01/strategy.pine",
+      "sha256": "cd7dc14b810b9764f1579db4cf8e379a4470b8d0831115935a0dcb63327ca45c"
+    },
+    {
+      "file": "ta-rsi14-bands-30-70-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi14-bands-30-70-01/strategy.pine",
+      "sha256": "c1821136f799bd424b6555e4ae7417884df74925fe8edad1561cffc2a2a8b90a"
+    },
+    {
+      "file": "ta-rsi14-cross-50-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi14-cross-50-01/strategy.pine",
+      "sha256": "c9b21043b8cf804308390cb523b9f895fd778e8cfed2e6bc0542122c495a7f58"
+    },
+    {
+      "file": "ta-rsi14-gt-50-continuous-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi14-gt-50-continuous-state-01/strategy.pine",
+      "sha256": "e79170a1d47c0523c43d6f214ff604561876e2bc1a767f081634d45e6cb9aab3"
+    },
+    {
+      "file": "ta-rsi14-gt60-lt45-no-matrix-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-rsi14-gt60-lt45-no-matrix-01/strategy.pine",
+      "sha256": "d31e14cd4fed6bd297264903447f8bb58fde4f4aac855b57f3b59768132cae45"
+    },
+    {
+      "file": "ta-sar-flip-entry-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-sar-flip-entry-01/strategy.pine",
+      "sha256": "320f0fa1417d0ba6d488961f1e7fce57f3b242acc5cd41ffd6b935d402fae1c7"
+    },
+    {
+      "file": "ta-sextant-cci-hma-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-sextant-cci-hma-01/strategy.pine",
+      "sha256": "730ae7f5f6846cbc085ad3eb0a5f45693a717468cef5b4e1d384f723069822b4"
+    },
+    {
+      "file": "ta-sma-152-close-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-sma-152-close-cross-01/strategy.pine",
+      "sha256": "d8c7746013050548bc82f36d3e3e33cf20cae3e7404ea31b8997bebf7d8143ef"
+    },
+    {
+      "file": "ta-sma-dual-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-sma-dual-cross-01/strategy.pine",
+      "sha256": "3ad90df5fd6370ffa0fbe8737bd3459ec7326db813803892d4591f4d580b15f3"
+    },
+    {
+      "file": "ta-stdev-sma-expansion-break-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-stdev-sma-expansion-break-01/strategy.pine",
+      "sha256": "3695ec5e7772ed869975aea5f749552116217082924617ba642b304a1657e90b"
+    },
+    {
+      "file": "ta-stoch-slow-k-d-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-stoch-slow-k-d-cross-01/strategy.pine",
+      "sha256": "1b432630953159614597042a69168062ee1f66944931a6b0dd4230345023e419"
+    },
+    {
+      "file": "ta-stochastic-rsi-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-stochastic-rsi-cross-01/strategy.pine",
+      "sha256": "e865936219d2c79a18afc90af6738ecf819b7762535e517c175ab1603a8e6988"
+    },
+    {
+      "file": "ta-str-match-regex-filter-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-str-match-regex-filter-01/strategy.pine",
+      "sha256": "42fc2382fb3ab1b858332c268886c5176545198646ed947ecb319b162b1c2a1d"
+    },
+    {
+      "file": "ta-supertrend-adx-filter-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-supertrend-adx-filter-01/strategy.pine",
+      "sha256": "d73ea0857753d02028c30f61244c7dc0c27b062a7ebd99adbb102fa9c0aefb38"
+    },
+    {
+      "file": "ta-supertrend-direction-flip-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-supertrend-direction-flip-01/strategy.pine",
+      "sha256": "2bfba6581648a3b56bd7432e0d1eb115686a9ce3e10d233ffdcffd9b20187ee3"
+    },
+    {
+      "file": "ta-tally-volume-index-roc-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-tally-volume-index-roc-01/strategy.pine",
+      "sha256": "7dbc1314f44c3ea2d33eb521129f005610356d757ac5430976dd634a05a02233"
+    },
+    {
+      "file": "ta-torque-tsi-signal-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-torque-tsi-signal-01/strategy.pine",
+      "sha256": "d5cae37525ed8fcf5cbc2492a153e66b02fd7f1aca4af01ee606092e3dd762b5"
+    },
+    {
+      "file": "ta-triple-sma-stack-latch-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-triple-sma-stack-latch-01/strategy.pine",
+      "sha256": "a0c849d9cef869edfdd7563be72a6ad046d473d90c252d7a54a0151b74f1fa16"
+    },
+    {
+      "file": "ta-tsi-25-13-signal-cross-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-tsi-25-13-signal-cross-01/strategy.pine",
+      "sha256": "61a037b063f19ba67ff0c47f7908258ce1f84d6ef5b32a05768b57f2ca99731b"
+    },
+    {
+      "file": "ta-volume-spike-atr-breakout-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-volume-spike-atr-breakout-01/strategy.pine",
+      "sha256": "1fe5605cb2f8df808da810b86600693eefffe1c86e8ef168b7f976a37bd19521"
+    },
+    {
+      "file": "ta-vwma-vs-sma-divergence-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-vwma-vs-sma-divergence-01/strategy.pine",
+      "sha256": "4b71be7f758b35552a2204a24c784a2239e39720576b17e96e7a3fdbca5d20d4"
+    },
+    {
+      "file": "ta-wpr-14-bands-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-wpr-14-bands-01/strategy.pine",
+      "sha256": "5496c2ade3271d29399b2c1d8af6c7a58bd90e305b5b43e028d28fcdcddd06e9"
+    },
+    {
+      "file": "ta-zenith-rci-wpr-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/ta-zenith-rci-wpr-01/strategy.pine",
+      "sha256": "11df6e8f07d052cc136d6ecc7cc127bc0370c4c8c02d7629e82e11109a4615e5"
+    },
+    {
+      "file": "timeframe-dial-main-period-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/timeframe-dial-main-period-01/strategy.pine",
+      "sha256": "e46277239560b41fb7ad24353e0729bb864e2a28dcf00b6d4db9a3be5c67fc3c"
+    },
+    {
+      "file": "timeframe-main-period-self-adaptive-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/timeframe-main-period-self-adaptive-01/strategy.pine",
+      "sha256": "dc735948eb9df64aed6a312e08c396d8abe0a689b137ca58fe2071852f53429a"
+    },
+    {
+      "file": "udt-breaker-method-while-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-breaker-method-while-01/strategy.pine",
+      "sha256": "b4c045cca788a72ce49c04df9c51089953a060775d675bed88e979fb51dde65a"
+    },
+    {
+      "file": "udt-courier-return-method-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-courier-return-method-01/strategy.pine",
+      "sha256": "a7ff0ccbb3b0443fbecda1a43f104a96254d336ae55221b6e37f0db879ccbd03"
+    },
+    {
+      "file": "udt-loopback-method-for-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-loopback-method-for-01/strategy.pine",
+      "sha256": "75d1049bd7fd68a8a77a278ec72d924d9b85ebec920f8c1b1493e12692e32c41"
+    },
+    {
+      "file": "udt-method-calls-sibling-cumulative-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-calls-sibling-cumulative-01/strategy.pine",
+      "sha256": "9324e59fed92ddbc2cb3d90939bd109c3f99b8996cf7d6ea6fa010e4d5704299"
+    },
+    {
+      "file": "udt-method-default-param-kwargs-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-default-param-kwargs-01/strategy.pine",
+      "sha256": "d23d499bbd31160ab4df92db2a2a4c5f34bf897ad29a463d3580bbf6beaa5e97"
+    },
+    {
+      "file": "udt-method-drives-strategy-entry-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-drives-strategy-entry-01/strategy.pine",
+      "sha256": "46bae206c7decfbe50cdd2a43e0aec2a983738fd898a19f6a0da0e2668c300da"
+    },
+    {
+      "file": "udt-method-extra-primitive-args-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-extra-primitive-args-01/strategy.pine",
+      "sha256": "26872358da1a731079c52aefa132a7faac50f24d3db1a4899f0b2954a2974e3b"
+    },
+    {
+      "file": "udt-method-feeds-strategy-exit-prices-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-feeds-strategy-exit-prices-01/strategy.pine",
+      "sha256": "50dc0b4ce637cbac39c68e0710a8ff1d6422436a1313e53dac868c99da8ef605"
+    },
+    {
+      "file": "udt-method-in-for-loop-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-in-for-loop-01/strategy.pine",
+      "sha256": "e05246bbff55be57d60a670e96f4d8c57718e44d44f4a7a96a9d49c6800e34da"
+    },
+    {
+      "file": "udt-method-in-if-else-branch-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-in-if-else-branch-01/strategy.pine",
+      "sha256": "dd3b67e3160551dfb974b1d4e3406f1883cc06c616f3ea6a823428b2f51f1902"
+    },
+    {
+      "file": "udt-method-in-switch-arms-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-in-switch-arms-01/strategy.pine",
+      "sha256": "6f7e157bb4b1f166bb67c05647ebef13361f766670de38012d782406d81972b1"
+    },
+    {
+      "file": "udt-method-in-while-loop-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-in-while-loop-01/strategy.pine",
+      "sha256": "a9d7143b4d20bf3bd4aca5a41fcc8226137f1568424f92e22564abc93586b544"
+    },
+    {
+      "file": "udt-method-mutating-self-ref-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-mutating-self-ref-01/strategy.pine",
+      "sha256": "7eee37489eeb53fb54d6bd5a1280fe588120cbffe39cddd418fe15688a2a61a5"
+    },
+    {
+      "file": "udt-method-on-array-element-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-on-array-element-01/strategy.pine",
+      "sha256": "b7e4dfdeb999ff0b7e597b91f5289308afcb59b720449ed34e2511d53300947b"
+    },
+    {
+      "file": "udt-method-reads-strategy-state-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-reads-strategy-state-01/strategy.pine",
+      "sha256": "354eb3e6189accfe68b13dff3855d24bcc39bd4d711e185d9363d1731d55d235"
+    },
+    {
+      "file": "udt-method-receives-ta-series-param-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-receives-ta-series-param-01/strategy.pine",
+      "sha256": "f15222184fe0b694fe52cb93b018f2fabae8cd77f91ae941d3d8ac9411743a95"
+    },
+    {
+      "file": "udt-method-scalar-return-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-scalar-return-01/strategy.pine",
+      "sha256": "6843bb5300a5a73568586b731c7c0e20421350293d9ab224fe2d53089b41be0f"
+    },
+    {
+      "file": "udt-method-tuple-return-destructure-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-tuple-return-destructure-01/strategy.pine",
+      "sha256": "fbc267c36e9c9a7de88d599ef7e41652654ef4b862837f615353549ca63bb78d"
+    },
+    {
+      "file": "udt-method-udt-return-from-func-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-udt-return-from-func-01/strategy.pine",
+      "sha256": "9a7a03522f000b7b21f4f4f4baa6de082584dbb6ad7b7e364580a31b74407152"
+    },
+    {
+      "file": "udt-method-uses-history-globals-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-uses-history-globals-01/strategy.pine",
+      "sha256": "97b3de8f3847b23e89ca0fdceb93d117661a83a93c4fad4c67f12a4aaa47ebbc"
+    },
+    {
+      "file": "udt-method-uses-math-funcs-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-uses-math-funcs-01/strategy.pine",
+      "sha256": "eb431824cb2d0a3abbe2a8c29b25e9e5dae7ee17ff80f87e31153f1b0aff2ecc"
+    },
+    {
+      "file": "udt-method-uses-na-nz-fixnan-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-uses-na-nz-fixnan-01/strategy.pine",
+      "sha256": "97e8a2ded3f2798d100375d7583a7cf2fdf003d245be0b10dca1ff86e7889b04"
+    },
+    {
+      "file": "udt-method-var-instance-streak-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-var-instance-streak-01/strategy.pine",
+      "sha256": "1b1cfe0da20daa0a9589aac3ffb50843576e426acdce8d2d19c736cfe5a0a6be"
+    },
+    {
+      "file": "udt-method-windowed-method-chain-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-method-windowed-method-chain-01/strategy.pine",
+      "sha256": "f14a1a12d62f04d7dbc2033ecceb4dcc127a72672ce5e37b9f16000248c8c558"
+    },
+    {
+      "file": "udt-regime-stack-stress-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-regime-stack-stress-01/strategy.pine",
+      "sha256": "20d712ac8fe1086f7b4046eed73d1d2c4c301c1f26e0050583b635d69488c5f4"
+    },
+    {
+      "file": "udt-sentinel-method-regime-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-sentinel-method-regime-01/strategy.pine",
+      "sha256": "67727123fa58150a51a52505028e257b1a82b94517a4524a79f8303cd4ca1a5c"
+    },
+    {
+      "file": "udt-switchboard-method-arms-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-switchboard-method-arms-01/strategy.pine",
+      "sha256": "8627405ad88730a6db18c416fb7d1479972b96403efc58fe8f16a1abcf739231"
+    },
+    {
+      "file": "udt-tessellate-tuple-method-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/udt-tessellate-tuple-method-01/strategy.pine",
+      "sha256": "cff58080978a5c98666006e8a6a0e434fac40a1b152aaa20f5d44d33d256b785"
+    },
+    {
+      "file": "volume-tide-vwap-mfi-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/volume-tide-vwap-mfi-01/strategy.pine",
+      "sha256": "d152a8826de7cc4883503f77fa93ee20949a729eed7c6b181e840d4265fd2b8d"
+    },
+    {
+      "file": "vwap-bands-breakout-1sigma-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/vwap-bands-breakout-1sigma-01/strategy.pine",
+      "sha256": "55283d23f975e0fdc9f582c5ec22e89c29d5dfc7aaafee5cd10ecf4465181688"
+    },
+    {
+      "file": "vwap-bands-mean-reversion-2sigma-01.pine",
+      "source": "https://github.com/pineforge-4pass/pineforge-corpus/blob/7ad36e247768993238e2e14342ef2872aa99c933/validation/vwap-bands-mean-reversion-2sigma-01/strategy.pine",
+      "sha256": "54bea19d43aee742b8d50c93d7428e8e155a12752db993469a84d0cbc3a4a841"
+    }
+  ]
+}

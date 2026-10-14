@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "immutableConflict": 409,
+  "recursiveLocalLock": "d4e7834e7c746ebcdedb992c03939340f8441959c72ade2ca0481c1280ec8e81",
+  "nativePlot": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "libraryHash": "a9e91b8f2c9df64fa36790c3fb57c05cd88ff390810aca151c424c4aac83a033",
+  "manifestLock": {
+    "lockHash": "d4e7834e7c746ebcdedb992c03939340f8441959c72ade2ca0481c1280ec8e81",
+    "modules": [
+      {
+        "hash": "a9e91b8f2c9df64fa36790c3fb57c05cd88ff390810aca151c424c4aac83a033",
+        "reference": "local/Tools/1"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "continuous": [
+    {
+      "kind": "pine",
+      "session_id": "06405480-fd88-4b32-9239-434fb7f7a5c8",
+      "appended_events": 5,
+      "restart": true,
+      "native_batch_equals_continuous": true
+    },
+    {
+      "kind": "composer",
+      "session_id": "2f0cb884-2174-4c2a-8fe6-629f9f1b8c32",
+      "appended_events": 5,
+      "restart": true,
+      "native_batch_equals_continuous": true
+    },
+    {
+      "kind": "composer",
+      "session_id": "2f496839-b61a-4b5b-a7fe-f0006fbcb257",
+      "appended_events": 5,
+      "restart": true,
+      "native_batch_equals_continuous": true
+    },
+    {
+      "kind": "composer",
+      "session_id": "00234f70-c889-4d99-8a4c-efac83b79083",
+      "appended_events": 5,
+      "restart": true,
+      "native_batch_equals_continuous": true
+    }
+  ],
+  "plugins": 3,
+  "cli": true
+}

@@ -1,0 +1,1 @@
+{"id":"equity-report","version":"0.1.0","api_version":"trading.plugin.v1","entrypoint":"index.cjs","contributes":["report"],"permissions":["input.read"]}

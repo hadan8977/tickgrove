@@ -1,0 +1,219 @@
+{
+  "startedAt": "2026-10-14T05:49:45.942Z",
+  "completedAt": "2026-10-14T05:50:05.538Z",
+  "synthetic": false,
+  "provider": "coinbase",
+  "symbol": "BTC-USD",
+  "subscription": "fdbe5d8a-1bde-4f28-affe-b935b2eff74a",
+  "samples": [
+    {
+      "at": 1791956986035,
+      "requestMs": 53.88547699999992,
+      "status": "connected",
+      "quoteTime": 1791956981790,
+      "persistedAt": 1791956982088,
+      "processingLagMs": 298,
+      "quoteAgeMs": 4246,
+      "stale": false
+    },
+    {
+      "at": 1791956987062,
+      "requestMs": 25.395686999999953,
+      "status": "connected",
+      "quoteTime": 1791956981790,
+      "persistedAt": 1791956982088,
+      "processingLagMs": 298,
+      "quoteAgeMs": 5272,
+      "stale": false
+    },
+    {
+      "at": 1791956988146,
+      "requestMs": 83.55274499999996,
+      "status": "connected",
+      "quoteTime": 1791956981790,
+      "persistedAt": 1791956982088,
+      "processingLagMs": 298,
+      "quoteAgeMs": 6356,
+      "stale": false
+    },
+    {
+      "at": 1791956989173,
+      "requestMs": 24.603636999999708,
+      "status": "connected",
+      "quoteTime": 1791956981790,
+      "persistedAt": 1791956982088,
+      "processingLagMs": 298,
+      "quoteAgeMs": 7383,
+      "stale": false
+    },
+    {
+      "at": 1791956990202,
+      "requestMs": 28.716840000000047,
+      "status": "connected",
+      "quoteTime": 1791956981790,
+      "persistedAt": 1791956982088,
+      "processingLagMs": 298,
+      "quoteAgeMs": 8412,
+      "stale": false
+    },
+    {
+      "at": 1791956991221,
+      "requestMs": 16.552848999999696,
+      "status": "connected",
+      "quoteTime": 1791956990316,
+      "persistedAt": 1791956990391,
+      "processingLagMs": 75,
+      "quoteAgeMs": 905,
+      "stale": false
+    },
+    {
+      "at": 1791956992249,
+      "requestMs": 26.509683999999652,
+      "status": "connected",
+      "quoteTime": 1791956991987,
+      "persistedAt": 1791956992182,
+      "processingLagMs": 195,
+      "quoteAgeMs": 262,
+      "stale": false
+    },
+    {
+      "at": 1791956993280,
+      "requestMs": 29.52133799999956,
+      "status": "connected",
+      "quoteTime": 1791956992384,
+      "persistedAt": 1791956992466,
+      "processingLagMs": 82,
+      "quoteAgeMs": 896,
+      "stale": false
+    },
+    {
+      "at": 1791956994313,
+      "requestMs": 31.781942999999956,
+      "status": "connected",
+      "quoteTime": 1791956992384,
+      "persistedAt": 1791956992466,
+      "processingLagMs": 82,
+      "quoteAgeMs": 1929,
+      "stale": false
+    },
+    {
+      "at": 1791956995330,
+      "requestMs": 15.449792999999772,
+      "status": "connected",
+      "quoteTime": 1791956992384,
+      "persistedAt": 1791956992466,
+      "processingLagMs": 82,
+      "quoteAgeMs": 2946,
+      "stale": false
+    },
+    {
+      "at": 1791956996348,
+      "requestMs": 15.413431999999375,
+      "status": "connected",
+      "quoteTime": 1791956992384,
+      "persistedAt": 1791956992466,
+      "processingLagMs": 82,
+      "quoteAgeMs": 3964,
+      "stale": false
+    },
+    {
+      "at": 1791956997365,
+      "requestMs": 15.097065000001749,
+      "status": "connected",
+      "quoteTime": 1791956992384,
+      "persistedAt": 1791956992466,
+      "processingLagMs": 82,
+      "quoteAgeMs": 4981,
+      "stale": false
+    },
+    {
+      "at": 1791956998381,
+      "requestMs": 14.793456999999762,
+      "status": "connected",
+      "quoteTime": 1791956997320,
+      "persistedAt": 1791956997399,
+      "processingLagMs": 79,
+      "quoteAgeMs": 1061,
+      "stale": false
+    },
+    {
+      "at": 1791956999395,
+      "requestMs": 13.731208000001061,
+      "status": "connected",
+      "quoteTime": 1791956997320,
+      "persistedAt": 1791956997399,
+      "processingLagMs": 79,
+      "quoteAgeMs": 2075,
+      "stale": false
+    },
+    {
+      "at": 1791957000420,
+      "requestMs": 22.92712399999982,
+      "status": "connected",
+      "quoteTime": 1791956999709,
+      "persistedAt": 1791957000392,
+      "processingLagMs": 683,
+      "quoteAgeMs": 711,
+      "stale": false
+    },
+    {
+      "at": 1791957001483,
+      "requestMs": 62.72794400000021,
+      "status": "connected",
+      "quoteTime": 1791957000622,
+      "persistedAt": 1791957001298,
+      "processingLagMs": 676,
+      "quoteAgeMs": 861,
+      "stale": false
+    },
+    {
+      "at": 1791957002493,
+      "requestMs": 9.779203999998572,
+      "status": "connected",
+      "quoteTime": 1791957002346,
+      "persistedAt": 1791957002408,
+      "processingLagMs": 62,
+      "quoteAgeMs": 147,
+      "stale": false
+    },
+    {
+      "at": 1791957003513,
+      "requestMs": 18.823098999997455,
+      "status": "connected",
+      "quoteTime": 1791957003357,
+      "persistedAt": 1791957003438,
+      "processingLagMs": 81,
+      "quoteAgeMs": 156,
+      "stale": false
+    },
+    {
+      "at": 1791957004525,
+      "requestMs": 10.325998000000254,
+      "status": "connected",
+      "quoteTime": 1791957004288,
+      "persistedAt": 1791957004358,
+      "processingLagMs": 70,
+      "quoteAgeMs": 237,
+      "stale": false
+    },
+    {
+      "at": 1791957005537,
+      "requestMs": 12.48203900000226,
+      "status": "connected",
+      "quoteTime": 1791957004288,
+      "persistedAt": 1791957004358,
+      "processingLagMs": 70,
+      "quoteAgeMs": 1249,
+      "stale": false
+    }
+  ],
+  "summary": {
+    "medianStatusRequestMs": 22.92712399999982,
+    "medianQuoteAgeMs": 1929,
+    "maxQuoteAgeMs": 8412,
+    "freshSamples": 20,
+    "distinctQuoteTimestamps": 10
+  },
+  "passed": true,
+  "limitation": "Short observed public-network window after the status-query fix; not an uptime, latency SLA or many-symbol load guarantee. persistedAt is service processing time, not raw socket-read time."
+}

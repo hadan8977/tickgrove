@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "install": "corepack pnpm install --frozen-lockfile --ignore-scripts",
+  "packageManager": "pnpm@10.32.1",
+  "typecheck": true,
+  "build": true,
+  "versions": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "vite": "8.0.5",
+    "typescript": "5.9.3",
+    "pinets": "0.11.1",
+    "acorn": "8.19.0"
+  },
+  "sameFinalFrontendSource": true,
+  "projectDistCopiedFromLockedBuild": true,
+  "indexSha256": "0787aed9c3e49dc1f7098a607f19f09717fceb43937d10e48ee43129354488f0"
+}

@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
-@import 'tailwindcss';
-@import 'dockview-react/dist/styles/dockview.css';
+@import url("/fonts/fonts.css");
+@import "tailwindcss";
+@import "dockview-react/dist/styles/dockview.css";
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *, [data-theme='cobalt'], [data-theme='cobalt'] *));
 
 /* Open Composer — "Score": neutral hairline structure, one signal color per theme. */
 :root,
-[data-theme='dark'] {
+[data-theme="dark"] {
   --aura-1: #1f6f6a;
   --aura-2: #9a6a3c;
   --aura-k: 0.9;
@@ -35,7 +35,7 @@
   --grid: rgba(255, 255, 255, 0.035);
 }
 
-[data-theme='light'] {
+[data-theme="light"] {
   --aura-1: #b9d9d2;
   --aura-2: #ecd3ad;
   --aura-k: 0.75;
@@ -65,7 +65,7 @@
 }
 
 /* Cobalt: deep ink-blue night with an electric signal. */
-[data-theme='cobalt'] {
+[data-theme="cobalt"] {
   --aura-1: #2d5bff;
   --aura-2: #22c1ff;
   --aura-k: 1;
@@ -95,7 +95,7 @@
 }
 
 /* Moss: warm field-notes paper with a botanical signal. */
-[data-theme='moss'] {
+[data-theme="moss"] {
   --aura-1: #8faa62;
   --aura-2: #d9935e;
   --aura-k: 0.8;
@@ -127,8 +127,10 @@
 @theme inline {
   --color-aura-1: var(--aura-1);
   --color-aura-2: var(--aura-2);
-  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-sans:
+    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, "Microsoft YaHei", monospace;
   --color-bg: var(--bg);
   --color-bg-2: var(--bg-2);
   --color-panel: var(--panel);
@@ -162,14 +164,110 @@ body {
   font-family: var(--font-sans);
   font-size: 13px;
   -webkit-font-smoothing: antialiased;
-  font-feature-settings: 'ss01', 'cv11';
+  line-height: 1.45;
   overflow: hidden;
 }
 
 .num {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+pre,
+code,
+kbd,
+pre.num,
+code.num,
+textarea.num,
+.code-text {
+  font-family: var(--font-mono);
+}
+.chart-panel {
+  container: chart-panel / inline-size;
+}
+.chart-toolbar {
+  min-height: 32px;
+}
+.chart-more-tools {
+  display: none;
+}
+@container chart-panel (max-width: 619px) {
+  .chart-secondary-tools {
+    display: none;
+  }
+  .chart-more-tools {
+    display: block;
+  }
+  .chart-toolbar .chart-change,
+  .chart-toolbar .chart-separator {
+    display: none;
+  }
+}
+@container chart-panel (max-width: 399px) {
+  .chart-toolbar .chart-quote {
+    display: none;
+  }
+  .chart-ohlc-extra {
+    display: none;
+  }
+  .chart-indicator-details {
+    display: none;
+  }
+  .chart-indicator-summary {
+    display: block;
+  }
+}
+@container chart-panel (min-width: 400px) {
+  .chart-indicator-summary {
+    display: none;
+  }
+}
+.workspace-taskbar {
+  scrollbar-width: none;
+}
+.workspace-taskbar::-webkit-scrollbar {
+  display: none;
+}
+.page-heading {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.page-description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.pine-workbench {
+  container: pine-pane / inline-size;
+}
+.report-panel {
+  container: report-pane / inline-size;
+}
+.report-metrics {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@container report-pane (max-width: 599px) {
+  .report-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container pine-pane (max-width: 699px) {
+  .pine-sidebar {
+    position: absolute;
+    inset: 36px auto 0 0;
+    z-index: 25;
+    width: min(260px, 85%);
+    box-shadow: 8px 0 24px #0003;
+  }
 }
 
 ::selection {
@@ -184,8 +282,16 @@ body {
 /* Liquid glass: blurred backdrop, specular top rim, refracted aura tint, soft drop. */
 .glass {
   background:
-    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--aura-1) 10%, transparent), transparent 60%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-edge) 30%, transparent), transparent 38%),
+    radial-gradient(
+      120% 80% at 0% 0%,
+      color-mix(in srgb, var(--aura-1) 10%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glass-edge) 30%, transparent),
+      transparent 38%
+    ),
     var(--glass);
   backdrop-filter: blur(24px) saturate(1.7);
   -webkit-backdrop-filter: blur(24px) saturate(1.7);
@@ -204,8 +310,16 @@ body {
 /* Static fallback for no-WebGL: same aura, no motion. */
 .field-fallback {
   background:
-    radial-gradient(60% 50% at 15% 0%, color-mix(in srgb, var(--aura-1) 30%, transparent), transparent 70%),
-    radial-gradient(50% 50% at 90% 100%, color-mix(in srgb, var(--aura-2) 22%, transparent), transparent 70%),
+    radial-gradient(
+      60% 50% at 15% 0%,
+      color-mix(in srgb, var(--aura-1) 30%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 50% at 90% 100%,
+      color-mix(in srgb, var(--aura-2) 22%, transparent),
+      transparent 70%
+    ),
     var(--bg);
 }
 .no-scrollbar {
@@ -345,5 +459,14 @@ input:focus-visible,
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+.report-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@container report-pane (max-width: 600px) {
+  .report-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

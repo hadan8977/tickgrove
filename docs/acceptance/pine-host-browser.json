@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-14T05:41:08.798Z",
+  "passed": true,
+  "synthetic": false,
+  "mode": "indicator",
+  "externalOrders": false,
+  "session": "229cf083-41ba-410e-b47b-9fcd6bc2684c",
+  "snapshot": "03c947a2-69a2-48ba-8656-5066ae36fdbf",
+  "initialCursor": 103532,
+  "status": "stopped",
+  "bars": 43,
+  "checks": [
+    "React creates an immutable Pine version and deploys it through the Rust service",
+    "actual Coinbase events advance same-bar varip ticks and rendered close values",
+    "live chart exposes provider, delay policy, timestamp and durable event history",
+    "stopping in React terminates the Rust-managed session",
+    "no browser exceptions or failed API requests"
+  ],
+  "errors": []
+}

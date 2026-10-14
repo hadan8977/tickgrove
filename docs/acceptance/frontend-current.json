@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-14T05:51:18.694Z",
+  "runtime": {
+    "service": "Rust",
+    "web": "React/TypeScript",
+    "pineAndComposer": "isolated Node.js",
+    "pythonProductionDependency": false,
+    "pythonRuntimeEvidence": "docs/acceptance/docker-runtime.json"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "webBuild": "passed",
+    "pineHostRealBrowser": "docs/acceptance/pine-host-browser.json",
+    "mobileBrowser": "docs/acceptance/mobile-workspace.json",
+    "realQuoteLatency": "docs/acceptance/market-latency-current.json",
+    "publicPineAggregate": "docs/acceptance/pine-public-current.json"
+  },
+  "source": {
+    "src/service/PineHosts.tsx": "ded718fa604642349abb7b0678de1a879444c3d71d04586567b39d4397ebd1c2",
+    "src/features/chart/pineDisplay.ts": "c12d6183ed0b1ae0d16f5332788e271ca1be4175912ad5b7026abe6595c89901",
+    "scripts/pine-host-worker.cjs": "1a54f6be7c366fe44e7773175f8fe1f4d0f73285c95230ae3452a35f17850b06"
+  },
+  "dist": [
+    {
+      "file": "dist/assets/index-BKtjTM_T.css",
+      "sha256": "5052ffe38cefd5f93b5f8277edcc49113543b873034a8a3f354867839703082b"
+    },
+    {
+      "file": "dist/assets/index-CXxchWf8.js",
+      "sha256": "55b8da18ef07f05e76087dd71a8306daebb2e96f192f0767a00dc70de0001375"
+    }
+  ],
+  "limitations": [
+    "Production strategies are not fully implemented in Rust",
+    "One initial public-corpus timeout passed an isolated identical-input rerun; original report retained",
+    "Final current Docker image and Compose rerun remain pending",
+    "Full feature release gate remains incomplete"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "command": "CARGO_BUILD_JOBS=1 cargo test --locked --bin trading-service -- --nocapture",
+  "passed": 12,
+  "failed": 0,
+  "timestamp": "2026-10-14T03:02:03.507189+00:00",
+  "cases": [
+    "bid/ask execution and last-price mark",
+    "actual trade OHLCV bar formation",
+    "duplicate/gap/disconnect/late trade diagnostics",
+    "reject malformed Yahoo protobuf",
+    "decode captured real Yahoo BTC quote",
+    "alert crossing and once-per-bar lifecycle",
+    "closed bar once and explicit revision",
+    "hand-calculated account cash/fees/PnL and stale rejection",
+    "NYSE DST/holiday/early-close",
+    "Alpaca q/t/minute wire normalization",
+    "regular/extended/holiday-week boundaries",
+    "official minute\u21925m aggregation, volume and correction"
+  ],
+  "credentials": false,
+  "externalOrders": false
+}

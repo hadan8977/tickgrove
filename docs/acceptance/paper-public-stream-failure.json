@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-14T04:50:24.880Z",
+  "passed": false,
+  "session": "f9641a8a-5069-4344-912a-a07c7ea3667f",
+  "error": "Error: Timed out waiting for a real closed-bar transition"
+}

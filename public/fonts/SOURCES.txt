@@ -1,0 +1,5 @@
+Geist and Geist Mono, SIL Open Font License 1.1. Downloaded 2026-10-14 from Google Fonts official distribution.
+https://github.com/google/fonts/tree/main/ofl/geist
+https://github.com/google/fonts/tree/main/ofl/geistmono
+https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwcGFU.woff2
+https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrcdmg.woff2

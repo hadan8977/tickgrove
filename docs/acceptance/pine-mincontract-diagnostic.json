@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-14T04:51:32.607Z",
+  "snapshot": "e7422e8e-52da-4410-8701-2a264ae6c416",
+  "results": [
+    {
+      "mincontract": 1,
+      "ok": true,
+      "trades": [],
+      "open": []
+    },
+    {
+      "mincontract": 1e-8,
+      "ok": true,
+      "trades": [
+        {
+          "id": 1,
+          "side": "long",
+          "entryBar": 68,
+          "exitBar": 69,
+          "entryTime": 1791953100,
+          "exitTime": 1791953160,
+          "entryPrice": 83651.9,
+          "exitPrice": 83648.47,
+          "qty": 0.0001,
+          "pnl": -0.00034299999999930155,
+          "pnlPct": -0.0041003252765245204,
+          "reason": "pine",
+          "entryId": "L",
+          "exitId": "Close entry(s) order L",
+          "commission": 0
+        }
+      ],
+      "open": []
+    }
+  ]
+}

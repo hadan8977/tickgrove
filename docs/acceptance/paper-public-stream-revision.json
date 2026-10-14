@@ -1,0 +1,116 @@
+{
+  "at": "2026-10-14T04:29:38.525Z",
+  "passed": false,
+  "session": {
+    "error": "Source revised committed BTC-USD bar 1791951900; native ledger frozen, deploy fresh snapshot",
+    "last_job_id": "ec44eea2-a672-4ef4-b4b6-f85c06ee6b2d",
+    "name": "Public stream transition",
+    "pending_job_id": null,
+    "pending_job_status": null,
+    "session_id": "75c871cc-645b-4b15-9b10-fc7553c85c65",
+    "snapshot_id": "e4a8fbd8-254d-4792-ba47-99c676039ae3",
+    "status": "stopped",
+    "stream_cursor": 42578,
+    "subscription_id": "fdbe5d8a-1bde-4f28-affe-b935b2eff74a",
+    "version_id": "23c06c71-7680-44eb-8a32-c2abe6ddffd6"
+  },
+  "lastBars": [
+    {
+      "close": 83666.86,
+      "closeTime": 1791951780,
+      "high": 83666.87,
+      "low": 83634.85,
+      "open": 83634.86,
+      "time": 1791951720,
+      "volume": 0.78014597
+    },
+    {
+      "close": 83652.79,
+      "closeTime": 1791951840,
+      "high": 83666.86,
+      "low": 83652.78,
+      "open": 83666.86,
+      "time": 1791951780,
+      "volume": 1.49063058
+    },
+    {
+      "close": 83670.76,
+      "closeTime": 1791951900,
+      "high": 83686.52,
+      "low": 83652.78,
+      "open": 83652.78,
+      "time": 1791951840,
+      "volume": 1.62454252
+    },
+    {
+      "close": 83612.09,
+      "closeTime": 1791951960,
+      "high": 83670.76,
+      "low": 83608.11,
+      "open": 83670.76,
+      "time": 1791951900,
+      "volume": 5.653350159999999
+    }
+  ],
+  "events": [
+    {
+      "cursor": 42582,
+      "eventTime": 1791951960000,
+      "identity": {
+        "adjustment": "none",
+        "assetClass": "crypto",
+        "baseCurrency": "BTC",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Public Coinbase exchange stream; transport latency and staleness are measured separately",
+          "kind": "realtime",
+          "seconds": null
+        },
+        "feed": "public-websocket",
+        "priceIncrement": "0.01",
+        "pricePrecision": 2,
+        "provider": "coinbase",
+        "quantityIncrement": "0.00000001",
+        "session": "24x7",
+        "sizeIncrement": 1e-8,
+        "status": "online",
+        "symbol": "BTC-USD",
+        "symbolId": "COINBASE:BTC-USD",
+        "tickSize": 0.01,
+        "timeframe": "1m",
+        "timezone": "UTC",
+        "venue": "COINBASE"
+      },
+      "payload": {
+        "bar": {
+          "close": 83612.09,
+          "closeTime": 1791951960,
+          "high": 83670.76,
+          "low": 83608.11,
+          "open": 83670.76,
+          "time": 1791951900,
+          "volume": 5.65335016
+        },
+        "previous": {
+          "close": 83612.09,
+          "closeTime": 1791951960,
+          "high": 83670.76,
+          "low": 83608.11,
+          "open": 83670.76,
+          "time": 1791951900,
+          "volume": 5.653350159999999
+        },
+        "reason": "provider correction or REST gap repair; not a new decision",
+        "revision": 245
+      },
+      "quality": {
+        "complete": true,
+        "reason": null,
+        "stale": false
+      },
+      "receivedAt": 1791952083785,
+      "subscriptionId": "fdbe5d8a-1bde-4f28-affe-b935b2eff74a",
+      "type": "bar.revised"
+    }
+  ]
+}

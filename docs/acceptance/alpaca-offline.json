@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "venue": "localhost HTTP mock",
+  "realCredentials": false,
+  "externalOrders": false,
+  "knownRejection": true,
+  "lostResponseNoResubmit": true,
+  "partialFillThenCancel": true,
+  "restartReconciliation": true,
+  "fillRegressionRejected": true,
+  "idConflictRejected": true,
+  "submitCounts": {
+    "reject": 1,
+    "lost-response": 1,
+    "filled": 1
+  }
+}

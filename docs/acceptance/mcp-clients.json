@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "clients": [
+    {
+      "client": "official-typescript-sdk@1.32.1",
+      "toolsList": true,
+      "toolsCall": true,
+      "errorPropagation": true,
+      "protocol": "negotiated by SDK"
+    },
+    {
+      "client": "official-python-sdk@1.30.0",
+      "protocolVersion": "2025-11-25",
+      "toolsList": true,
+      "toolsCall": true
+    }
+  ]
+}

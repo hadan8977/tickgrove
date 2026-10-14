@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-14T07:33:56.398Z",
+  "base": "http://127.0.0.1:18892",
+  "checks": [
+    "file import preserves source; real historical backtest produces one closed trade and displays its report in Scripts",
+    "Automation restores exact latest run and blocks execution after unsaved version changes",
+    "Data opens the active one-minute chart with a bounded three-day range",
+    "blank limit cannot submit; changing instrument clears quantity and old limit without placing orders",
+    "six-chart layout has no toolbar or page overflow across all four themes",
+    "mobile visual builder keeps generated code inline and confirmation within its panel",
+    "390px mobile chart and all main pages fit the viewport; Pine import dialog fits and closes with Escape",
+    "workspace import validates and previews replacement before any restore; cancel preserves current workspace"
+  ],
+  "bounds": [
+    {
+      "theme": "light",
+      "width": 1480,
+      "scroll": 1480,
+      "panels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1480,
+      "scroll": 1480,
+      "panels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "theme": "cobalt",
+      "width": 1480,
+      "scroll": 1480,
+      "panels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "theme": "moss",
+      "width": 1480,
+      "scroll": 1480,
+      "panels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-14T05:42:22.683Z",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "checks": [
+    "390px chart renders without page overflow",
+    "mobile order form submits exact fractional quantity and limit price to Rust",
+    "submitted local order can be canceled",
+    "mobile panel navigation reaches usable Pine editor",
+    "mobile panel changes persist without shrinking desktop layout"
+  ],
+  "errors": []
+}

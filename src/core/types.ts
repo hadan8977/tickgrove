@@ -1,6 +1,7 @@
-export type Timeframe = '5m' | '15m' | '1H' | '4H' | '1D' | '1W'
-export const TIMEFRAMES: Timeframe[] = ['5m', '15m', '1H', '4H', '1D', '1W']
+export type Timeframe = '1m' | '5m' | '15m' | '1H' | '4H' | '1D' | '1W'
+export const TIMEFRAMES: Timeframe[] = ['1m', '5m', '15m', '1H', '4H', '1D', '1W']
 export const TF_SECONDS: Record<Timeframe, number> = {
+  '1m': 60,
   '5m': 300,
   '15m': 900,
   '1H': 3600,
@@ -11,6 +12,7 @@ export const TF_SECONDS: Record<Timeframe, number> = {
 
 export interface Bar {
   time: number // unix seconds
+  closeTime?: number // session-aware unix seconds, when available
   open: number
   high: number
   low: number
@@ -50,6 +52,8 @@ export interface IndicatorInstance {
 
 export type DrawingTool = 'cursor' | 'trend' | 'hline' | 'rect' | 'fib' | 'text'
 export interface Drawing {
+  hidden?:boolean
+  locked?:boolean
   id: string
   tool: Exclude<DrawingTool, 'cursor'>
   points: { t: number; p: number }[]
@@ -57,6 +61,9 @@ export interface Drawing {
 }
 
 export interface ChartState {
+  scale?:'linear'|'log'
+  replayCursor?:number|null
+  comparisons?:string[]
   id: string
   symbol: string
   tf: Timeframe
@@ -72,7 +79,7 @@ export type ConnectionStatus = 'demo' | 'not-connected' | 'live'
 export interface PineInput {
   name: string
   title: string
-  type: 'int' | 'float' | 'bool' | 'string' | 'source'
+  type: 'int' | 'float' | 'bool' | 'string' | 'source' | 'color' | 'enum' | 'price' | 'time' | 'session' | 'symbol' | 'timeframe' | 'text_area'
   default: number | string | boolean
   min?: number
   max?: number
@@ -85,6 +92,7 @@ export interface Script {
   name: string
   kind: 'indicator' | 'strategy'
   source: string
+  inputs?: Record<string, number | string | boolean>
   updatedAt: number
   origin?: 'builder' | 'user' | 'example'
 }
@@ -106,7 +114,10 @@ export interface Trade {
   qty: number
   pnl: number
   pnlPct: number
-  reason: 'signal' | 'stop' | 'take' | 'end'
+  reason: 'signal' | 'stop' | 'take' | 'end' | 'pine'
+  entryId?: string
+  exitId?: string
+  commission?: number
 }
 
 export interface BacktestMetrics {
@@ -124,7 +135,10 @@ export interface BacktestMetrics {
   exposurePct: number
 }
 
+export interface PineReplayFrame { time: number; equity: number; positionSize: number; closedTrades: number }
+
 export interface BacktestResult {
+  server?: {jobId:string;versionId:string;snapshotId:string;manifest:Record<string,any>;inputs:Record<string,unknown>;result:any}
   id: string
   name: string
   source: 'pine' | 'builder'
@@ -133,6 +147,10 @@ export interface BacktestResult {
   tf: Timeframe
   createdAt: number
   config: BacktestConfig
+  engine?: 'pinets'
+  replayFrames?: PineReplayFrame[]
+  nativeConfig?: { commissionType: string; commissionValue: number; slippageTicks: number; sizeType: string; sizeValue: number }
+  openPositions?: { entryId: string; qty: number; price: number; time: number }[]
   trades: Trade[]
   equity: { time: number; value: number }[]
   drawdown: { time: number; value: number }[]
@@ -186,8 +204,9 @@ export interface PaperStrategy {
   tf: Timeframe
   source: 'pine' | 'builder'
   sourceRef: string
-  status: 'running' | 'paused' | 'stopped'
+  status: 'running' | 'paused' | 'stopped' | 'completed'
   startedAt: number
   sizePct: number
   lastSignal?: string
+  replay?: { cursor: number; total: number; frame?: PineReplayFrame }
 }

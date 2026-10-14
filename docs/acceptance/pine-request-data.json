@@ -1,0 +1,69 @@
+{
+  "ok": true,
+  "realNetwork": true,
+  "inspection": {
+    "dynamic": [],
+    "ok": true,
+    "requests": [
+      {
+        "function": "security",
+        "line": 3,
+        "symbol": "NASDAQ:QQQ",
+        "timeframe": "D"
+      }
+    ]
+  },
+  "primarySnapshot": "24ec6ea1-15da-4815-900e-3b4d6b53b3fd",
+  "preparedSnapshot": "6530b386-aec8-4cd2-9438-40a1f8de788a",
+  "targetIdentity": {
+    "adjustment": "raw",
+    "assetClass": "etf",
+    "currency": "USD",
+    "delay": {
+      "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+      "kind": "delayed",
+      "seconds": null
+    },
+    "feed": "public",
+    "pricePrecision": 2,
+    "provider": "yahoo",
+    "session": "regular",
+    "symbol": "QQQ",
+    "symbolId": "YAHOO:NGM:QQQ",
+    "tickSize": 0.01,
+    "timeframe": "1D",
+    "timezone": "America/New_York",
+    "venue": "NGM",
+    "venueName": "NasdaqGM"
+  },
+  "lastValue": 743.5700073242188,
+  "frozenSources": [
+    {
+      "hash": "eb0f1271c0a0d68c7cddec681f60419fe8dc82d89e2f365e20b2dec2ed3b4b66",
+      "identity": {
+        "adjustment": "raw",
+        "assetClass": "etf",
+        "currency": "USD",
+        "delay": {
+          "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+          "kind": "delayed",
+          "seconds": null
+        },
+        "feed": "public",
+        "pricePrecision": 2,
+        "provider": "yahoo",
+        "session": "regular",
+        "symbol": "QQQ",
+        "symbolId": "YAHOO:NGM:QQQ",
+        "tickSize": 0.01,
+        "timeframe": "1D",
+        "timezone": "America/New_York",
+        "venue": "NGM",
+        "venueName": "NasdaqGM"
+      },
+      "snapshot_id": "9c9d9e1c-dd0a-49bb-b8a9-90a12bf7a3ef",
+      "symbol": "NASDAQ:QQQ",
+      "timeframe": "1D"
+    }
+  ]
+}

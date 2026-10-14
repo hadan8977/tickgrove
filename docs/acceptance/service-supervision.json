@@ -1,0 +1,100 @@
+{
+  "checks": [
+    {
+      "check": "API authenticates before command execution",
+      "ok": true,
+      "detail": {
+        "commands": [
+          "strategy.createVersion",
+          "strategy.list",
+          "data.import",
+          "data.list",
+          "data.get",
+          "data.fetch",
+          "backtest.start",
+          "backtest.status",
+          "backtest.cancel",
+          "backtest.results",
+          "events.list",
+          "paper.deploy",
+          "paper.list",
+          "paper.append",
+          "paper.pause",
+          "paper.resume",
+          "paper.retry",
+          "paper.discard",
+          "alpaca.config",
+          "alpaca.account",
+          "orders.preview",
+          "orders.submit",
+          "orders.reconcile",
+          "orders.cancel",
+          "plugins.list",
+          "plugins.validate",
+          "plugins.enable",
+          "plugins.disable",
+          "plugins.call"
+        ],
+        "continuousPaper": "closed_bar_native",
+        "engine": "PineTS 0.11.1",
+        "externalFills": false,
+        "permissions": [
+          "read",
+          "strategy.write",
+          "data.write",
+          "backtest.run",
+          "paper.manage",
+          "broker.paper",
+          "plugins.manage"
+        ],
+        "protocol": "trading.commands.v1"
+      }
+    },
+    {
+      "check": "Invalid data and inputs are rejected",
+      "ok": true,
+      "detail": "non-object inputs and duplicate timestamps rejected"
+    },
+    {
+      "check": "Concurrent idempotency binds the request body",
+      "ok": true,
+      "detail": {
+        "oneJobForSixConcurrentCalls": true,
+        "changedPayloadRejected": true
+      }
+    },
+    {
+      "check": "API preserves the hand-calculated Pine ledger",
+      "ok": true,
+      "detail": {
+        "entryBar": 2,
+        "exitBar": 5,
+        "qty": 2,
+        "finalEquity": 10005.586
+      }
+    },
+    {
+      "check": "Results survive a service restart",
+      "ok": true,
+      "detail": "report unchanged after restart; list contains summaries"
+    },
+    {
+      "check": "A second service cannot acquire an active data directory",
+      "ok": true,
+      "detail": "second process rejected without modifying first process data"
+    },
+    {
+      "check": "Cancellation handles running and queued jobs",
+      "ok": true,
+      "detail": "running and queued cancellation leave no successful result"
+    },
+    {
+      "check": "Hard restart distinguishes interrupted and queued work",
+      "ok": true,
+      "detail": "running job interrupted; queued job resumes with one terminal success"
+    }
+  ],
+  "passed": 8,
+  "total": 8,
+  "artifactDirectory": "/tmp/trading-supervision-thz8g9z8"
+}

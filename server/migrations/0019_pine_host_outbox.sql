@@ -1,0 +1,1 @@
+CREATE TABLE pine_host_intents(session_id TEXT NOT NULL REFERENCES pine_host_sessions(id),pine_order_id TEXT NOT NULL,request TEXT NOT NULL,status TEXT NOT NULL,PRIMARY KEY(session_id,pine_order_id));

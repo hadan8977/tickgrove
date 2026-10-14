@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "freshRustStartup": true,
+  "embeddedMigrationVersion": 21,
+  "indexes": [
+    [
+      "market_quote_event_time",
+      "CREATE INDEX market_quote_event_time ON market_events(subscription_id,event_time) WHERE type='quote'"
+    ],
+    [
+      "market_quote_received_at",
+      "CREATE INDEX market_quote_received_at ON market_events(subscription_id,received_at) WHERE type='quote'"
+    ]
+  ],
+  "noMarketSubscriptions": true
+}

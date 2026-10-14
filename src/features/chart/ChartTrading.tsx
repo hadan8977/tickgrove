@@ -1,0 +1,16 @@
+import { Wallet } from 'lucide-react'
+import { useState } from 'react'
+import type { ChartState } from '../../core/types'
+import { isDemoData,marketRequest } from '../../data/feed'
+import { useAccount,accountAction } from '../../service/account'
+import { useApp } from '../../store'
+import { execute } from '../../core/commands'
+import { Button,IconButton,Popover,fmt,Input } from '../../ui/primitives'
+export default function ChartTrading({state}:{state:ChartState}){
+  const data=useAccount(s=>s.data),request=marketRequest(state.symbol,state.tf)
+  const [editing,setEditing]=useState<any>(),[qty,setQty]=useState(''),[price,setPrice]=useState(''),[stop,setStop]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('')
+  if(isDemoData()||state.replayCursor!=null)return null
+  const positions=data?.positions.filter(p=>p.provider===request.provider&&p.symbol===request.symbol)??[],orders=data?.orders.filter(o=>o.provider===request.provider&&o.symbol===request.symbol&&['working','triggered'].includes(o.status))??[]
+  async function act(method:string,params:Record<string,unknown>){setBusy(true);setError('');try{await accountAction(method,params);setEditing(undefined)}catch(e){setError(String(e))}finally{setBusy(false)}}
+  return <Popover align="right" className="w-80" trigger={({toggle})=><IconButton label="Chart orders and positions" onClick={toggle}><Wallet size={14}/></IconButton>}><div className="space-y-3 p-2 text-xs"><b>{state.symbol} · Local paper</b><Button size="sm" onClick={()=>{useApp.getState().setActiveChart(state.id);void execute('panel.open',{panel:'ticket'})}}>Open order ticket</Button>{positions.map(p=><div key={p.symbol} className="flex items-center justify-between"><span>{p.qty} @ {fmt.price(p.avg)}</span><Button size="sm" disabled={busy} onClick={()=>void act('account.flatten',{...request,client_order_id:crypto.randomUUID()})}>Flatten</Button></div>)}{orders.map(o=><div key={o.id} className="flex flex-wrap items-center gap-2 border-t border-line pt-2"><span>{o.side} {o.qty} {o.type}</span><button className="text-accent" onClick={()=>{setEditing(o);setQty(String(o.qty));setPrice(String(o.price??''));setStop(String(o.stopPrice??''))}}>Modify</button><button disabled={busy} onClick={()=>void act('account.cancelOrder',{id:o.id})}>Cancel</button></div>)}{!orders.length&&!positions.length&&<p className="text-muted">No open position or working order.</p>}{editing&&<form className="space-y-2" onSubmit={e=>{e.preventDefault();void act('account.modifyOrder',{id:editing.id,qty:Number(qty),...(['limit','stop-limit'].includes(editing.type)?{price:Number(price)}:{}),...(['stop','stop-limit'].includes(editing.type)?{stopPrice:Number(stop)}:{})})}}><label>Quantity<Input type="number" step="any" value={qty} onChange={e=>setQty(e.target.value)}/></label>{['limit','stop-limit'].includes(editing.type)&&<label>Limit<Input type="number" step="any" value={price} onChange={e=>setPrice(e.target.value)}/></label>}{['stop','stop-limit'].includes(editing.type)&&<label>Stop<Input type="number" step="any" value={stop} onChange={e=>setStop(e.target.value)}/></label>}<Button size="sm" disabled={busy} type="submit">Apply order change</Button></form>}{error&&<p role="alert" className="text-down">{error}</p>}</div></Popover>
+}

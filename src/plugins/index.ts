@@ -112,6 +112,7 @@ export const PLUGINS: PluginManifest[] = [
         },
         run: ({ symbol, equity, riskPct, stopPct }) => {
           const p = livePrice(symbol)
+          if(!Number.isFinite(p)||p<=0)throw Error('No current price is available for this instrument')
           const qty = Math.floor((equity * riskPct) / 100 / ((p * stopPct) / 100))
           return `${qty} ${symbol} @ ${p.toFixed(2)} (stop ${(p * (1 - stopPct / 100)).toFixed(2)})`
         },

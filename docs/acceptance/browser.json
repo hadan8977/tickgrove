@@ -1,0 +1,76 @@
+{
+  "browserVersion": "148.0.7778.96",
+  "checks": [
+    {
+      "check": "Primary action labels have contrasting theme text",
+      "ok": true,
+      "detail": {
+        "text": "rgb(12, 12, 13)",
+        "background": "rgb(232, 232, 230)"
+      }
+    },
+    {
+      "check": "Web save, run, inputs and native chart rendering",
+      "ok": true,
+      "detail": {
+        "job": "48f9e138-44b7-44cc-b7b6-74f8dcb65780",
+        "qty": 7,
+        "snapshot": "9cce25c5-8b1f-4344-8163-3cf1221adb60",
+        "canvasCount": 16,
+        "pineTable": true
+      }
+    },
+    {
+      "check": "Web paper deployment preserves selected data and inputs",
+      "ok": true,
+      "detail": {
+        "session": "63a740a5-8965-4ef5-9b2f-cff8c53e13d4",
+        "qty": 7,
+        "snapshot": "9cce25c5-8b1f-4344-8163-3cf1221adb60"
+      }
+    },
+    {
+      "check": "Web session pause and resume",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "check": "Composer invalid intermediate weights remain visually editable",
+      "ok": true,
+      "detail": {
+        "weights": [
+          0.7,
+          0.3
+        ]
+      }
+    },
+    {
+      "check": "Web Composer visual editor and native allocation ledger",
+      "ok": true,
+      "detail": {
+        "job": "3ad8c562-71aa-4373-96b5-6c15dd40936d",
+        "frames": 256
+      }
+    },
+    {
+      "check": "Malformed Composer source displays an error without a React crash",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "check": "Web reload retains authenticated access and immutable history",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "check": "No uncaught browser page errors",
+      "ok": true,
+      "detail": {}
+    }
+  ],
+  "errors": [],
+  "passed": 9,
+  "total": 9,
+  "build": "frozen pnpm10.32.1 / React19.2.4 / Vite8.0.5",
+  "projectDistIndexSha256": "0787aed9c3e49dc1f7098a607f19f09717fceb43937d10e48ee43129354488f0"
+}

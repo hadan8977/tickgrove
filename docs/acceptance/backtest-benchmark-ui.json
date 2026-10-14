@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "method": "Actual EquityChart source function transpiled into isolated hook/chart fixture; no API/preview writes",
+  "command": "node --test tests/backtest-benchmark.test.cjs",
+  "passed": 5,
+  "typecheck": "tsc -b --pretty false passed",
+  "cases": [
+    "Saved snapshot ID, never mutable global market feed",
+    "Hand calculation 1000 capital / 10 initial open * closes 11,15 -> 1100,1500, exactly equity times10,30",
+    "Manifest ID fallback; empty snapshot explicit unavailable, no bars[0] crash",
+    "Missing matching bar retained as whitespace rather than fake close",
+    "Unmount prevents late async chart mutation; demo cannot use live feed"
+  ],
+  "fontFamily": "Inherited from getComputedStyle(document.body).fontFamily",
+  "liveBrowserAcceptance": false
+}

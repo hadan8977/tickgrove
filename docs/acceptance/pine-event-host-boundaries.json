@@ -1,0 +1,39 @@
+{
+  "status": "bounded-event-host-implemented-not-full-pine-compatibility",
+  "nativeVersion": "PineTS 0.11.1",
+  "contract": "recorded execution/event-time forming and closed updates; actual Rust local fills or authorized external fill projection; native matching disabled throughout broker warmup",
+  "verifiedUnitCases": [
+    "ordinary var and mutable array/map/UDT rollback",
+    "primitive global varip intrabar persistence",
+    "explicit close before new bar",
+    "unknown volume remains na",
+    "deterministic timenow including request.security",
+    "flat broker warmup without ghost native fills",
+    "FIFO partial exits, positive grossloss, fees and signed reversal"
+  ],
+  "serviceEvidence": "docs/acceptance/pine-event-service.json",
+  "verifiedServiceCases": [
+    "Rust fresh quote local matching with input override qty=2",
+    "full result deterministic service restart",
+    "partial external fill retains remaining quantity",
+    "paused external fill feedback",
+    "identical fill ID is idempotent",
+    "external fill journal deterministic restart",
+    "matching render bars and plots",
+    "actual persistent process cumulative CPU limit unlimited",
+    "runaway-loop failure is durable terminal",
+    "actual nested-loop event exceeds deadline and persists failed without success"
+  ],
+  "marketSessionEvidence": "docs/acceptance/market-session-roundtrip.json",
+  "remaining": [
+    "calc_on_order_fills and fill-triggered recalculation",
+    "multi-timeframe live request bindings",
+    "scoped or structured varip",
+    "OCA/bracket/trailing execution semantics",
+    "external order rejection/cancel/status feedback",
+    "Alpaca connected live account and feed entitlement require dedicated credentials",
+    "cannot recover exchange ticks never received during network outage"
+  ],
+  "resourceBoundary": "Default 2 workers (configurable 1\u20138), serialized global process mutex, event deadline 10s, input 16MB/output 32MB, heap 256MB, AS1536MB, FD128, NPROC32, bounded stderr. No multi-tenant throughput or unlimited replay claim. CPU unlimited verified via actual process /proc limits, not a long-duration soak test.",
+  "externalOrdersExecuted": false
+}

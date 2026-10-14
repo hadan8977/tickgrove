@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Reorder, AnimatePresence, motion } from 'motion/react'
 import { ArrowRight, Boxes, Code2, FlaskConical, GitBranch, GripVertical, Plus, ShieldAlert, Trash2, Wallet, X, Copy } from 'lucide-react'
 import { execute } from '../../core/commands'
 import { TIMEFRAMES } from '../../core/types'
-import { SYMBOLS } from '../../data/feed'
+import SymbolSearch from '../chart/SymbolSearch'
 import { newCondition, newGroup, uid, exampleStrategy, type Comparator, type Condition, type Group, type Operand, type OperandKind, type StrategyDefinition } from '../../builder/model'
 import { toPine } from '../../builder/codegen'
 import { useApp, useBacktests, useBuilder } from '../../store'
-import { Button, IconButton, Segmented, Select, cx } from '../../ui/primitives'
+import { Button, IconButton, Segmented, Select, Popover, Empty, cx } from '../../ui/primitives'
 
 const KINDS: { v: OperandKind; l: string }[] = [
   { v: 'price', l: 'Price' },
@@ -30,25 +30,40 @@ function updateNode(g: Group, id: string, fn: (n: Condition | Group) => Conditio
   }
 }
 
-export default function StrategyBuilder() {
+export default function StrategyBuilder({onBacktest}: {onBacktest?:()=>void} = {}) {
   const { defs, activeId, setDef, addDef, setActive } = useBuilder()
   const def = defs.find((d) => d.id === activeId) ?? defs[0]
-  const [showCode, setShowCode] = useState(true)
+  const [showCode, setShowCode] = useState(false)
+  const container = useRef<HTMLDivElement>(null)
+  const inlinePreview = useRef<HTMLElement>(null)
+  const [widePanel, setWidePanel] = useState(false)
+  useEffect(() => {
+    const node = container.current
+    if (!node) return
+    const measure = () => setWidePanel(node.getBoundingClientRect().width >= 900)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [!!def])
+  useEffect(() => {
+    if (showCode && !widePanel) inlinePreview.current?.scrollIntoView({ block: 'nearest' })
+  }, [showCode, widePanel])
   const [confirm, setConfirm] = useState(false)
   const running = useBacktests((s) => s.running)
   const pine = useMemo(() => (def ? toPine(def) : ''), [def])
-  if (!def) return null
+  if (!def) return <Empty title="No visual strategy" action={<Button onClick={()=>addDef({...exampleStrategy(),entry:newGroup('all',[]),exit:newGroup('any',[])})}>Create strategy</Button>}/>
   const set = (patch: Partial<StrategyDefinition>) => setDef({ ...def, ...patch })
   const editGroup = (which: 'entry' | 'exit') => ({
     root: def[which],
     onChange: (g: Group) => set({ [which]: g } as Partial<StrategyDefinition>),
   })
-  const backtest = () => execute('backtest.runBuilder', { strategyId: def.id }).catch((e) => useApp.getState().toast({ title: e.message, tone: 'error' }))
+  const backtest = () => execute('backtest.runBuilder', { strategyId: def.id }).then(()=>onBacktest?.()).catch((e) => useApp.getState().toast({ title: e.message, tone: 'error' }))
 
   return (
-    <div className="relative flex h-full bg-panel">
+    <div ref={container} className="@container relative flex h-full min-w-0 bg-panel">
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex h-10 shrink-0 items-center gap-1.5 border-b border-line px-2">
+        <div className="flex h-10 shrink-0 items-center gap-1.5 overflow-x-auto whitespace-nowrap border-b border-line px-2">
           <Select value={def.id} onChange={(e) => setActive(e.target.value)} className="max-w-[160px] font-medium">
             {defs.map((d) => (
               <option key={d.id} value={d.id}>
@@ -62,6 +77,7 @@ export default function StrategyBuilder() {
           <IconButton label="Duplicate" onClick={() => addDef({ ...structuredClone(def), id: uid('s'), name: def.name + ' copy' })}>
             <Copy size={13} />
           </IconButton>
+          <IconButton label="Delete visual strategy" onClick={()=>useBuilder.getState().removeDef(def.id)}><Trash2 size={13}/></IconButton>
           <div className="flex-1" />
           <Button size="sm" variant="ghost" onClick={() => setShowCode(!showCode)}>
             <Code2 size={13} /> {showCode ? 'Hide' : 'Show'} Pine
@@ -79,11 +95,7 @@ export default function StrategyBuilder() {
             <Card tone="root" icon={<Boxes size={14} />} title="Strategy">
               <div className="flex flex-wrap items-center gap-2">
                 <input value={def.name} onChange={(e) => set({ name: e.target.value })} className="h-7 min-w-[160px] flex-1 rounded-md border border-line bg-panel px-2 text-[13px] font-semibold outline-none focus:border-accent/60" />
-                <Select value={def.symbol} onChange={(e) => set({ symbol: e.target.value })}>
-                  {SYMBOLS.map((s) => (
-                    <option key={s.symbol}>{s.symbol}</option>
-                  ))}
-                </Select>
+                <Popover className="w-80" trigger={({toggle})=><Button size="sm" onClick={toggle}>{def.symbol} · Search</Button>}>{close=><SymbolSearch onPick={symbol=>{set({symbol});close()}}/>}</Popover>
                 <Select value={def.tf} onChange={(e) => set({ tf: e.target.value as StrategyDefinition['tf'] })}>
                   {TIMEFRAMES.map((t) => (
                     <option key={t}>{t}</option>
@@ -114,33 +126,26 @@ export default function StrategyBuilder() {
                 <RiskField label="Take profit" value={def.takePct} onChange={(v) => set({ takePct: v })} />
               </div>
             </Card>
+            <Connector/>
+            <Card tone="risk" icon={<Wallet size={14}/>} title="Native backtest settings"><div className="flex flex-wrap gap-3 text-xs"><label>Starting capital<input aria-label="Builder starting capital" className="ml-2 w-28 rounded border border-line bg-panel p-1" type="number" min="1" value={def.capital??100000} onChange={e=>set({capital:Number(e.target.value)})}/></label><label>Commission (bps)<input aria-label="Builder commission" className="ml-2 w-20 rounded border border-line bg-panel p-1" type="number" min="0" step="0.1" value={def.commissionBps??2} onChange={e=>set({commissionBps:Number(e.target.value)})}/></label><label>Slippage (ticks)<input aria-label="Builder slippage" className="ml-2 w-20 rounded border border-line bg-panel p-1" type="number" min="0" step="1" value={def.slippageTicks??3} onChange={e=>set({slippageTicks:Number(e.target.value)})}/></label></div><p className="mt-2 text-xs text-muted">Saved in the generated Pine source and run manifest. Choose the data range in Market data.</p></Card>
+            {showCode && !widePanel && <section ref={inlinePreview} aria-label="Generated Pine preview" className="mt-4 flex max-h-80 flex-col overflow-hidden rounded-xl border border-line bg-bg-2"><PinePreview pine={pine} onClose={() => setShowCode(false)} /></section>}
           </div>
         </div>
       </div>
       <AnimatePresence initial={false}>
-        {showCode && (
+        {showCode && widePanel && (
           <motion.aside initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} className="flex shrink-0 flex-col overflow-hidden border-l border-line bg-bg-2">
-            <div className="flex h-10 shrink-0 items-center justify-between border-b border-line px-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">Generated Pine · live preview</span>
-            </div>
-            <pre className="num min-h-0 flex-1 overflow-auto p-3 text-[11.5px] leading-relaxed text-muted">
-              {pine.split('\n').filter((l) => !l.startsWith('// @oc-blocks')).map((l, i) => (
-                <div key={i} className={cx(l.startsWith('//') && 'text-faint', /^(if|strategy)/.test(l.trim()) && 'text-accent')}>
-                  {l || ' '}
-                </div>
-              ))}
-            </pre>
-            <div className="border-t border-line p-3 text-[11px] leading-relaxed text-faint">One-way generation. Only unmodified generated scripts can be reopened as blocks.</div>
+            <PinePreview pine={pine} onClose={() => setShowCode(false)} />
           </motion.aside>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {confirm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-30 grid place-items-center bg-black/40 backdrop-blur-[2px]">
-            <motion.div initial={{ scale: 0.96, y: 8 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 8 }} className="glass w-[380px] rounded-2xl p-5">
-              <div className="mb-1 text-[14px] font-semibold">Send “{def.name}” to the Pine editor?</div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Send strategy to Pine editor" className="absolute inset-0 z-30 flex items-center justify-center overflow-auto bg-black/40 p-3 backdrop-blur-[2px]">
+            <motion.div initial={{ scale: 0.96, y: 8 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 8 }} className="glass max-h-full w-full max-w-[380px] overflow-auto rounded-2xl p-4">
+              <div className="mb-1 break-words text-[14px] font-semibold">Send “{def.name}” to the Pine editor?</div>
               <p className="mb-4 text-[12.5px] leading-relaxed text-muted">A strategy script will be created (or updated) in your library. Generation is one-way — manual Pine edits can’t be mapped back to blocks.</p>
-              <div className="flex justify-end gap-2">
+              <div className="flex flex-wrap justify-end gap-2">
                 <Button variant="ghost" onClick={() => setConfirm(false)}>
                   Cancel
                 </Button>
@@ -160,6 +165,19 @@ export default function StrategyBuilder() {
       </AnimatePresence>
     </div>
   )
+}
+
+function PinePreview({ pine, onClose }: { pine: string; onClose: () => void }) {
+  return <>
+    <div className="flex min-h-10 shrink-0 items-center justify-between gap-2 border-b border-line px-3">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">Generated Pine · live preview</span>
+      <IconButton label="Close Pine preview" onClick={onClose}><X size={12}/></IconButton>
+    </div>
+    <pre className="num min-h-0 flex-1 overflow-auto p-3 text-[11.5px] leading-relaxed text-muted">
+      {pine.split('\n').filter(l => !l.startsWith('// @oc-blocks')).map((line, i) => <div key={i} className={cx(line.startsWith('//') && 'text-faint', /^(if|strategy)/.test(line.trim()) && 'text-accent')}>{line || ' '}</div>)}
+    </pre>
+    <div className="shrink-0 border-t border-line p-3 text-[11px] leading-relaxed text-faint">Generated scripts can return to blocks while unchanged. Custom Pine edits remain in the Pine editor.</div>
+  </>
 }
 
 const TONES = {
@@ -192,7 +210,7 @@ function GroupEditor({ group, root, onChange, depth }: { group: Group; root: Gro
   const setChildren = (children: (Condition | Group)[]) => patch(group.id, (g) => ({ ...(g as Group), children }))
   return (
     <div className={cx(depth > 0 && 'rounded-lg border border-dashed border-line-2 bg-panel/60 p-2')}>
-      <div className="mb-1.5 flex items-center gap-2 text-[12px] text-muted">
+      <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[12px] text-muted">
         <span>If</span>
         <Segmented layoutId={`op-${group.id}`} value={group.op} onChange={(op) => patch(group.id, (g) => ({ ...(g as Group), op }))} options={[{ value: 'all', label: 'all' }, { value: 'any', label: 'any' }]} />
         <span>of the following are true</span>
@@ -208,7 +226,7 @@ function GroupEditor({ group, root, onChange, depth }: { group: Group; root: Gro
             {c.type === 'group' ? (
               <div className="flex gap-1">
                 <Grip />
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <GroupEditor group={c} root={root} onChange={onChange} depth={depth + 1} />
                 </div>
               </div>
@@ -239,29 +257,25 @@ const Grip = () => (
 )
 
 function ConditionRow({ c, onChange, onRemove }: { c: Condition; onChange: (c: Condition) => void; onRemove: () => void }) {
-  return (
-    <div className="group flex items-center gap-1.5 rounded-lg bg-panel px-1.5 py-1.5 ring-1 ring-line hover:ring-line-2">
-      <Grip />
-      <OperandEditor o={c.left} onChange={(left) => onChange({ ...c, left })} />
-      <Select value={c.cmp} onChange={(e) => onChange({ ...c, cmp: e.target.value as Comparator })} className="font-medium text-accent">
-        {CMPS.map((x) => (
-          <option key={x}>{x}</option>
-        ))}
+  return <div className="@container">
+    <div className="group grid grid-cols-[20px_minmax(0,1fr)_32px] items-start gap-1.5 rounded-lg bg-panel px-1.5 py-1.5 ring-1 ring-line hover:ring-line-2 @min-[560px]:grid-cols-[20px_minmax(0,1fr)_auto_minmax(0,1fr)_32px] @min-[560px]:items-center">
+      <div className="col-start-1 row-start-1 flex min-h-7"><Grip /></div>
+      <div className="col-start-2 row-start-1 min-w-0"><OperandEditor o={c.left} onChange={(left) => onChange({ ...c, left })} /></div>
+      <Select value={c.cmp} onChange={(e) => onChange({ ...c, cmp: e.target.value as Comparator })} className="col-start-2 row-start-2 max-w-full justify-self-start font-medium text-accent @min-[560px]:col-start-3 @min-[560px]:row-start-1">
+        {CMPS.map(x => <option key={x}>{x}</option>)}
       </Select>
-      <OperandEditor o={c.right} onChange={(right) => onChange({ ...c, right })} />
-      <div className="flex-1" />
-      <IconButton label="Remove condition" className="opacity-0 group-hover:opacity-100" onClick={onRemove}>
-        <Trash2 size={12} />
-      </IconButton>
+      <div className="col-start-2 row-start-3 min-w-0 @min-[560px]:col-start-4 @min-[560px]:row-start-1"><OperandEditor o={c.right} onChange={(right) => onChange({ ...c, right })} /></div>
+      <IconButton label="Remove condition" className="col-start-3 row-start-1 opacity-100 @min-[560px]:col-start-5" onClick={onRemove}><Trash2 size={12}/></IconButton>
     </div>
-  )
+  </div>
 }
 
 function OperandEditor({ o, onChange }: { o: Operand; onChange: (o: Operand) => void }) {
   const num = 'num h-7 w-14 rounded-md border border-line bg-panel-2 px-1.5 text-right text-[12px] outline-none focus:border-accent/60'
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex min-w-0 flex-wrap items-center gap-1">
       <Select
+        className="min-w-0 max-w-full"
         value={o.kind}
         onChange={(e) => {
           const kind = e.target.value as OperandKind
@@ -275,7 +289,7 @@ function OperandEditor({ o, onChange }: { o: Operand; onChange: (o: Operand) => 
         ))}
       </Select>
       {o.kind === 'price' && (
-        <Select value={o.field} onChange={(e) => onChange({ ...o, field: e.target.value as Operand['field'] })}>
+        <Select className="min-w-0 max-w-full" value={o.field} onChange={(e) => onChange({ ...o, field: e.target.value as Operand['field'] })}>
           {['close', 'open', 'high', 'low'].map((f) => (
             <option key={f}>{f}</option>
           ))}
