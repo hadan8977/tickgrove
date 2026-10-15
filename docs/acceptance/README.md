@@ -5,6 +5,8 @@ These files record actual offline, local and public-market network checks. Each 
 | Evidence | Scope |
 | --- | --- |
 | [free-data-release.json](free-data-release.json) | Current integration checks, exact frontend/binary hashes and explicit remaining release boundaries |
+| [publication.json](publication.json) | Public repository access, updated commit attribution and preserved source history |
+| [free-data-docker.json](free-data-docker.json) | Current image: 13 isolated runtime checks, real ETF history and crypto WebSocket, restart persistence and sandboxed Pine; exact build hashes and network scope |
 | [free-data-preview.json](free-data-preview.json) | Updated HTTPS preview; preserved user workspace, account and token; current frontend and vector favicon |
 | [market-data-report.json](../../server/tests/market-data-report.json) | Actual public Yahoo/Coinbase paging, 28-day minute snapshots, shared live connections and bounded cache |
 | [free-data-workflow.json](free-data-workflow.json) | Real VOO history → immutable zero-gap snapshot → recorded-price native Pine backtest |
@@ -70,6 +72,6 @@ Do not run multiple full corpora or parallel Rust builds on the 4GB host. Tests 
 
 Historical `plans/research/pine-public-execution.json` is preserved, including its original adapter file hashes. Adding pending-order result serialization changes report.ts, so that file is an earlier tested adapter snapshot, not a claim that all source hashes match this service release. Local assertion tests were re-run after integration. TradingView same-data numeric/fill comparison remains unperformed.
 
-A project-isolated Docker daemon was used to build and exercise the image recorded in `docker-runtime.json`; subsequent source changes still need a new image acceptance run, and Compose execution is tracked separately. No dedicated Alpaca account is configured; offline fault acceptance does not replace real account/data/order acceptance. The separate event host implements tested tick rollback and broker-feedback cases, with unsupported cases listed in its boundary report. TradingView same-data equivalence and original frontend licensing clearance remain outstanding before any claim of full compatibility or authorized whole-repository publication.
+Docker reports identify the image and network configuration actually tested; Compose configuration validation does not verify its default bridge/NAT behavior. No dedicated Alpaca account is configured; offline fault acceptance does not replace real account/data/order acceptance. The separate event host implements tested tick rollback and broker-feedback cases, with unsupported cases listed in its boundary report. TradingView same-data equivalence remains unverified. Public repository access does not expand the grants described in [Licenses](../licenses.md).
 
 Browser replay requires an isolated dedicated test service, not a real account or existing user data. Install Playwright into an optional test environment and set `PLAYWRIGHT_MODULE` (module name or absolute package path), `BROWSER_EXECUTABLE` (optional existing browser binary), `TRADING_URL`, `TRADING_TOKEN` and `TRADING_BROWSER_OUTPUT`; run `node scripts/acceptance/browser.cjs`. The token is used only in requests and never written to reports. Screenshots reflect the authoritative server path, not localStorage demo results.

@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-15T07:54:26.555Z",
+  "repository": "https://github.com/hadan8977/tickgrove",
+  "visibility": "public",
+  "anonymousRead": 200,
+  "repositoryRecreated": false,
+  "authenticatedAccount": "hadan8977",
+  "commitIdentity": "hadan agent",
+  "rewrittenHermesAuthors": 5,
+  "originalFigmaCommitPreserved": true,
+  "sourceTreesPreserved": true,
+  "authorDatesPreserved": true,
+  "head": "02be2f7dae8ebfd364a1e8a6eada6d9cff26bf2e",
+  "commits": 9,
+  "verifiedContributors": ["hadan8977", "figma[bot]"],
+  "backupBundle": "var/git-publication/before-author-rewrite.bundle",
+  "historyMappings": [
+    {
+      "before": "c8103809fe7b18d88cba9747518f4872d12aa3c1",
+      "after": "c8103809fe7b18d88cba9747518f4872d12aa3c1"
+    },
+    {
+      "before": "6e237d722687de572ad048661fb14204ccd0fa52",
+      "after": "57882c0b73f650001a34cbe4793bc8ed282757b4"
+    },
+    {
+      "before": "340b335a0e04807be19a2d5439394ca0199954f2",
+      "after": "3d532c4110c1f0065a7dfa307435487bd098c674"
+    },
+    {
+      "before": "ec039649fe9f4b8729b977e819509910bf95cc2a",
+      "after": "f7203f8c8050b83c46964916c9329803e93e917b"
+    },
+    {
+      "before": "1f7d5a12d3cdce90d2fd332ced8f0d0ec04573e7",
+      "after": "e3a98d5dcc339ae2eb904236b30599ff16544d4e"
+    },
+    {
+      "before": "2bfeab837ff113da0848e8b8fb696c64b4c5c6f2",
+      "after": "76dcbb6fbb4df9ef43292eddb5a5a5a047c1d3b2"
+    },
+    {
+      "before": "faf316c12583db16fac316d124bdb338df1c09d9",
+      "after": "edc0c323e05804a7635cb11104f5a06a47c473c0"
+    },
+    {
+      "before": "3c26fd3ace74238634d06b37b9f0e86cfe431fe2",
+      "after": "02be2f7dae8ebfd364a1e8a6eada6d9cff26bf2e"
+    }
+  ]
+}

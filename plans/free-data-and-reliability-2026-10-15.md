@@ -21,4 +21,8 @@
 
 Rust 行情缓存/分页/复用、React 数据生命周期与配置、Pine/提醒正确性、工作台交互已实现并通过本轮针对性验收。真实源验证包括 VOO 长日线、28 天 SPY 1m 快照、月前加密分钟数据、多标的共享实时源及真实数据回测。新 logo 使用图像工具探索后重建为统一 SVG，已替换应用和品牌资产；实际截图还定位并修复了主题与 Canvas 更新顺序。
 
-公开预览在备份后更新；workspace revision 30、账户和 token 均保留。整合报告见 `docs/acceptance/free-data-release.json`，未完成的正式版本边界见 `docs/review/2026-10-15/implementation-update.md`。容器首次构建/运行验收和最终 GitHub 提交记录随最后发布更新。
+公开预览在备份后更新；workspace revision 30、账户和 token 均保留。整合报告见 `docs/acceptance/free-data-release.json`，未完成的正式版本边界见 `docs/review/2026-10-15/implementation-update.md`。
+
+最终 Docker 镜像通过 13 项独立运行验收：真实 VOO 历史、LTC 实时事件、缓存重启保留、清缓存保留快照与回测、Pine 沙箱执行及认证等；镜像与预览的前端产物 hash 相同。首次冷构建在打包阶段收到 SIGTERM，第二轮复用已成功的 Rust 编译缓存并完成构建，两个阶段记录均保留。验收使用独立卷、host 网络与 loopback 绑定；Compose 配置通过校验，默认 bridge/NAT 尚未实测。报告见 `docs/acceptance/free-data-docker.json`。
+
+README 已改为简洁英文并采用真实黑色工作区截图。GitHub 原仓库已公开；5 条 Hermes Agent 历史提交已改署 hadan agent，保留原作者日期、代码树及 Figma 原始提交，没有删除或重建仓库。发布记录见 `docs/acceptance/publication.json`。

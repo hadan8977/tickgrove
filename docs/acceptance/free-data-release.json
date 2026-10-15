@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-15T07:26:17.001Z",
+  "at": "2026-10-15T08:18:46.489Z",
   "scope": "Free-source history/realtime workflow, first reviewed correctness and usability repairs, redesigned identity. Not a full TradingView equivalence or 96-feature release certification.",
   "checks": {
     "node": {
@@ -60,8 +60,20 @@
       "report": "docs/acceptance/free-data-preview.json"
     },
     "docker": {
-      "status": "in_progress",
-      "note": "First clean image build and isolated runtime validation are still running."
+      "status": "passed",
+      "passed": 13,
+      "failed": 0,
+      "report": "docs/acceptance/free-data-docker.json",
+      "image": "sha256:1c09e8e06e41f27b2d82bb311dba5fa7e089407b4a0df7e6a26292b30ea4e82a",
+      "entrySha256": "7f2c22f3ed99190135449025bb2f4bf8ddb11fe3002214df1b3f0576b2800752",
+      "scope": "Isolated container and volume with host networking and loopback bind; default Compose bridge/NAT was not exercised. Compose configuration validation passed."
+    },
+    "publication": {
+      "passed": true,
+      "report": "docs/acceptance/publication.json",
+      "repository": "https://github.com/hadan8977/tickgrove",
+      "visibility": "public",
+      "historicalHermesCommitsReattributed": 5
     }
   },
   "binarySha256": "c846fc1a304461fd32e125bbe26c600a201e08df57cccd383478bba288dd1991",

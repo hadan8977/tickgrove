@@ -1,0 +1,138 @@
+{
+  "at": "2026-10-15T08:17:06.673Z",
+  "image": "sha256:1c09e8e06e41f27b2d82bb311dba5fa7e089407b4a0df7e6a26292b30ea4e82a",
+  "sourceHashes": {
+    "src/App.tsx": "a8a7582f9aabce1dcb9525136b90d64ea0d316434cc436d8c19b72de8f340bd7",
+    "server/Cargo.lock": "48bab7f8d270153b4295f6e866aa9c8b7881167467ea0d08ad8a0fd50462a191",
+    "Dockerfile": "70843dbf1acb6a82466af234720f35b836a21189ad42cdc6e10de69897f80c35"
+  },
+  "entryAsset": {
+    "path": "/assets/index-BecLKarF.js",
+    "sha256": "7f2c22f3ed99190135449025bb2f4bf8ddb11fe3002214df1b3f0576b2800752"
+  },
+  "buildMode": "Dockerfile legacy builder, DOCKER_BUILDKIT=0; isolated CLI has no Buildx plugin",
+  "runtime": {
+    "python": false,
+    "node": "v22.22.2"
+  },
+  "uid": "10001",
+  "job": "7f70d764-6b64-4be6-810b-9a2c7dfe6839",
+  "backtestData": "DOCKER-FIXTURE: six synthetic daily bars",
+  "trade": {
+    "commission": 0,
+    "entryBar": 2,
+    "entryId": "L",
+    "entryPrice": 12,
+    "entryTime": 1735948800,
+    "exitBar": 4,
+    "exitId": "Close entry(s) order L",
+    "exitPrice": 14,
+    "exitTime": 1736121600,
+    "id": 1,
+    "pnl": 4,
+    "pnlPct": 16.666666666666664,
+    "qty": 2,
+    "reason": "pine",
+    "side": "long"
+  },
+  "liveQuote": {
+    "provider": "coinbase",
+    "symbol": "LTC-USD",
+    "eventTime": 1792052212667,
+    "receivedAt": 1792052226647,
+    "priceKind": "last-trade"
+  },
+  "history": {
+    "provider": "yahoo",
+    "symbol": "VOO",
+    "bars": 30,
+    "cacheHit": true
+  },
+  "cache": {
+    "archiveTtlSeconds": 86400,
+    "bytes": 11022,
+    "entries": 1,
+    "latest": 1792052205596,
+    "maxBytes": 67108864,
+    "oldest": 1792052205570,
+    "preservesSnapshots": true,
+    "rebuildable": true,
+    "recentTtlSeconds": 30
+  },
+  "container": {
+    "dataVolume": "tickgrove-free-data-1792052200540",
+    "networkMode": "host",
+    "readOnly": true,
+    "capDrop": [
+      "ALL"
+    ],
+    "securityOpt": [
+      "seccomp=unconfined",
+      "apparmor=tickgrove",
+      "no-new-privileges=true"
+    ],
+    "tmpfs": {
+      "/tmp": ""
+    }
+  },
+  "scope": "New isolated data volume and container; public read-only data requests; no account keys or orders. Host networking with loopback service bind is used because this dedicated daemon has no bridge; default Compose bridge/NAT was not tested.",
+  "checks": [
+    "service container runs as unprivileged uid 10001",
+    "runtime image has no Python interpreter on PATH",
+    "unauthenticated API rejected",
+    "Rust serves built React entry point",
+    "image App.tsx matches frozen source; exact source and built entry asset hashes recorded",
+    "current Tickgrove logo is included in the built image",
+    "read-only root, dropped capabilities, tmpfs and no-new-privileges match Compose",
+    "free provider connections are ready without account credentials",
+    "real public ETF history loads and reuses the bounded persistent cache",
+    "downloaded history cache and authentication survive container restart",
+    "bubblewrap-isolated Pine worker executes and persists exact native fills",
+    "clearing disposable history cache preserves the immutable snapshot and backtest result",
+    "real Coinbase LTC-USD WebSocket quote reaches the container within bounded wait"
+  ],
+  "composeTool": {
+    "version": "v5.6.0",
+    "source": "https://github.com/docker/compose/releases/tag/v5.6.0",
+    "asset": "https://github.com/docker/compose/releases/download/v5.6.0/docker-compose-linux-x86_64",
+    "sha256": "40343e21ca777173e69cff5dbafeb37c6f81f3b0d57d9e597f036e95eb63e76a"
+  },
+  "buildHistory": {
+    "firstAttempt": {
+      "exitCode": 143,
+      "signal": "SIGTERM",
+      "lastStep": "16/34: COPY --from=web /app/node_modules ./node_modules",
+      "completedStages": {
+        "webBuild": true,
+        "rustDependencyRelease": "37m 00s",
+        "rustApplicationRelease": "11m 41s",
+        "runtimePackages": true
+      },
+      "finalImageProduced": false,
+      "cause": "External termination cause not established; no compiler or product error reported in build log"
+    },
+    "logs": [
+      "/tmp/tickgrove-free-data-build.log",
+      "/tmp/tickgrove-free-data-final-build.log"
+    ],
+    "finalAttempt": {
+      "exitCode": 0,
+      "image": "sha256:1c09e8e06e41f27b2d82bb311dba5fa7e089407b4a0df7e6a26292b30ea4e82a",
+      "rustDependencyCacheHit": true,
+      "rustApplicationCacheHit": true,
+      "frontendRebuilt": true
+    }
+  },
+  "cleanup": {
+    "containerRemoved": true,
+    "container": "tickgrove-free-data-1792052200540",
+    "dataVolumeRetained": "tickgrove-free-data-1792052200540"
+  },
+  "launch": {
+    "bind": "http://127.0.0.1:5987",
+    "network": "host",
+    "restart": "unless-stopped",
+    "systemPaths": "unconfined",
+    "AppArmor": "tickgrove"
+  }
+}
