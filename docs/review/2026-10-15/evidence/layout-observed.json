@@ -1,0 +1,401 @@
+{
+  "at": "2026-10-15T05:42:04.013Z",
+  "sha": "ec039649fe9f4b8729b977e819509910bf95cc2a",
+  "mode": "demo",
+  "base": "http://127.0.0.1:18892/?mode=demo",
+  "freshContext": true,
+  "serverApiRequests": [],
+  "initial": {
+    "app": "tickgrove",
+    "version": "0.1.0",
+    "mode": "DEMO",
+    "time": "2026-10-15T05:42:10.795Z",
+    "view": "workspace",
+    "workspace": {
+      "active": "Research",
+      "all": [
+        {
+          "id": "w-research",
+          "name": "Research"
+        },
+        {
+          "id": "w-strategy",
+          "name": "Strategy Lab"
+        },
+        {
+          "id": "w-trade",
+          "name": "Trade"
+        }
+      ]
+    },
+    "activeChartId": "chmv9439h77",
+    "charts": [
+      {
+        "id": "chmv9439h77",
+        "symbol": "NVDA",
+        "tf": "1D",
+        "link": "violet",
+        "style": "candles",
+        "indicators": [],
+        "last": 138.6
+      },
+      {
+        "id": "chmv9439iv8",
+        "symbol": "NVDA",
+        "tf": "1H",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 138.6
+      },
+      {
+        "id": "chmv9439jm9",
+        "symbol": "SPY",
+        "tf": "1H",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 571.38
+      },
+      {
+        "id": "chmv9439k8a",
+        "symbol": "BTCUSD",
+        "tf": "4H",
+        "link": "amber",
+        "style": "candles",
+        "indicators": [],
+        "last": 67250
+      }
+    ],
+    "scripts": [
+      {
+        "id": "ex-ema-cross",
+        "name": "EMA Cross Strategy",
+        "kind": "strategy"
+      },
+      {
+        "id": "ex-rsi-bands",
+        "name": "RSI Bands",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-keltner",
+        "name": "Keltner Channel",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-breakout",
+        "name": "Donchian Breakout",
+        "kind": "strategy"
+      }
+    ],
+    "builder": [
+      {
+        "id": "smv9438wg0",
+        "name": "Trend Pullback",
+        "symbol": "NVDA",
+        "tf": "1D"
+      }
+    ],
+    "backtests": [],
+    "paper": {
+      "cash": 100000,
+      "positions": [],
+      "workingOrders": 0,
+      "strategies": []
+    }
+  },
+  "targetId": "chmv9439h77",
+  "modified": {
+    "app": "tickgrove",
+    "version": "0.1.0",
+    "mode": "DEMO",
+    "time": "2026-10-15T05:42:11.611Z",
+    "view": "workspace",
+    "workspace": {
+      "active": "Research",
+      "all": [
+        {
+          "id": "w-research",
+          "name": "Research"
+        },
+        {
+          "id": "w-strategy",
+          "name": "Strategy Lab"
+        },
+        {
+          "id": "w-trade",
+          "name": "Trade"
+        }
+      ]
+    },
+    "activeChartId": "chmv9439h77",
+    "charts": [
+      {
+        "id": "chmv9439h77",
+        "symbol": "COINBASE:SOL-USD",
+        "tf": "5m",
+        "link": "violet",
+        "style": "candles",
+        "indicators": []
+      },
+      {
+        "id": "chmv9439iv8",
+        "symbol": "NVDA",
+        "tf": "1H",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 138.65
+      },
+      {
+        "id": "chmv9439jm9",
+        "symbol": "SPY",
+        "tf": "1H",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 571.38
+      },
+      {
+        "id": "chmv9439k8a",
+        "symbol": "BTCUSD",
+        "tf": "4H",
+        "link": "amber",
+        "style": "candles",
+        "indicators": [],
+        "last": 67250
+      }
+    ],
+    "scripts": [
+      {
+        "id": "ex-ema-cross",
+        "name": "EMA Cross Strategy",
+        "kind": "strategy"
+      },
+      {
+        "id": "ex-rsi-bands",
+        "name": "RSI Bands",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-keltner",
+        "name": "Keltner Channel",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-breakout",
+        "name": "Donchian Breakout",
+        "kind": "strategy"
+      }
+    ],
+    "builder": [
+      {
+        "id": "smv9438wg0",
+        "name": "Trend Pullback",
+        "symbol": "NVDA",
+        "tf": "1D"
+      }
+    ],
+    "backtests": [],
+    "paper": {
+      "cash": 100000,
+      "positions": [],
+      "workingOrders": 0,
+      "strategies": []
+    }
+  },
+  "afterSix": {
+    "app": "tickgrove",
+    "version": "0.1.0",
+    "mode": "DEMO",
+    "time": "2026-10-15T05:42:13.231Z",
+    "view": "workspace",
+    "workspace": {
+      "active": "Research",
+      "all": [
+        {
+          "id": "w-research",
+          "name": "Research"
+        },
+        {
+          "id": "w-strategy",
+          "name": "Strategy Lab"
+        },
+        {
+          "id": "w-trade",
+          "name": "Trade"
+        }
+      ]
+    },
+    "activeChartId": "chmv943bosb",
+    "charts": [
+      {
+        "id": "chmv943bosb",
+        "symbol": "NVDA",
+        "tf": "1D",
+        "link": "violet",
+        "style": "candles",
+        "indicators": [],
+        "last": 138.65
+      },
+      {
+        "id": "chmv943bpuc",
+        "symbol": "AAPL",
+        "tf": "1D",
+        "link": "teal",
+        "style": "candles",
+        "indicators": [],
+        "last": 228.78
+      },
+      {
+        "id": "chmv943bq9d",
+        "symbol": "SPY",
+        "tf": "1H",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 571.51
+      },
+      {
+        "id": "chmv943bqqe",
+        "symbol": "BTCUSD",
+        "tf": "4H",
+        "link": "amber",
+        "style": "candles",
+        "indicators": [],
+        "last": 67237.11
+      },
+      {
+        "id": "chmv943br6f",
+        "symbol": "MSFT",
+        "tf": "1D",
+        "link": "rose",
+        "style": "candles",
+        "indicators": [],
+        "last": 430.93
+      },
+      {
+        "id": "chmv943brng",
+        "symbol": "TSLA",
+        "tf": "15m",
+        "link": null,
+        "style": "candles",
+        "indicators": [],
+        "last": 251.17
+      }
+    ],
+    "scripts": [
+      {
+        "id": "ex-ema-cross",
+        "name": "EMA Cross Strategy",
+        "kind": "strategy"
+      },
+      {
+        "id": "ex-rsi-bands",
+        "name": "RSI Bands",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-keltner",
+        "name": "Keltner Channel",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-breakout",
+        "name": "Donchian Breakout",
+        "kind": "strategy"
+      }
+    ],
+    "builder": [
+      {
+        "id": "smv9438wg0",
+        "name": "Trend Pullback",
+        "symbol": "NVDA",
+        "tf": "1D"
+      }
+    ],
+    "backtests": [],
+    "paper": {
+      "cash": 100000,
+      "positions": [],
+      "workingOrders": 0,
+      "strategies": []
+    }
+  },
+  "afterOne": {
+    "app": "tickgrove",
+    "version": "0.1.0",
+    "mode": "DEMO",
+    "time": "2026-10-15T05:42:14.538Z",
+    "view": "workspace",
+    "workspace": {
+      "active": "Research",
+      "all": [
+        {
+          "id": "w-research",
+          "name": "Research"
+        },
+        {
+          "id": "w-strategy",
+          "name": "Strategy Lab"
+        },
+        {
+          "id": "w-trade",
+          "name": "Trade"
+        }
+      ]
+    },
+    "activeChartId": "chmv943d09h",
+    "charts": [
+      {
+        "id": "chmv943d09h",
+        "symbol": "NVDA",
+        "tf": "1D",
+        "link": "violet",
+        "style": "candles",
+        "indicators": [],
+        "last": 138.8
+      }
+    ],
+    "scripts": [
+      {
+        "id": "ex-ema-cross",
+        "name": "EMA Cross Strategy",
+        "kind": "strategy"
+      },
+      {
+        "id": "ex-rsi-bands",
+        "name": "RSI Bands",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-keltner",
+        "name": "Keltner Channel",
+        "kind": "indicator"
+      },
+      {
+        "id": "ex-breakout",
+        "name": "Donchian Breakout",
+        "kind": "strategy"
+      }
+    ],
+    "builder": [
+      {
+        "id": "smv9438wg0",
+        "name": "Trend Pullback",
+        "symbol": "NVDA",
+        "tf": "1D"
+      }
+    ],
+    "backtests": [],
+    "paper": {
+      "cash": 100000,
+      "positions": [],
+      "workingOrders": 0,
+      "strategies": []
+    }
+  },
+  "success": true,
+  "reproducedStateLoss": true
+}

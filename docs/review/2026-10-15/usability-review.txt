@@ -1,0 +1,113 @@
+Tickgrove product usability review — 2026-10-15
+Review commit: ec039649fe9f4b8729b977e819509910bf95cc2a. Verdict: ISSUES. Reviewer scope: product IA, task completion, chart density, Pine, mobile, typography.
+Evidence: current source, docs/review/interaction-audit-2026-10-14.md, docs/acceptance/*, current committed desktop/mobile screenshots. Initial isolated-preview request timed out; a later single scoped Playwright reproduction succeeded at 2026-10-15T05:42Z in a fresh demo-only context. Only grid-state loss was reproduced; no whole-task end-to-end success claimed. No public preview writes, credentials reused, source edits, or builds. Prior UX evidence is credited only for its actual 2026-10-14 scope.
+
+结论
+现状已经比用户最初截图明显简洁；应保留已完成的 Geist 字体统一、32px 单行图表栏、来源详情折叠、Pine Import and edit / Add to chart / Update on chart、Settings 默认 Appearance 和手机单面板。下一轮重点不是再加功能，而是使用户对“当前标的/数据/脚本版本/模拟账户/运行结果”始终有确定理解。公开推广之前仍应修下面的任务断点，尤其网格切换重置图表状态，以及从 Scripts 部署后找不到运行对象。
+
+优先缺陷（均按当前源码重新确认；不复用历史审计的已修问题）
+
+P0-UX-01：Layout 的数字网格其实是重建模板，有意外状态损失。
+- Shell.tsx:135–158 把 1/2/4/6 chart 作为 Layout presets，core/actions.ts:495–510 调 applyPreset；features/workspace/dock.ts:97–123 移除当前未被其它布局引用的 charts，清空 dock，再用固定 NVDA/AAPL/SPY/BTCUSD/MSFT/TSLA 重建；store/index.ts:175–178 删除 chart 对象。
+- 用户换网格时会丢当前 chart 的 symbol/timeframe/indicators/comparisons/backtest/replay 等配置。按 symbol 独立存的 drawings 不会被 removeChart 删除，不能误写成所有画线都丢。
+- 必须分为 Change grid（保留 chart IDs、设置、图层、顺序；缩格保留隐藏图）和 Replace with template（明确覆盖范围、可 Undo）。数字网格必须走前者。
+
+P1-UX-02：从 Scripts 回测报告 Deploy to paper 成功后没有落到新运行。
+- core/actions.ts:172–195 创建 closed_bar_native session 后只 openPanel('positions')；App.tsx:118–149 在 Scripts 页面把 Workspace 隐藏；ServerAccount.tsx:20 默认 positions，策略在 strategies tab，316–328 仍常以 UUID 片段显示。
+- 结果是成功 toast 后用户不知道任务在哪运行，且看到的 $100,000 手动账户不是策略独立账本。
+- 统一 Start paper 的简短 review sheet：策略名/保存版本、标的周期、来源时段、每根收盘执行、独立模拟账本；完成后直达所创建运行详情，显示下一次预期事件、最近数据/信号/成交、暂停/停止。手动模拟账户与策略账户可共用 Account 导航，但对象必须显式选中。
+
+P1-UX-03：数据入口仍是适配器配置表单，不是首次上手。
+- ConnectionGate.tsx:22–53 只有 token，说明路径没有 setup 文档动作；MarketPanel.tsx:224–329 默认暴露 Provider/Provider symbol/Feed/Session/Interval/StartUTC/EndUTC；254–260 夜盘选项照常可选但361明确集成尚待修正验证。
+- 初次连接应做一次轻量状态检查：服务已连接、股票历史可用/报价延迟、加密实时可用、付费源未配置；主动作 Open chart；正式行情连接另有 Connect provider → server credentials → test entitlement → choose feeds。不可把未验证 boats/overnight 与已用 feed 平列成可用选项。
+- Charts 内搜索用“标的/交易所/资产类型”；provider/feed/复权/时段进入“数据来源”抽屉。用户选非默认源时明确保留其身份，不能静默换源。
+
+P1-UX-04：搜索新词时旧结果仍可按 Enter 选中。
+- features/chart/SymbolSearch.tsx:8–11 remote 结果保留；输入改变只 setQ/setIdx，300ms debounce 后 loading 才变 true；23–26 无 query/result 对应校验即选 list[idx]。
+- 输入新词到新请求返回之间仍可选前一查询的股票/币。修为 results 带 queryKey，Enter 只允许匹配当前查询的已完成结果；输入变更立即进入 searching。显示空态和重试/精确标的入口。
+
+P1-UX-05：脚本依赖问题仍迫使用户学习两套导入。
+- ImportPine.tsx:51–54 遇 library 只返回 More → Pine dependencies 文本；PineEditor.tsx:442–450 依赖在菜单；Workspace.tsx:79/dock.ts:16 又叫 Pine imports；PineLibraries.tsx:81–121 要填 publisher/name/version/source，保存文案为 Save immutable library version。
+- 统一文案 Dependencies；导入主脚本时解析 import 生成缺失依赖清单，从错误行一键打开带预填 publisher/name/version 的安装抽屉。允许贴/上传来源，显示来源与许可证；只安装明确授权且可取得的源码。未拿到或不支持时清楚阻断，不能宣称任意 TV 复制脚本直接可跑。
+- imported library 文件识别后提供 Install dependency 的可操作按钮，不要只给一段指路文字。现有不可变锁和来源记录应保留在详情。
+
+P1-UX-06：Pine/回测路径短，但关键运行口径不可见。
+- PineEditor.tsx:493–496 的 Backtest 直接运行；core/actions.ts:53–75 用 current chart、runs.ts:29–35 用历史缓存范围。用户在脚本页看不到范围/覆盖/复权/交易时段/手续费滑点摘要；报告 BacktestReport.tsx:128–134 却优先展示 snapshot/source hash、engine、inputs JSON。
+- 回测按钮旁保留上次运行设定；首次运行/改变数据口径时展开 Setup：标的、周期、日期、源+时段+复权、资金与脚本实际费用假设、缺口和可用历史。普通报告首屏以这些人类可读字段、净值/回撤/成交为主；hash/原始manifest收进 Reproducibility。
+- 保留 immutable report，但不要求用户知道 snapshot 才能运行。无交易空态 BacktestReport.tsx:392 建议 loosen entry conditions 过于偏向优化结果，改先检查数据范围、warmup、条件是否触发、仓位约束，再选择编辑。
+
+P1-UX-07：freshness 既不统一也不区分休市。
+- MarketBadge.tsx:32–53（实际文件 src/service/MarketPanel.tsx）用所有源15秒固定阈值；来源 delayed 优先于 freshness；Shell.tsx:372–390 底栏只数 transport connected。保存截图 mobile.png 同时出现 Waiting + green 9 connected streams。
+- 应显示两个正交状态：Session（regular/pre/post/overnight/closed/24x7）和 Price quality（live/delayed/as-of/reconnecting/unverified）。closed/无成交不能自动当故障；延迟源也可能完全断流。全局显示 degraded counts/最严重问题，不以 connected 绿色代替“可用报价”。源探测与状态机由数据架构组实现，UI消费统一契约。
+
+P1-UX-08：手机号称无溢出不等于容易操作。
+- brand-review/mobile.png: 顶栏 workspace 名被缩成“Re…”，左侧6个图标无文字，taskbar 的 Order ticket 横滚藏在右边，另有 Panel selector + dock tab + chart toolbar 共多层选择。
+- Shell.tsx:288–310 小屏隐藏文字但保留左轨，317–349 保留横滚任务栏；Workspace.tsx:267–289 再加 panel selector；IconButton28px、button28/32px（ui/primitives.tsx:30,57）。
+- <768px 用底部 Charts / Scripts / Activity / More 四入口，单个 full-screen content；图表底部“Trade / Alert”明确动作，Pine/报告用 sheet/fullscreen，面板切换为一个按钮。桌面布局与手机布局分别持久化，避免手机保存破坏桌面。
+- 关键触控目标建议44px；WCAG2.2 AA最小24px另有间距等例外，不能把44px说成AA硬要求。
+
+P2-UX-09：字体族已统一，尺寸/对比/操作性未统一。
+- index.css:131–133 本地Geist/Geist Mono已正确；但大量10/10.5/11px+text-faint。--faint light #9a9a96 onwhite contrast2.82，moss #979b88 on#fbfaf6 2.73，dark #6b6b6a on#151516 3.42（按CSS色值计算）。BacktestReport.tsx:166 指标名属于有信息文本，不宜用此颜色。
+- 只保留类型标尺 12/13/14/16/20px；UI13默认、辅助12、价格tabular nums；代码13–14且可调；最低信息文字4.5:1。别用缩字号解决多图空间。
+- Watchlist.tsx:83 row role=button 没tabIndex/key handling，103–111 remove hover-only；PineEditor.tsx:307–315 删除脚本hover-only无可恢复反馈；Shell.tsx:107–116 删除workspace同样。加可聚焦menu、名称、Delete+Undo，移动端可达。
+
+P2-UX-10：组合构建器藏错层级且存在改变用户权重的动作。
+- Script workspace 的 Visual builder 是条件策略builder；Composer在 ServiceWorkbench.tsx:252–316 “Version editor, Composer and data import · advanced”里。想使用Composer的用户需进入Automation→Advanced→Strategy type→Composer，与编辑脚本/策略不在一起。
+- AllocationEditor.tsx:166–174 的 Add equal-weight branch 重写所有旧分支权重；标题未充分提醒旧比例变化。
+- Scripts/Strategies → New 提供 Pine / Rule strategy / Portfolio 三类型，每类型自己的编辑器；同一个结果/运行管理。加分支默认保留旧权重并明确重新分配方式，显示百分比合计、单位、Undo。tick/external fill 继续高级，不与普通paper模式争首屏。
+
+IA和保留边界
+- 顶层4项：Charts / Strategies / Activity / Settings。Charts 自选和标的详情在右侧sheet；Strategies统一 Pine、Rule、Portfolio，Backtests 是所选策略的结果，不独立多处库；Activity集中 Alerts、Orders/Fills、Strategy runs。Data为右上状态按钮和Settings→Data connections，不必再占一整个永久主导航项。
+- Charts保留当前符号+周期+质量状态。多图时主工具栏针对明确激活图表；小格只显示符号/周期/报价/数据点/菜单，绘图工具栏只在活动图出现或全局共用。重复dock title和chart title合为一行。4/6图侧边自选默认折叠，可重新展开；不能靠固定300px侧栏让六图只有约248px画布。
+- 保留高级API/CLI/MCP、插件权限、CSV/JSON数据导入、依赖锁、tick宿主、外部成交、日志和manifest；收进Settings→Developer / 数据详情 / 运行详情。它们不会因默认隐藏而减少扩展能力。
+- 删除仅表达同一路径的重复入口和失效文案，不删除可用引擎；把“Integrations→Plugins”旧指路（Workspace.tsx:67）改成实际Settings→Extensions。
+- 界面不加AI对话。OpenBB取其模板/同步参数思路，不采用其默认AI交互。
+
+任务动作数（源码推演，不是本轮真人测试测量）
+- 连接：粘token+Connect，1点击+1输入；寻找token未计入，当前无向导，这是部署后第一道理解成本。
+- 标的：开搜索→输入→选结果，2点击+1输入。目标维持≤2点击+输入，选择时能辨识交易所和数据质量。
+- Pine：Charts→Scripts→Import Pine→粘贴→Import and edit→Add to chart，4点击+粘贴，若看图再+1。目标≤4点击+粘贴且同屏看到图；脚本复杂度/依赖另计。
+- 回测：打开的strategy上Backtest1点击，但口径隐含。目标常用重跑1点击，首次配置不超过1个sheet，运行中/失败/完成都有明确后继动作。
+- 模拟：报告Deploy1点击创建，但还需Charts→Strategies页签才能找到账本，且无新session定位。目标设置摘要1次→Start1次→自动直达该运行；重复点击只能创建一个session。
+- 价格提醒：Alerts→填价格→Create，2点击+1输入（name有默认）；但离开图且7项表单平铺。目标图表价格轴/contextmenu或Alert动作→预填symbol/price→Create，日常3点击以内，frequency/expiry折叠。
+
+分屏与状态屏规范
+1) 首次启动：单图+自选，非4/6图；简短“行情可用范围”面板，有交易所时段、实时/延迟、可连接源；不展示散落的provider API名。
+2) Pine：列表+编辑器+目标图；主动作Add/Update，secondaryBacktest；底部仅有问题时展开Problems，dependencies由具体缺失行直达。回测结束打开同一策略Result，不重置编辑器草稿。
+3) 回测报告：策略名/标的/周期/日期/口径→净值和基准→净收益/回撤/交易数→trades；数据缺口和失败首屏可见。Share/Export可作为以后宣传素材，但必须带数据来源/假设。
+4) 模拟运行：人类名+状态+所绑定数据+执行模式+账户，最新事件/订单/下个预期事件，Pause/Stop；外部成交配置按就绪门禁，不给普通用户raw JSON。
+5) 数据连接：provider test结果按Authenticated/Entitled/History verified/Streaming verified分开。单纯configured flag不是就绪状态。
+
+发布前可量化闸门（建议目标，不是当前成绩）
+- 至少8位没用过Tickgrove的目标用户（4位Pine用户、4位偏看盘/组合），≥7人不靠口头提示完成“选新标的→导入公开简单Pine→回测→找到模拟运行→创建提醒”；总时长中位数≤5分钟，首张可用真实行情≤60秒（从服务可用/已获授权凭据算起，另测首次部署≤10分钟）。复杂Pine依赖另列测试，不把SMA成功替代兼容性。
+- 用户100%能复述“真实行情/本地模拟资金/独立策略账户/延迟状态”；任何用户误以为已接真券商或策略净值属于手动账户，阻止推广。
+- 新浏览器真实任务验收：1430×900、1366×768、1024×768、390×844、320px，以及125%/200%缩放；1/4/6图，长ticker、6个指标、多行error、无数据、失联、重连、只读、缺权限、依赖缺失、job失败都覆盖。
+- 1366×768四图每格有效plot宽≥360px、高≥200px；六图plot宽≥280px、高≥200px，默认折叠侧栏达成；plot占各panel高度≥70%，固定header合计≤56px，诊断不常驻占画布。空间不足提示切单图/隐藏侧栏，不缩字体。390px只看一图，plot宽≥280px，关键动作无横滚寻路。
+- 换1→4→6→1保留当前标的、周期、指标、比较、图表ID和自定义设置；桌面↔手机恢复各自布局；任何reset/delete可恢复。断线刷新后草稿/运行/提醒可找回，不能只验证截图没溢出。
+- 每个主要mutation：pending禁重复、成功定位对象、错误给解释/重试，read-only在点击前给原因；键盘完整可走、focus可见、screen reader有名称；普通文本4.5:1。
+- Pine公开语义测试与行情长跑闸门由其它审计负责；UX要求兼容性失败有具体语义/行号/依赖路径和下一步，不能把运行失败包装“Import succeeded”。
+
+官方参考（2026-10-15查阅，实际查看官方截图）
+- TradingView Supercharts: https://www.tradingview.com/support/solutions/43000746464-getting-started-with-supercharts/
+  从标的/周期/指标/布局/提醒/交易组织任务；右侧工具、左侧绘图；保留图表上下文，不能机械复制全部金融社交功能。截图已下载并查看 /tmp/tickgrove-reference-supercharts.png。
+- TradingView Pine Editor: https://www.tradingview.com/support/solutions/43000763320-how-to-work-with-pine-editor/
+  当前默认浮动，并可右侧停靠、底部或独立窗口；恢复编辑状态，主要动作为Add to chart。不能继续宣称TV只用底栏编辑器。截图已下载并查看 /tmp/tickgrove-reference-pine.png。
+- Composer创建： https://help.composer.trade/article/54-create-tutorial
+  资产/权重/条件/过滤/分组组合，编辑与回测在同一任务上下文，日期/基准可见，错误组合有guardrail。取其可视化规则/结果对照，不照搬其AI入口。
+- Composer回测： https://help.composer.trade/article/67-backtest-basics
+- aggr开源项目： https://github.com/Tucsky/aggr
+  取交易所真实事件/market pair清晰选择、实时与历史部署责任分明，不把它的Vue前端直接嵌入Rust/React主产品，也不把聚合交易终端当作回测或券商基座。
+- OpenBB Workspace Apps官方说明： https://docs.openbb.co/workspace/analysts/apps
+  取明确任务模板、参数同步；Workspace产品与OpenBB开源组件应区分，不能说该SaaS整体是可直接采用的开源终端。
+- W3C contrast: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
+- W3C target size: https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+
+建议执行顺序：先修保留用户状态/搜索竞态/部署落点；再统一策略与账户运行对象、数据状态和配置摘要；然后重构desktop/mobile导航与设计token；最后新用户实测+真实数据长跑，达到上述闸门再制作社媒演示。
+
+MVP wireflow：
+Connect instance → source availability summary → single Chart (global symbol search + watchlist) → Scripts opens a docked editor → Import Pine (paste/file, dependency checklist if needed) → Add/Update on chart → Backtest setup summary → Result → Start paper review → selected Run detail. Chart price → Create alert sheet → selected Alert detail. Desktop preserves chart context; phone uses fullscreen steps with one Back action. No duplicate standalone Library or second hidden Composer editor.
+
+First-time-user test protocol：给参与者一份许可明确的公开Pine strategy源码和目标未预置股票/币，不告诉按钮位置。任务1找到真实数据并说出来源、时段及延迟；任务2导入源码并在图看到输出；任务3指定日期回测并解释费用/结果；任务4开始本地模拟并找出其独立账本和Stop；任务5对当前价位建提醒并再次找到它；任务6切4/6图再回1图检查原配置；任务7换手机尺寸找回脚本与运行。记录首击、误击/回退、请求帮助、每任务时长与失败原因。上述≤5分钟/≤60秒/≥7of8是拟定目标，不是本轮测量结果。
+
+Fresh browser evidence supplement (2026-10-15T05:42Z):
+Runnable repro /tmp/tickgrove-layout-review.cjs; result /tmp/tickgrove-layout-review.json. Fresh browser context, ?mode=demo, /api/** route blocked. Observed server API requests: 0. Target chmv9439h77 set to COINBASE:SOL-USD / 5m using real in-page commands. Apply charts6 replaced it with six new chart IDs and default NVDA/AAPL/SPY/BTCUSD/MSFT/TSLA (no SOL chart and no original ID). Apply charts1 then left only chmv943d09h / NVDA / 1D. reproducedStateLoss=true. This promotes P0-UX-01 from source-confirmed to fresh-browser-reproduced; all other findings retain their previously stated source/screenshot methods. No server account/workspace/token was used or modified.

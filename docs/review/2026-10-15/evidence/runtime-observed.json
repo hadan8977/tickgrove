@@ -1,0 +1,129 @@
+{
+  "reviewedGitSha": "ec039649fe9f4b8729b977e819509910bf95cc2a",
+  "reviewAt": "2026-10-15T05:41:18Z",
+  "verdict": "ISSUES",
+  "scope": "synthetic fixtures; no public preview state, provider keys, broker accounts or external orders",
+  "pine": {
+    "exitIntents": [
+      {
+        "source": "strategy.exit('Exit','L',profit=20,loss=10)",
+        "pending": [
+          {
+            "id": "Exit",
+            "direction": 0,
+            "qty": 0,
+            "type": "market",
+            "bar": 2,
+            "time": 1700006520000,
+            "status": "pending",
+            "category": "exit",
+            "from_entry": "L",
+            "profit": 20,
+            "loss": 10,
+            "trail_armed": false,
+            "trail_peak": null,
+            "_attachedAtReversal": false,
+            "_coversOpenTrade": true,
+            "_isPersistent": false,
+            "_callsiteId": "#0",
+            "_placedWithPosition": true
+          }
+        ],
+        "absoluteLimitStopAbsent": true,
+        "rustSourceFinding": "server/src/pine_host.rs:593-604 defaults absent limit/stop to market; actual Rust local order dispatch not executed by this probe"
+      },
+      {
+        "source": "strategy.exit('Exit','L',trail_points=2,trail_offset=1)",
+        "pending": [
+          {
+            "id": "Exit",
+            "direction": 0,
+            "qty": 0,
+            "type": "market",
+            "bar": 2,
+            "time": 1700006520000,
+            "status": "pending",
+            "category": "exit",
+            "from_entry": "L",
+            "trail_points": 2,
+            "trail_offset": 1,
+            "trail_armed": false,
+            "trail_peak": null,
+            "_attachedAtReversal": false,
+            "_coversOpenTrade": true,
+            "_isPersistent": false,
+            "_callsiteId": "#0",
+            "_placedWithPosition": true
+          }
+        ],
+        "absoluteLimitStopAbsent": true,
+        "rustSourceFinding": "server/src/pine_host.rs:593-604 defaults absent limit/stop to market; actual Rust local order dispatch not executed by this probe"
+      }
+    ],
+    "wrongSide": {
+      "issued": [
+        {
+          "id": "L",
+          "direction": 1,
+          "qty": 2,
+          "type": "market",
+          "bar": 2,
+          "time": 1700006520000,
+          "status": "pending",
+          "category": "entry",
+          "_isReversalEntry": false,
+          "_base_qty": 2
+        }
+      ],
+      "accepted": {
+        "duplicate": false
+      },
+      "account": {
+        "cash": 1020,
+        "equity": 1000,
+        "positionSize": -2,
+        "last": 10
+      }
+    }
+  },
+  "realtimeAlerts": {
+    "loopbackPort": 15187,
+    "temporaryDatabaseDeletedOnExit": true,
+    "outboundHttpBlocked": true,
+    "liveHostAlerts": [
+      {
+        "bar_index": 1,
+        "freq": "all",
+        "id": "alert_0",
+        "message": "probe-live-alert",
+        "time": 1792042860000,
+        "type": "alert"
+      }
+    ],
+    "historyBeforeRestart": [],
+    "historyAfterRestart": []
+  },
+  "runtimeBinary": {
+    "path": "server/target/debug/tickgrove-server",
+    "sha256": "82897a3621464a0cba7582c58ecefb5a25b7236dd4bc06c853cfe6520b56a56a",
+    "modifiedAt": "2026-10-14T13:26:00.398Z",
+    "builtDuringReview": false
+  },
+  "reviewedExecutionHashMatches": {
+    "server/src/account.rs": true,
+    "server/src/sandbox.rs": true,
+    "server/src/pine_host.rs": true,
+    "scripts/service-worker.cjs": true,
+    "scripts/pine-host-worker.cjs": true,
+    "scripts/register-typescript.cjs": true,
+    "src/pine/host.ts": true,
+    "src/pine/broker.ts": true,
+    "src/pine/rollback.ts": true,
+    "src/pine/runtime.ts": true,
+    "src/pine/library.ts": true,
+    "src/pine/compat.ts": true,
+    "src/pine/data.ts": true,
+    "src/pine/report.ts": true,
+    "src/composer/engine.ts": true
+  }
+}

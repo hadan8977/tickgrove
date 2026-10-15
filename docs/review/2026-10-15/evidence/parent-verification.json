@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-15T05:54:11.131Z",
+  "reviewedSha": "ec039649fe9f4b8729b977e819509910bf95cc2a",
+  "purpose": "Parent reran portable diagnostic scripts; observed defects remain, NOT product acceptance",
+  "runtime": {
+    "exitIntents": [
+      {
+        "source": "strategy.exit('Exit','L',profit=20,loss=10)",
+        "absoluteLimitStopAbsent": true
+      },
+      {
+        "source": "strategy.exit('Exit','L',trail_points=2,trail_offset=1)",
+        "absoluteLimitStopAbsent": true
+      }
+    ],
+    "wrongSide": {
+      "issued": [
+        {
+          "id": "L",
+          "direction": 1,
+          "qty": 2,
+          "type": "market",
+          "bar": 2,
+          "time": 1700006520000,
+          "status": "pending",
+          "category": "entry",
+          "_isReversalEntry": false,
+          "_base_qty": 2
+        }
+      ],
+      "accepted": {
+        "duplicate": false
+      },
+      "account": {
+        "cash": 1020,
+        "equity": 1000,
+        "positionSize": -2,
+        "last": 10
+      }
+    },
+    "liveAlertCount": 1,
+    "historyBeforeRestart": [],
+    "historyAfterRestart": []
+  },
+  "layout": {
+    "completed": true,
+    "stateLoss": true,
+    "serverApiRequestCount": 0,
+    "before": {
+      "id": "chmv94h34w7",
+      "symbol": "COINBASE:SOL-USD",
+      "tf": "5m",
+      "link": "violet",
+      "style": "candles",
+      "indicators": []
+    },
+    "after": [
+      {
+        "id": "chmv94h844h",
+        "symbol": "NVDA",
+        "tf": "1D",
+        "link": "violet",
+        "style": "candles",
+        "indicators": [],
+        "last": 138.63
+      }
+    ]
+  },
+  "fixesImplemented": false,
+  "publicPreviewWrites": false
+}

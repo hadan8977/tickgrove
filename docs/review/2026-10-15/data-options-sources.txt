@@ -1,0 +1,101 @@
+Tickgrove data delivery options — 2026-10-15 UTC
+Status: DECISION OPTIONS, not an approved implementation choice. The user explicitly requested evaluation before selecting BYOK or any other mode. This supersedes the BYOK-first working assumption in /tmp/tickgrove-formal-data-review.txt; the source findings and ISSUES verdict there remain unchanged.
+Method: official public documentation, pricing pages and anonymous public pricing metadata; no logins, secrets, purchases, sales contacts or product changes. Currency USD. Posted prices exclude taxes/infrastructure and any additional rights not explicitly included. Professional/non-professional eligibility is not assumed. Corporate-use and redistribution contracts may differ.
+
+1. Delivery modes
+
+| Mode | First-use experience | Who pays for data? | What can realistically be promised? | Main tradeoff |
+| A. Free public/replay | Open a URL and immediately chart, import Pine, backtest and paper-trade a labeled replay; optional live venue data only with appropriate distribution rights | Project owns/licences replay fixtures; zero paid live feed is possible if the demo stays offline/replay | A complete feature demonstration, repeatable and useful outside market hours. It cannot by itself promise current consolidated US tape, real night ticks or arbitrary current history | Least friction and cost; replay must be visibly distinguished from live data. Public API accessibility is not public redistribution permission |
+| B. Self-hosted own data connection/BYOK | Install Tickgrove, choose provider, add dedicated credentials, test entitlements, then use live data | Each user/organization pays its own provider plan; local/public crypto feeds may have no subscription charge | With eligible paid SIP+BOATS access, strong US day/pre/post/night coverage; a chosen crypto exchange supplies its own live market. CLI/MCP operate within the user's contract | Better autonomy and open-base fit, but more onboarding and uneven data budgets. It is a candidate, not a decision already made |
+| C. Project-funded shared licensed service | Open Tickgrove and immediately receive centrally managed authorized live data | Project pays data platform + feed rights + any per-user/device/display/non-display charges + hosting | Smoothest experience. A licensed derived composite can support broad live charts relatively cheaply; official consolidated tape/overnight/full tick export is a larger contracted product | Central uptime, access control, reporting, cost management, license boundaries and abuse/rate protection become project obligations |
+| Hybrid proposal | Public no-key replay first; optional project-paid licensed chart feed; personal/organization connectors for required SIP/night/history/automation | Shared baseline by project; specialist subscriptions by the users who require them | Lets the software stay fully open and functional while choosing data quality/cost independently. No silent change from a baseline feed to a user's strategy feed | Some source choices remain, but keep them in one Data Connection setup and a compact chart source badge |
+
+No-cost public launch should not be described as “Yahoo/Coinbase for everyone.” The current sources' internal/personal research status is not a shared deployment licence. A free-to-end-user experience can still require project-paid data, and a replay package must itself have redistribution rights or use clearly synthetic data.
+
+2. Provider comparison (cost and rights checked 2026-10-15)
+
+| Provider | Posted price / basis | US stock/ETF sessions and data | Shared use/export boundary | Rust fit and proposed role |
+| Alpaca | Basic $0; Algo Trader Plus $99/month. Broker partner pricing is a separate schedule; its published Standard tiers remain IEX or delayed SIP, so $500/$1,000/$2,000 partner rows are not automatic realtime-SIP distribution prices | Basic real-time IEX, 30 stock symbols; Plus whole-market SIP, unlimited stock-symbol subscription entitlement, history since 2016. Official Plus night plan uses BOATS; free overnight offers indicative realtime quotes and delayed trades. Day/pre/post plus 20:00-04:00 night must be implemented feed/session correctly. Bars, quotes, trades and snapshots, not just UI price polls | $99 is an individual Trading API plan, not a project-wide redistribution license. Shared SIP/BOATS, user entitlement and non-display use require suitable partner/exchange terms and a quote | Existing Rust REST/WS adapter means lowest implementation cost for B. Fix connection multiplexing/session/quality bugs before credential acceptance |
+| Massive (formerly Polygon) | Individual monthly: Basic $0, Starter $29, Developer $79, Advanced $199. Annual prepaid: Starter $288/year, Developer $768/year, Advanced $1,920/year ($160/month equivalent). Business base $2,499 billed monthly; $1,999/month with commitment; annual prepaid $19,188 ($1,599/month equivalent). Full Market realtime add-on listed $1,999/month plus exchange fees; Enterprise custom | Advanced offers SIP realtime trades/quotes/bars and 20+ years history; Starter/Developer are delayed, not a cheaper realtime substitute. Published stock hours 04:00-20:00 ET; BOATS overnight was not verified. Business baseline is realtime derived FMV + end-of-day SIP, not full live tape | Individual plans are personal/non-professional. Business permits contracted customer display; standard business terms restrict downstream data feeds/files/machine-readable substitutes. Tickgrove hosted API/CLI/MCP export, strategy use and non-display rights need explicit matching terms | HTTP/JSON + WS fit reqwest/tungstenite; no Python runtime needed. Strong alternative for B historical/tick research; larger-cost C if full SIP is necessary |
+| Databento US Equities / EQUS.MINI | CURRENT official public offering API: Standard $199/month, 1-month commitment; Plus $1,500/month and Unlimited $4,000/month, both 12-month commitment. These are service fees; publisher licenses for other feeds are separate. Standard explicitly includes live EQUS.MINI. Historical data beyond included windows is usage-based | EQUS.MINI is a derived multi-venue BBO/trade composite, not official SIP/NBBO or all-volume tape. Mini history starts March 2023. Night Blue Ocean is a separate dataset/entitlement, not assumed included in Mini. Standard's broad historical datasets do not mean all of those are licensed live | Official Mini documentation permits personal/commercial display and distribution without extra exchange/per-user license fees under its derived-data conditions. Do not extend that exemption to other datasets or claim an unrestricted white-label/raw API resale right without checking the current service agreement and planned exports. Current general legal page was not readable in this session | Official Apache-2.0 Rust client + DBN, live/intraday replay/history. Most interesting C/hybrid broad-chart candidate, with clear “composite” labeling and a separately evaluated night product |
+| Coinbase Exchange | Public market endpoints/WS are accessible without a paid data subscription; no current public price for the requested external redistribution contract was verified. Do not quote $0 for hosted distribution | Crypto pairs listed by Coinbase, 24/7. Trades/ticker/heartbeat, REST history and book data; history candles max 300 per request and may omit no-trade intervals. One venue's prices and volume | 2026-08-07 terms limit internal/personal/research use and external display/distribution including derived charts without prior written consent. Extra restrictions also affect some AI/automated-system uses; merely exposing data through MCP does not remove them | Existing Rust adapter; suitable for a user's permitted private research setup. C needs explicit rights. Add trade repair and genuine continuous L2 before promising complete ticks/depth |
+| Kraken (optional second crypto venue) | Official public ticker/L2/trades/OHLC feeds are free/no key. Commercial/shared-distribution price not published in reviewed sources; quote/permission required | Separate Kraken crypto venue, 24/7. WS v2 multi-symbol trades and L2 with checksums. Ordinary REST OHLC is limited to latest 720 entries, so arbitrary deep historical backtesting needs another archive/import route | Current regional/global terms and legacy API notice do not establish an unrestricted shared-data grant; the legacy API notice explicitly asks permission for non-personal commercial public-data use. Do not claim “switch to Kraken and redistribution is solved” | Standard REST/WS is straightforward in Rust; evaluate as an independent provider, not silent Coinbase continuation. Tokenized xStocks are not a substitute for ordinary US equity SIP data |
+
+3. Price evidence and billing distinctions
+
+Alpaca direct source:
+https://docs.alpaca.markets/us/docs/about-market-data-api
+https://docs.alpaca.markets/us/docs/245-trading-for-trading-api
+Plus $99 and BOATS coverage are confirmed in separate official documents. Availability remains dependent on the actual account, geography, classification and entitlement. The broker partner rows on the first page explicitly state IEX/delayed SIP; a pooled $99 key is not the C option.
+
+Massive current direct pages:
+https://massive.com/stocks
+https://massive.com/business-stocks
+https://massive.com/legal/market-data-terms-of-service
+https://massive.com/legal/businesses-terms-of-service
+The business page currently says $2,499/month billed monthly and exposes Monthly / Monthly + Commitment / Annually choices. Its public server-rendered product metadata confirms:
+  stocks_business_v2: monthly_price.amount=249900; contract_price.amount=199900; annual_price.amount=1918800 (USD cents).
+  stocks_advanced: monthly 19900 cents; annual 192000 cents.
+  stocks_starter: monthly 2900 cents; annual 28800 cents.
+  stocks_developer: monthly 7900 cents; annual 76800 cents.
+Amounts above were read without login from the same official public page. The $1,999 business figure in some search snippets is not the no-commitment monthly price. The precise commitment cancellation/term rules must be checked at checkout/order form; do not present monthly-equivalent annual prices as monthly cash outlay. Add-on billing terms may differ; do not combine an annual-discounted base with assumed annual-discounted feed add-ons.
+
+Databento current exact equities quote evidence:
+https://databento.com/api/v0/dataset/service_offerings/us-equities
+This is the anonymous read-only service-offerings endpoint referenced by Databento's own current pricing-page JavaScript. It was fetched directly successfully on 2026-10-15 without credentials. The web browser-text extraction tool could not parse this endpoint, so direct HTTP inspection supplied evidence:
+  Standard Databento US Equities: unit_price=19900; billing_interval=1; commitment_period=1; self_service=true; allowed_live_datasets includes EQUS.MINI.
+  Plus Databento US Equities: unit_price=150000; billing_interval=1; commitment_period=12; self_service=false.
+  Unlimited Databento US Equities: unit_price=400000; billing_interval=1; commitment_period=12; self_service=false.
+The pricing components divide unit_price by 100 for dollars and label the monthly billing/annual commitment distinction. Cross-checks:
+https://databento.com/blog/introducing-databento-us-equities (Standard $199 announcement)
+https://databento.com/blog/real-time-cboe-edgx-depth-now-available-on-databento-us-equities (Plus $1,500 update)
+https://databento.com/blog/updates-to-subscription-pricing (Unlimited equities $4,000 update effective June 22, 2026)
+Do not cite databento.tech or transplant the default CME pricing table. Relevant rights/coverage:
+https://databento.com/equities
+https://databento.com/blog/databento-us-equities-mini-now-available
+https://databento.com/docs/portal
+https://databento.com/pricing
+https://github.com/databento/databento-rs
+Mini's absence of exchange fees is a dataset-specific benefit, not “all Databento feeds freely redistributable.” I did not complete an executable contract audit for Tickgrove raw-data redistribution/API resale and do not claim clearance.
+
+Crypto sources:
+https://www.coinbase.com/legal/market_data
+https://docs.cdp.coinbase.com/exchange/websocket-feed/channels
+https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles
+https://blog.kraken.com/product/api/unlocked-3-the-market-data-feeds-systematic-traders-use
+https://docs.kraken.com/exchange/guides/overview
+https://docs.kraken.com/exchange/api-reference/spot-websocket-v2/book
+https://docs.kraken.com/api-reference/market-data/get-ohlc-data
+https://docs-legacy.kraken.com/api/docs/guides/global-intro/
+https://www.kraken.com/legal/global-terms (last updated 2026-10-06)
+https://www.kraken.com/legal (regional applicability)
+Kraken current docs prove public no-key access; the older API notice and current general restrictions mean we should not infer commercial redistribution permission. Region-specific terms remain relevant. No crypto vendor commercial quote was invented.
+
+4. Costs that must not be combined into one misleading number
+
+Software/infrastructure: Tickgrove code licensing, machine/VM, storage, traffic, backups, monitoring and support. A private local installation needs no separately purchased SQLite server; existing hardware may avoid extra hosting spend. This research did not price a cloud deployment, so no arbitrary VM dollar amount is included.
+Data acquisition: provider subscription, optional historical bulk usage, source/feed add-ons and archive limits.
+Rights: individual/professional eligibility, exchange display users/devices, non-display strategy computation/automated execution, external distribution, raw tick/file/API export and derived works. Different uses can carry different terms/charges; a chart display licence is not a complete research/automation/data-export licence.
+Operation: identity/tenant controls, user entitlement declarations where required, usage reporting, support and uptime. A low provider base price does not price these obligations.
+
+Concrete budget envelopes, only where evidence allows:
+- A replay-only public experience: $0 paid live-data subscription is possible; replay-content rights and hosting remain.
+- B eligible personal US SIP+BOATS: Alpaca's published $99/month data plan + the user's infrastructure. This is one candidate, not a mandatory user purchase or universal eligibility promise.
+- B deeper US history alternative: Massive Advanced $199 billed monthly or $1,920 upfront/year + infrastructure; night not covered by this verified matrix.
+- C derived broad US chart experience: investigate Databento Standard/EQUS.MINI at $199/month + infra, confirm the intended shared display/export use under its current terms. This buys a composite source, not SIP; night and unrestricted downstream export are separate decisions.
+- C Massive full live market: monthly base $2,499 + listed Full Market add-on $1,999 = $4,498/month in published platform/add-on fees before exchange/usage/user/non-display/export/taxes/infra. This is arithmetic on posted list prices, not an all-inclusive commercial quote. Base-only FMV is cheaper than full tape but has different semantics. Annual/committed base options change cash flow and obligations.
+- C Alpaca shared SIP+night or Coinbase/Kraken shared crypto: suitable commercial quote/rights required; no defensible flat total established in this review.
+
+5. Minimum viable combinations (our proposals, awaiting product/budget choice)
+
+A. If zero project data budget is the priority: make no-key replay genuinely excellent; include chart/Pine/backtest/paper/alert examples with explicit replay time. Offer private user connections for live sources. This satisfies an easy feature trial, but is not the final live-market requirement.
+
+B. If formal personal use is the priority: one polished Alpaca setup for entitled SIP+BOATS, plus a permitted crypto venue setup. Keep different feed/session/venue identities pinned to strategies. An optional Massive connection supports users needing its deeper historical archive. No need to require every user to subscribe to three vendors.
+
+C. If “open link, see live general markets immediately” is the priority: a project-funded licensed data gateway is the natural model. Evaluate EQUS.MINI for stock/ETF chart display with an honest composite label; use explicit licensed crypto distribution. For official full tape or night trading semantics, cost/contract a separate SIP/BOATS tier. A desktop/self-hosted client consuming that gateway is still data redistribution, even though its code is open source.
+
+Hybrid (recommended for discussion, not selected): ship the same open core with a first-run Replay choice, one simple Data Connection setup, and interchangeable local/provider or shared-gateway adapters. A project-funded licensed chart feed can be added later without changing the chart API. Serious strategies/backtests can bind to dedicated formal sources. This separates onboarding quality from the decision to subsidize everyone's data bill and avoids forcing an open project to become a full market-data reseller immediately.
+
+Regardless of mode, keep one canonical capability/event contract. The server must distinguish actual trades, BBO, indicative/composite prices, corrected bars, delay and permitted uses; the UI may simplify these into compact source/session labels. Never silently join Mini live, SIP history, Yahoo price and BOATS night into one reproducible strategy series. Choosing a commercial model does not remove the P0 engineering fixes from the first report.
+
+Machine-readable selected public evidence: /tmp/tickgrove-data-pricing-evidence.json. Price units rendering source: https://databento.com/assets/StandardColumn-DS0tYRWz.js — the Standard component destructures unit_price as M and renders M/100, while billing_interval/commitment_period determine month and commitment labels. The JSON stores the excerpt and exact public offering fields. No accounts or private keys were accessed.

@@ -1,0 +1,1286 @@
+{
+  "schema": "tickgrove.review-plan.v1",
+  "date": "2026-10-15",
+  "reviewedSha": "ec039649fe9f4b8729b977e819509910bf95cc2a",
+  "verdict": "ISSUES",
+  "implementationStarted": false,
+  "dataDeliveryDecision": "pending user evaluation of free/BYOK/project-funded/hybrid options",
+  "scopePolicy": "All 96 original required features retained; proposed tasks do not change verified status",
+  "counts": {
+    "required": 96,
+    "verified": 6,
+    "partial": 87,
+    "planned": 1,
+    "blocked_external": 2
+  },
+  "tasks": [
+    {
+      "id": "T01",
+      "phase": 0,
+      "title": "Pine订单语义和外部反馈校验",
+      "owner": "runtime",
+      "dependsOn": [],
+      "findings": [
+        "F01",
+        "F02"
+      ],
+      "features": [
+        "P07",
+        "P08",
+        "P09",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "acceptance": [
+        "所有未支持订单字段明确拒绝，不默认市价",
+        "相反方向/超额/冲突成交反馈不改账本",
+        "部分成交、反转、改类型、重试的事件与账本一致"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T02",
+      "phase": 0,
+      "title": "持久提醒与事务outbox",
+      "owner": "runtime",
+      "dependsOn": [
+        "T01"
+      ],
+      "findings": [
+        "F03",
+        "F04"
+      ],
+      "features": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "E08",
+        "P10"
+      ],
+      "acceptance": [
+        "实时与闭柱提醒共用持久历史",
+        "事件游标和订单意图原子提交",
+        "关键边界崩溃注入、重启重放不漏不重"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T03",
+      "phase": 0,
+      "title": "保留布局状态与操作结果定位",
+      "owner": "frontend",
+      "dependsOn": [],
+      "findings": [
+        "F05",
+        "F06"
+      ],
+      "features": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W06",
+        "W07",
+        "E10"
+      ],
+      "acceptance": [
+        "1到4到6到1保留图表ID和设置",
+        "搜索不能选择过期查询结果",
+        "部署后直达对应运行，重复提交不会产生多个对象"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T04",
+      "phase": 1,
+      "title": "数据能力合同和多标的连接管理",
+      "owner": "data",
+      "dependsOn": [],
+      "findings": [
+        "F07",
+        "F08",
+        "F09"
+      ],
+      "features": [
+        "D03",
+        "D04",
+        "D05",
+        "D11",
+        "D14",
+        "E11"
+      ],
+      "acceptance": [
+        "每账户feed单连接支持多标的多周期",
+        "夜盘端点/历史映射/扩展时段/日历fixture通过",
+        "未知/延迟/指示性不可默认撮合；LastTrade和BBO分离"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T05",
+      "phase": 1,
+      "title": "历史缓存、修正、缺口和限流",
+      "owner": "data",
+      "dependsOn": [
+        "T04"
+      ],
+      "findings": [
+        "F08",
+        "F10",
+        "F11"
+      ],
+      "features": [
+        "D01",
+        "D02",
+        "D06",
+        "D07",
+        "D08",
+        "D09",
+        "D10",
+        "D13",
+        "D15"
+      ],
+      "acceptance": [
+        "请求合并与provider共享限流、429退避",
+        "乱序重复修正取消停牌缺口有可回放合同",
+        "无成交、休市和丢数据不混为一种gap；复权与标的变更可追溯"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T06",
+      "phase": 2,
+      "title": "统一可恢复行情分发与健康状态",
+      "owner": "data",
+      "dependsOn": [
+        "T04",
+        "T05"
+      ],
+      "findings": [
+        "F09",
+        "F10",
+        "F11"
+      ],
+      "features": [
+        "D03",
+        "D05",
+        "D09",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "O04"
+      ],
+      "acceptance": [
+        "前端单一SSE/WS事件流，cursor过期可恢复",
+        "多图与后台消费者共享源并保持各自生命周期",
+        "记录源/接收/持久化/绘制延迟及背压，报价合并仅用于UI"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T07",
+      "phase": 2,
+      "title": "策略工作区、依赖导入与完整运行路径",
+      "owner": "frontend",
+      "dependsOn": [
+        "T01",
+        "T02",
+        "T03",
+        "T04"
+      ],
+      "findings": [
+        "F06"
+      ],
+      "features": [
+        "P01",
+        "P02",
+        "P03",
+        "P05",
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "E01",
+        "E05",
+        "E06",
+        "E07"
+      ],
+      "acceptance": [
+        "Pine/Rule/Portfolio统一入口，各有合适编辑器",
+        "缺失库版本预填抽屉、首次回测口径摘要",
+        "结果与运行保留草稿上下文、账户归属清楚"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T08",
+      "phase": 2,
+      "title": "多图、手机、字体和图表细节",
+      "owner": "frontend",
+      "dependsOn": [
+        "T03",
+        "T07"
+      ],
+      "findings": [
+        "F05"
+      ],
+      "features": [
+        "W05",
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "L01",
+        "L06"
+      ],
+      "acceptance": [
+        "4/6图画布几何目标和窄屏动作可达",
+        "字号/对比/focus/键盘/Undo规范统一",
+        "图表导出回放比较绘图使用正确数据与可见范围"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T09",
+      "phase": 3,
+      "title": "增量历史对象、保留和完整备份",
+      "owner": "storage",
+      "dependsOn": [
+        "T02",
+        "T05"
+      ],
+      "findings": [
+        "F11"
+      ],
+      "features": [
+        "D12",
+        "O03"
+      ],
+      "acceptance": [
+        "连续策略不复制增长的完整历史",
+        "配额、pin、回收、DB+对象恢复hash一致",
+        "验证对象写入与DB提交中断及活跃cursor跨保留边界"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T10",
+      "phase": 3,
+      "title": "Pine分层兼容与同数据差分验收",
+      "owner": "runtime",
+      "dependsOn": [
+        "T01",
+        "T02",
+        "T04",
+        "T05"
+      ],
+      "findings": [
+        "F01",
+        "F02"
+      ],
+      "features": [
+        "P04",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P11",
+        "P12",
+        "P13"
+      ],
+      "acceptance": [
+        "固定公开语料与数值/撮合语义fixture分开统计",
+        "同数据TradingView对照覆盖支持的历史/实时语义",
+        "未支持模式可解释地失败，不能把解析/执行率当等价率"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T11",
+      "phase": 3,
+      "title": "类型化API和插件兼容合同",
+      "owner": "extensions",
+      "dependsOn": [
+        "T04",
+        "T07"
+      ],
+      "findings": [],
+      "features": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06",
+        "I07"
+      ],
+      "acceptance": [
+        "参数/结果/错误schema可发现，SDK/CLI/MCP同合同",
+        "示例插件独立安装并验证边界",
+        "默认产品不内置AI聊天，进阶入口仍完整"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T12",
+      "phase": 3,
+      "title": "镜像、CI、许可和发布清单",
+      "owner": "release",
+      "dependsOn": [
+        "T09",
+        "T10",
+        "T11"
+      ],
+      "findings": [
+        "F12"
+      ],
+      "features": [
+        "O01",
+        "O02",
+        "O05",
+        "O06",
+        "O07",
+        "O08"
+      ],
+      "acceptance": [
+        "固定版本镜像干净安装、升级和恢复",
+        "发布证据绑定SHA/锁/hash/image而非只检查文件存在",
+        "原前端授权或替代方案完成，依赖清单及单所有者权限边界清楚"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T13",
+      "phase": 4,
+      "title": "正式源和Paper专用账户验证",
+      "owner": "verification",
+      "dependsOn": [
+        "T04",
+        "T05",
+        "T06"
+      ],
+      "findings": [],
+      "features": [
+        "E09"
+      ],
+      "acceptance": [
+        "日间/扩展/夜盘权限与真实数据按feed分别验证",
+        "Alpaca Paper账户下单、部分成交、撤单和核对",
+        "没有凭据时保持待外部验收，不用fixture替代"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "T14",
+      "phase": 4,
+      "title": "真人任务、长跑、恢复和发布体验",
+      "owner": "verification",
+      "dependsOn": [
+        "T07",
+        "T08",
+        "T12",
+        "T13"
+      ],
+      "findings": [],
+      "features": [],
+      "acceptance": [
+        "首次用户8人至少7人完成核心流程，目标中位5分钟",
+        "声明的正式市场时段和加密周末长跑，记录失败和容量",
+        "demo数据权利及隔离模式明确，推广素材与已验收版本一致"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "featureCoverage": [
+    {
+      "id": "D01",
+      "feature": "真实美股与ETF历史数据",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D02",
+      "feature": "真实加密货币历史与实时行情",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D03",
+      "feature": "美股实时/延迟行情订阅",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04",
+        "T06"
+      ]
+    },
+    {
+      "id": "D04",
+      "feature": "盘前、正常、盘后、隔夜时段",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04"
+      ]
+    },
+    {
+      "id": "D05",
+      "feature": "行情权限、来源、延迟、最后更新时间",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04",
+        "T06"
+      ]
+    },
+    {
+      "id": "D06",
+      "feature": "历史范围、分页、预热、缺口",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D07",
+      "feature": "时间周期与聚合",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D08",
+      "feature": "形成中K线与收盘事件",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D09",
+      "feature": "断线、重连、补数、陈旧数据",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05",
+        "T06"
+      ]
+    },
+    {
+      "id": "D10",
+      "feature": "迟到成交与数据修订",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D11",
+      "feature": "标的搜索、唯一身份、精度",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04"
+      ]
+    },
+    {
+      "id": "D12",
+      "feature": "CSV/JSON导入与导出",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T09"
+      ]
+    },
+    {
+      "id": "D13",
+      "feature": "多标的、多周期数据请求",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "D14",
+      "feature": "交易日、夏令时、提前收盘",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04"
+      ]
+    },
+    {
+      "id": "D15",
+      "feature": "复权、拆股、股息与口径",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T05"
+      ]
+    },
+    {
+      "id": "W01",
+      "feature": "1/2/4/6图与研究/策略/交易预设",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "W02",
+      "feature": "面板拖拽停靠、尺寸、最大化",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "W03",
+      "feature": "布局创建、重命名、删除和服务器保存",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "W04",
+      "feature": "标的、周期、十字光标联动组",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "W05",
+      "feature": "主题、可访问性和小屏布局",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "W06",
+      "feature": "命令面板与快捷键",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "W07",
+      "feature": "状态导出、恢复与服务连接",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "C01",
+      "feature": "蜡烛、OHLC、折线、面积图",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C02",
+      "feature": "成交量、十字光标、OHLC数据窗",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C03",
+      "feature": "SMA/EMA/BB/VWAP/RSI/MACD/ATR",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C04",
+      "feature": "Pine绘图和交易标记",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C05",
+      "feature": "趋势线/水平线/矩形/斐波那契/文字",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C06",
+      "feature": "绘图撤销重做、显隐、锁定与对象管理",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C07",
+      "feature": "缩放、自动适配、时间与价格刻度",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C08",
+      "feature": "图表截图与行情CSV导出",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C09",
+      "feature": "逐bar回放、暂停、步进、速度、重置",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "C10",
+      "feature": "多标的比较与基准",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "L01",
+      "feature": "自选分组增删改、排序、添加删除标的",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "L02",
+      "feature": "最新价、涨跌、真实前收盘、迷你图",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T06"
+      ]
+    },
+    {
+      "id": "L03",
+      "feature": "标的详情与统计",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T06"
+      ]
+    },
+    {
+      "id": "L04",
+      "feature": "真实盘口与价差",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T06"
+      ]
+    },
+    {
+      "id": "L05",
+      "feature": "真实逐笔成交",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T06"
+      ]
+    },
+    {
+      "id": "L06",
+      "feature": "板块热力图和仓位计算插件",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T08"
+      ]
+    },
+    {
+      "id": "P01",
+      "feature": "编辑器高亮、补全、错误行、运行取消",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "P02",
+      "feature": "输入类型、默认值、范围与图表覆盖",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "P03",
+      "feature": "指标/策略库与不可变版本",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "P04",
+      "feature": "复杂v5/v6语言与容器",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T10"
+      ]
+    },
+    {
+      "id": "P05",
+      "feature": "本地库import、版本与依赖锁",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "P06",
+      "feature": "跨标的、跨周期、预热与可见性",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T10"
+      ]
+    },
+    {
+      "id": "P07",
+      "feature": "历史原生订单语义",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01",
+        "T10"
+      ]
+    },
+    {
+      "id": "P08",
+      "feature": "实时tick与rollback/varip",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01",
+        "T10"
+      ]
+    },
+    {
+      "id": "P09",
+      "feature": "外部订单Host和成交反馈",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01",
+        "T10"
+      ]
+    },
+    {
+      "id": "P10",
+      "feature": "脚本alerts/alertcondition事件",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "P11",
+      "feature": "隔离、资源限制、取消、错误传播",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T10"
+      ]
+    },
+    {
+      "id": "P12",
+      "feature": "固定公开脚本与兼容性矩阵",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T10"
+      ]
+    },
+    {
+      "id": "P13",
+      "feature": "TradingView同数据数值/成交对照",
+      "required": true,
+      "currentStatus": "planned",
+      "workPackages": [
+        "T10"
+      ]
+    },
+    {
+      "id": "B01",
+      "feature": "原条件树、比较、AND/OR、指标条件",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B02",
+      "feature": "原仓位、止损、止盈、生成Pine",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B03",
+      "feature": "Pine到构建器受支持子集",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B04",
+      "feature": "Composer资产、现金、分组",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B05",
+      "feature": "等权、指定权重、逆波动率",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B06",
+      "feature": "条件分支、排序和筛选",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B07",
+      "feature": "按bar/日/周/月/偏离阈值再平衡",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "B08",
+      "feature": "组合回测、持续模拟与解释报告",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R01",
+      "feature": "Pine和构建器服务器回测",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R02",
+      "feature": "日期、预热、本金、费用、滑点",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R03",
+      "feature": "权益、回撤、月收益、完整指标",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R04",
+      "feature": "交易明细、多空、成本、开放订单",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R05",
+      "feature": "持久任务、取消、重试、进度、恢复",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R06",
+      "feature": "源码/输入/引擎/行情快照清单",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "R07",
+      "feature": "报告CSV/JSON导出和版本比较",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "E01",
+      "feature": "服务器手动模拟账户",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "E02",
+      "feature": "市价/限价/止损委托",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01"
+      ]
+    },
+    {
+      "id": "E03",
+      "feature": "撤单、改单、平仓、部分退出",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01"
+      ]
+    },
+    {
+      "id": "E04",
+      "feature": "多空、仓位、权益和风险限制",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T01"
+      ]
+    },
+    {
+      "id": "E05",
+      "feature": "订单/成交/持仓历史和导出",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "E06",
+      "feature": "Pine从回测部署到真实行情本地模拟",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "E07",
+      "feature": "Composer真实多标的持续模拟",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T07"
+      ]
+    },
+    {
+      "id": "E08",
+      "feature": "暂停、恢复、停止、pending失败处理",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "E09",
+      "feature": "Alpaca Paper联网闭环",
+      "required": true,
+      "currentStatus": "blocked_external",
+      "workPackages": [
+        "T13"
+      ]
+    },
+    {
+      "id": "E10",
+      "feature": "图上订单/持仓与交易操作",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T03"
+      ]
+    },
+    {
+      "id": "E11",
+      "feature": "DEMO、真实行情、本地模拟、券商模拟区分",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T04"
+      ]
+    },
+    {
+      "id": "A01",
+      "feature": "价格above/below/cross提醒",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "A02",
+      "feature": "指标/策略提醒与收盘触发",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "A03",
+      "feature": "创建、暂停、恢复、删除、到期、频率",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "A04",
+      "feature": "提醒历史、失败状态、站内通知",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T02"
+      ]
+    },
+    {
+      "id": "I01",
+      "feature": "统一API、CLI、MCP命令",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I02",
+      "feature": "工作区与图表外部控制",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I03",
+      "feature": "TS/Python SDK和schema发现",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I04",
+      "feature": "插件清单、启停、版本与权限",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I05",
+      "feature": "数据/指标/面板/命令插件示例",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I06",
+      "feature": "可替换Data/Chart/Runtime/Backtest/Broker接口",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "I07",
+      "feature": "不内置AI聊天与模型账户",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T11"
+      ]
+    },
+    {
+      "id": "O01",
+      "feature": "React+Rust本地/服务器自托管",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T12"
+      ]
+    },
+    {
+      "id": "O02",
+      "feature": "令牌、权限、撤销、敏感信息保护",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T12"
+      ]
+    },
+    {
+      "id": "O03",
+      "feature": "SQLite迁移、单实例、备份与恢复",
+      "required": true,
+      "currentStatus": "verified",
+      "workPackages": [
+        "T09"
+      ]
+    },
+    {
+      "id": "O04",
+      "feature": "服务健康、数据健康、日志与诊断",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T06"
+      ]
+    },
+    {
+      "id": "O05",
+      "feature": "Docker/Compose实际运行",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T12"
+      ]
+    },
+    {
+      "id": "O06",
+      "feature": "依赖锁、许可和开源发布",
+      "required": true,
+      "currentStatus": "blocked_external",
+      "workPackages": [
+        "T12"
+      ]
+    },
+    {
+      "id": "O07",
+      "feature": "端到端真实数据验收与功能门禁",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T12"
+      ]
+    },
+    {
+      "id": "O08",
+      "feature": "Paseo远程访问与持久服务",
+      "required": true,
+      "currentStatus": "partial",
+      "workPackages": [
+        "T12"
+      ]
+    }
+  ]
+}

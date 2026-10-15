@@ -1,0 +1,80 @@
+{
+  "accessedAt": "2026-10-15T05:54:37.682Z",
+  "provider": "Databento",
+  "pricingEndpoint": "https://databento.com/api/v0/dataset/service_offerings/us-equities",
+  "selectedRawObjects": [
+    {
+      "id": 7,
+      "service_name": "Unlimited Databento US Equities",
+      "service_type": "flat-rate-plan",
+      "service_tier": "Unlimited",
+      "self_service": false,
+      "billing_interval": 1,
+      "unit_price": 400000,
+      "commitment_period": 12,
+      "allowed_live_datasets": [
+        "XNAS.ITCH",
+        "XNAS.BASIC",
+        "XNYS.PILLAR",
+        "ARCX.PILLAR",
+        "XASE.PILLAR",
+        "XNYS.TRADES",
+        "XCHI.PILLAR",
+        "XCIS.TRADESBBO",
+        "EDGX.PITCH",
+        "EQUS.MINI",
+        "IEXG.TOPS",
+        "OCEA.MEMOIR"
+      ]
+    },
+    {
+      "id": 10,
+      "service_name": "Plus Databento US Equities",
+      "service_type": "flat-rate-plan",
+      "service_tier": "Plus",
+      "self_service": false,
+      "billing_interval": 1,
+      "unit_price": 150000,
+      "commitment_period": 12,
+      "allowed_live_datasets": [
+        "XNAS.ITCH",
+        "XNAS.BASIC",
+        "XNYS.PILLAR",
+        "ARCX.PILLAR",
+        "XASE.PILLAR",
+        "XNYS.TRADES",
+        "XCHI.PILLAR",
+        "XCIS.TRADESBBO",
+        "EDGX.PITCH",
+        "EQUS.MINI",
+        "IEXG.TOPS",
+        "OCEA.MEMOIR"
+      ]
+    },
+    {
+      "id": 13,
+      "service_name": "Standard Databento US Equities",
+      "service_type": "flat-rate-plan",
+      "service_tier": "Standard",
+      "self_service": true,
+      "billing_interval": 1,
+      "unit_price": 19900,
+      "commitment_period": 1,
+      "allowed_live_datasets": [
+        "EQUS.MINI",
+        "IEXG.TOPS"
+      ]
+    }
+  ],
+  "priceRenderingSource": "https://databento.com/assets/StandardColumn-DS0tYRWz.js",
+  "priceRenderingExcerpts": [
+    "PACT\":case\"IFEU.IMPACT\":case\"IFUS.IMPACT\":case\"IFLL.IMPACT\":case\"XEEE.EOBI\":case\"XCBF.PITCH\":return{unit_price:15e4,billing_interval:1,commitment_period:12};case\"GLBX.MDP3\":return{unit_price:17900,billing_interval:1,commitment_period:1};case\"OPRA.PILLAR\":return{unit_price:19900,b",
+    "\"XCBF.PITCH\":return{unit_price:15e4,billing_interval:1,commitment_period:12};case\"GLBX.MDP3\":return{unit_price:17900,billing_interval:1,commitment_period:1};case\"OPRA.PILLAR\":return{unit_price:19900,billing_interval:1,commitment_period:1};case\"DBIX.CORE\":return{unit_price:9900,bi",
+    "GLBX.MDP3\":return{unit_price:17900,billing_interval:1,commitment_period:1};case\"OPRA.PILLAR\":return{unit_price:19900,billing_interval:1,commitment_period:1};case\"DBIX.CORE\":return{unit_price:9900,billing_interval:1,commitment_period:1};default:return{unit_price:void 0,billing_int",
+    "OPRA.PILLAR\":return{unit_price:19900,billing_interval:1,commitment_period:1};case\"DBIX.CORE\":return{unit_price:9900,billing_interval:1,commitment_period:1};default:return{unit_price:void 0,billing_interval:void 0,commitment_period:void 0}}};function Pu({className:e,dataset:n,onCT",
+    "od:1};case\"DBIX.CORE\":return{unit_price:9900,billing_interval:1,commitment_period:1};default:return{unit_price:void 0,billing_interval:void 0,commitment_period:void 0}}};function Pu({className:e,dataset:n,onCTAClick:t,apiUrlBuilder:r,standardPlan:i,authenticated:l,userProfile:o,n",
+    "eCatalogs:y,isCurrentPlan:w=!1,cancelStandardPlan:T,navToBillingPage:A}){const R=n?.dataset_id||\"\",{unit_price:M,billing_interval:x,commitment_period:D}=i||cu(R),N=M&&x&&D,_=N?uu(x).toLocaleLowerCase():\"\",Y=N?su(D):\"\",[I,L]=ee.useState(!1),[F,v]=ee.useState(!1),[P,G]=ee.useState(",
+    "s(Ja,{className:\"gap-0\",children:[g.jsxs(eu,{className:\"mb-6\",children:[!N&&g.jsx(Sn,{className:\"w-40 h-9\"}),N&&g.jsxs(nu,{children:[\"$\",qr(M/100,0)]}),g.jsxs(tu,{children:[\"per \",_,\" \",g.jsx(\"br\",{}),Y,\" subscription\"]})]}),!F&&g.jsx(Le,{delayDuration:200,children:g.jsxs(je,{trackingId:`ui-pricing-calc-standard-col-action-button-${n?.dat",
+    "(Ja,{className:\"gap-0\",children:[g.jsxs(eu,{className:\"mb-6\",children:[!N&&g.jsx(Sn,{className:\"w-40 h-9\"}),N&&g.jsxs(nu,{children:[\"$\",qr(M/100,0)]}),g.jsxs(tu,{children:[\"per \",_,\" \",g.jsx(\"br\",{}),Y,\" subscription\"]})]}),!F&&g.jsx(Le,{delayDuration:200,children:g.jsxs(je,{trackingId:`ui-pricing-calc-standard-col-action-button-${n?.data"
+  ]
+}
