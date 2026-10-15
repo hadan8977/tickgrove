@@ -7,7 +7,7 @@ A self-hosted workspace for market charts, Pine scripts, backtesting, and paper 
 
 [Quick start](#quick-start) · [Self-hosting](docs/self-hosting.md) · [Free data](docs/free-data.md) · [API & MCP](docs/api.md) · [Feature status](docs/features/checklist.csv)
 
-![Four-chart workspace with stocks, crypto, watchlists, and market data status](docs/images/workspace.png)
+![Dark six-chart workspace with real stock, ETF and crypto data](docs/images/workspace-dark.png)
 
 ## Features
 
