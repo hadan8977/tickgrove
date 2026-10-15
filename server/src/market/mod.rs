@@ -1,6 +1,9 @@
 mod alpaca_wire;
+mod cache;
 mod calendar;
 pub(crate) mod history;
+mod http;
+mod hub;
 mod instruments;
 pub(crate) mod period;
 mod state;
@@ -76,15 +79,42 @@ pub fn identity(
         ["coinbase", "yahoo", "alpaca"].contains(&provider),
         "Unsupported market provider"
     );
-    Ok(
-        json!({"symbolId":format!("{}:{}",if crypto{"COINBASE"}else if provider=="yahoo"{"YAHOO:US"}else{"ALPACA:US"},symbol),"symbol":symbol,"venue":if crypto{"COINBASE"}else{"unresolved"},"currency":if crypto{symbol.rsplit('-').next().unwrap_or("unknown")}else{"USD"},"assetClass":if crypto{"crypto"}else{"unknown"},"timeframe":timeframe,"timezone":if crypto{"UTC"}else{"America/New_York"},"session":if crypto{"24x7"}else if feed=="boats"||feed=="overnight"{"overnight"}else{"regular"},"adjustment":adjustment,"provider":provider,"feed":feed,"delay":{"kind":if provider=="coinbase"{"realtime"}else if provider=="alpaca"{"unknown"}else{"delayed"},"seconds":Value::Null,"disclaimer":if provider=="yahoo"{"Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote"}else if provider=="alpaca"{"Feed entitlement and venue coverage depend on dedicated account; no credential-free guarantee"}else{"Public Coinbase exchange stream; transport latency and staleness are measured separately"}}}),
-    )
+    let mut meta = json!({"symbolId":format!("{}:{}",if crypto{"COINBASE"}else if provider=="yahoo"{"YAHOO:US"}else{"ALPACA:US"},symbol),"symbol":symbol,"venue":if crypto{"COINBASE"}else{"unresolved"},"currency":if crypto{symbol.rsplit('-').next().unwrap_or("unknown")}else{"USD"},"assetClass":if crypto{"crypto"}else{"unknown"},"timeframe":timeframe,"timezone":if crypto{"UTC"}else{"America/New_York"},"session":if crypto{"24x7"}else if feed=="boats"||feed=="overnight"{"overnight"}else{"regular"},"adjustment":adjustment,"provider":provider,"feed":feed,"delay":{"kind":if provider=="coinbase"{"realtime"}else if provider=="alpaca"{"unknown"}else{"delayed"},"seconds":Value::Null,"disclaimer":if provider=="yahoo"{"Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote"}else if provider=="alpaca"{"Feed entitlement and venue coverage depend on dedicated account; no credential-free guarantee"}else{"Public Coinbase exchange stream; transport latency and staleness are measured separately"}}});
+    apply_feed_policy(&mut meta);
+    Ok(meta)
 }
-pub fn client() -> anyhow::Result<reqwest::Client> {
-    Ok(reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(20))
-        .user_agent("Tickgrove/0.2 self-hosted research")
-        .build()?)
+/// Positive policy: display-only, delayed, indicative and unknown sources cannot match orders.
+pub fn execution_eligibility(identity: &Value, quality: &Value) -> anyhow::Result<()> {
+    anyhow::ensure!(
+        identity["executionEligible"] == true
+            && identity["quoteKind"] == "executable"
+            && identity["delay"]["kind"] == "realtime"
+            && quality["complete"] == true
+            && quality["stale"] != true,
+        "This source does not provide a fresh executable quote"
+    );
+    Ok(())
+}
+pub(crate) fn apply_feed_policy(meta: &mut Value) {
+    let provider = meta["provider"].as_str().unwrap_or("");
+    let feed = meta["feed"].as_str().unwrap_or("");
+    let executable =
+        provider == "coinbase" || (provider == "alpaca" && ["iex", "sip", "boats"].contains(&feed));
+    let indicative = provider == "alpaca" && feed == "overnight";
+    meta["executionEligible"] = json!(executable);
+    meta["quoteKind"] = json!(if executable {
+        "executable"
+    } else if indicative {
+        "indicative"
+    } else {
+        "display-only"
+    });
+    if executable || indicative {
+        meta["delay"]["kind"] = json!("realtime");
+    }
+    if indicative {
+        meta["tradeDelaySeconds"] = json!(900);
+    }
 }
 pub async fn event(
     app: &App,
@@ -95,6 +125,14 @@ pub async fn event(
     complete: bool,
     reason: Option<&str>,
 ) -> anyhow::Result<()> {
+    let mut payload = payload;
+    if matches!(kind, "quote" | "trade") && payload.get("priceKind").is_none() {
+        payload["priceKind"] = json!(if kind == "trade" || payload["type"] == "ticker" {
+            "last-trade"
+        } else {
+            "reference"
+        });
+    }
     let mut quality = json!({"complete":complete,"stale":!complete||(matches!(kind,"quote"|"trade")&&now()-time>15000),"reason":reason});
     if kind == "bar.update" && payload["volume"].is_null() {
         quality["source"] = json!("quote-derived");
@@ -117,8 +155,7 @@ pub async fn event(
         if row.get::<String, _>("status") == "connected" {
             let instrument: Value = serde_json::from_str(&row.get::<String, _>("identity"))?;
             if instrument["currency"] == "USD"
-                && instrument["provider"] != "yahoo"
-                && instrument["delay"]["kind"] != "delayed"
+                && execution_eligibility(&instrument, &quality).is_ok()
             {
                 crate::account::on_quote(
                     app,
@@ -129,20 +166,11 @@ pub async fn event(
                     time,
                     received,
                     &payload,
+                    &instrument,
+                    &quality,
                 )
                 .await?;
             }
-            crate::alerts::on_quote(
-                app,
-                inserted.last_insert_rowid(),
-                &row.get::<String, _>("provider"),
-                &row.get::<String, _>("symbol"),
-                instrument["feed"].as_str().unwrap_or("unknown"),
-                time,
-                received,
-                &payload,
-            )
-            .await?;
         }
     }
     prune(app, inserted.last_insert_rowid()).await?;
@@ -170,8 +198,11 @@ pub(crate) async fn prune(app: &App, cursor: i64) -> anyhow::Result<()> {
 pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value> {
     match method {
         "market.capabilities" => Ok(
-            json!({"providers":[{"id":"coinbase","symbols":"dynamic Coinbase products registry","history":true,"stream":["ticker","matches","heartbeat"],"credentials":false},{"id":"yahoo","history":true,"stream":["public-pricing-websocket","quote-polling-60s"],"credentials":false,"fallback":true,"delay":"unknown/provider reported"},{"id":"alpaca","history":true,"stream":["quotes","trades","bars","updatedBars"],"feeds":["iex","sip","boats","overnight"],"configured":std::env::var("ALPACA_API_KEY").is_ok()&&std::env::var("ALPACA_API_SECRET").is_ok()}],"timeframes":["1m","5m","15m","1H","4H","6H","1D","1W"],"events":"persistent cursor polling (no history-as-ticks)","browserDisconnectStopsStream":false,"sessions":{"yahoo":["regular","extended"],"coinbase":["24x7"],"alpaca":["regular","overnight (entitlement required)"]},"maxSubscriptions":max_subscriptions(),"retention":{"events":retention("TRADING_MARKET_EVENT_RETENTION",100000,10000,1000000),"closedBarsPerSubscription":retention("TRADING_MARKET_BAR_RETENTION",10000,1000,100000),"tradeIdsPerSubscription":retention("TRADING_MARKET_TRADE_ID_RETENTION",100000,10000,1000000)},"resourcePolicy":"configurable 1–256 active symbol/timeframe subscriptions; current connectors use separate sockets"}),
+            json!({"providers":[{"id":"coinbase","symbols":"dynamic Coinbase products registry","history":true,"stream":["ticker","matches","heartbeat"],"credentials":false},{"id":"yahoo","history":true,"stream":["public-pricing-websocket","quote-polling-60s"],"credentials":false,"fallback":true,"delay":"unknown/provider reported"},{"id":"alpaca","history":true,"stream":["quotes","trades","bars","updatedBars"],"feeds":["iex","sip","boats","overnight"],"configured":crate::connections::alpaca_configured(app).await}],"timeframes":["1m","5m","15m","1H","4H","6H","1D","1W"],"events":"persistent cursor polling (no history-as-ticks)","browserDisconnectStopsStream":false,"sessions":{"yahoo":["regular","extended"],"coinbase":["24x7"],"alpaca":["regular","extended","overnight (entitlement required)"]},"maxSubscriptions":max_subscriptions(),"retention":{"events":retention("TRADING_MARKET_EVENT_RETENTION",100000,10000,1000000),"closedBarsPerSubscription":retention("TRADING_MARKET_BAR_RETENTION",10000,1000,100000),"tradeIdsPerSubscription":retention("TRADING_MARKET_TRADE_ID_RETENTION",100000,10000,1000000)},"resourcePolicy":"1–256 local subscriptions; shared provider/feed upstream connections, with independent timeframe consumers","upstreams":hub::info(app).await,"historyPaging":true,"historyCache":{"bounded":true,"commands":["market.cacheInfo","market.cacheClear"]}}),
         ),
+        "market.historyPage" => history::page(app, p).await,
+        "market.cacheInfo" => cache::info(app).await,
+        "market.cacheClear" => cache::clear(app).await,
         "market.search" => {
             let query = required(p, "query")?;
             anyhow::ensure!(query.len() <= 64, "Query too long");
@@ -182,17 +213,17 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             );
             let mut symbols = Vec::new();
             if selected.is_none_or(|v| v == "yahoo") {
-                let response = client()?
-                    .get("https://query1.finance.yahoo.com/v1/finance/search")
-                    .query(&[("q", query), ("quotesCount", "20"), ("newsCount", "0")])
-                    .send()
-                    .await?;
-                anyhow::ensure!(
-                    response.status().is_success(),
-                    "Yahoo search response {}",
-                    response.status()
-                );
-                let value: Value = response.json().await?;
+                let value = http::get(
+                    "https://query1.finance.yahoo.com/v1/finance/search",
+                    &[
+                        ("q".into(), query.into()),
+                        ("quotesCount".into(), "20".into()),
+                        ("newsCount".into(), "0".into()),
+                    ],
+                    None,
+                    60,
+                )
+                .await?;
                 for q in value["quotes"].as_array().into_iter().flatten() {
                     if ["EQUITY", "ETF"].contains(&q["quoteType"].as_str().unwrap_or("")) {
                         symbols.push(json!({"symbol":q["symbol"],"symbolId":format!("YAHOO:{}:{}",q["exchange"].as_str().unwrap_or("unknown"),q["symbol"].as_str().unwrap_or("")),"venue":q["exchange"],"assetClass":q["quoteType"].as_str().unwrap_or("unknown").to_lowercase(),"name":q["shortname"],"provider":"yahoo","currency":Value::Null}));
@@ -200,23 +231,17 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 }
             }
             if selected == Some("alpaca") {
-                let key = std::env::var("ALPACA_API_KEY")
-                    .map_err(|_| anyhow::anyhow!("Dedicated Alpaca key not configured"))?;
-                let secret = std::env::var("ALPACA_API_SECRET")
-                    .map_err(|_| anyhow::anyhow!("Dedicated Alpaca secret not configured"))?;
-                let response = client()?
-                    .get("https://paper-api.alpaca.markets/v2/assets")
-                    .query(&[("status", "active"), ("asset_class", "us_equity")])
-                    .header("APCA-API-KEY-ID", key)
-                    .header("APCA-API-SECRET-KEY", secret)
-                    .send()
-                    .await?;
-                anyhow::ensure!(
-                    response.status().is_success(),
-                    "Alpaca asset catalog response {}",
-                    response.status()
-                );
-                let values: Value = response.json().await?;
+                let (key, secret) = crate::connections::alpaca_credentials(app).await?;
+                let values = http::get(
+                    "https://paper-api.alpaca.markets/v2/assets",
+                    &[
+                        ("status".into(), "active".into()),
+                        ("asset_class".into(), "us_equity".into()),
+                    ],
+                    Some((&key, &secret)),
+                    300,
+                )
+                .await?;
                 for v in values
                     .as_array()
                     .ok_or_else(|| anyhow::anyhow!("Invalid asset catalog"))?
@@ -266,38 +291,27 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 "Unsupported quote provider; Alpaca requires configured stream"
             );
             identity("coinbase", symbol, "1m", "REST-ticker", "none")?;
-            let response = client()?
-                .get(format!(
-                    "https://api.exchange.coinbase.com/products/{symbol}/ticker"
-                ))
-                .send()
-                .await?;
-            anyhow::ensure!(
-                response.status().is_success(),
-                "Ticker response {}",
-                response.status()
-            );
-            let v: Value = response.json().await?;
+            let v = http::get(
+                &format!("https://api.exchange.coinbase.com/products/{symbol}/ticker"),
+                &[],
+                None,
+                1,
+            )
+            .await?;
             Ok(
-                json!({"provider":"coinbase","symbol":symbol,"kind":"REST-ticker-snapshot","eventTime":chrono::DateTime::parse_from_rfc3339(v["time"].as_str().ok_or_else(||anyhow::anyhow!("Ticker time missing"))?)?.timestamp_millis(),"receivedAt":now(),"price":v["price"].as_str().and_then(|s|s.parse::<f64>().ok()),"bid":v["bid"].as_str().and_then(|s|s.parse::<f64>().ok()),"ask":v["ask"].as_str().and_then(|s|s.parse::<f64>().ok()),"previousClose":Value::Null,"quote":v}),
+                json!({"provider":"coinbase","symbol":symbol,"kind":"REST-ticker-snapshot","priceKind":"last-trade","eventTime":chrono::DateTime::parse_from_rfc3339(v["time"].as_str().ok_or_else(||anyhow::anyhow!("Ticker time missing"))?)?.timestamp_millis(),"receivedAt":now(),"price":v["price"].as_str().and_then(|s|s.parse::<f64>().ok()),"bid":v["bid"].as_str().and_then(|s|s.parse::<f64>().ok()),"ask":v["ask"].as_str().and_then(|s|s.parse::<f64>().ok()),"previousClose":Value::Null,"quote":v}),
             )
         }
         "market.depth" => {
             let symbol = required(p, "symbol")?;
             identity("coinbase", symbol, "1m", "REST-level2", "none")?;
-            let response = client()?
-                .get(format!(
-                    "https://api.exchange.coinbase.com/products/{symbol}/book"
-                ))
-                .query(&[("level", "2")])
-                .send()
-                .await?;
-            anyhow::ensure!(
-                response.status().is_success(),
-                "Coinbase depth response {}",
-                response.status()
-            );
-            let value: Value = response.json().await?;
+            let value = http::get(
+                &format!("https://api.exchange.coinbase.com/products/{symbol}/book"),
+                &[("level".into(), "2".into())],
+                None,
+                1,
+            )
+            .await?;
             Ok(
                 json!({"provider":"coinbase","symbol":symbol,"kind":"REST-level2-snapshot","realtimeL2":false,"receivedAt":now(),"book":value}),
             )
@@ -378,14 +392,20 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             if let Some(session) = p["session"].as_str() {
                 anyhow::ensure!(
                     (provider == "yahoo" && ["regular", "extended"].contains(&session))
-                || (provider == "coinbase" && session == "24x7")
-                || (provider == "alpaca" && Some(session) == meta["session"].as_str()),
+                        || (provider == "coinbase" && session == "24x7")
+                        || (provider == "alpaca"
+                            && (Some(session) == meta["session"].as_str()
+                                || (meta["session"] == "regular" && session == "extended"))),
                     "Unsupported provider/session subscription"
                 );
                 meta["session"] = json!(session);
             }
-            if let Some(row)=sqlx::query("SELECT id,identity FROM market_subscriptions WHERE provider=? AND symbol=? AND timeframe=? AND feed=? AND json_extract(identity,'$.session')=? AND desired=1").bind(provider).bind(symbol).bind(tf).bind(meta["feed"].as_str()).bind(meta["session"].as_str()).fetch_optional(&app.db).await?{return Ok(json!({"subscription_id":row.get::<String,_>("id"),"identity":serde_json::from_str::<Value>(&row.get::<String,_>("identity"))?,"duplicate":true}));}
-            meta = instruments::enrich(meta).await?;
+            if let Some(row)=sqlx::query("SELECT id,identity FROM market_subscriptions WHERE provider=? AND symbol=? AND timeframe=? AND feed=? AND json_extract(identity,'$.session')=? AND desired=1").bind(provider).bind(symbol).bind(tf).bind(meta["feed"].as_str()).bind(meta["session"].as_str()).fetch_optional(&app.db).await?{
+                let id:String=row.get("id");let mut existing:Value=serde_json::from_str(&row.get::<String,_>("identity"))?;apply_feed_policy(&mut existing);
+                sqlx::query("UPDATE market_subscriptions SET identity=? WHERE id=?").bind(existing.to_string()).bind(&id).execute(&app.db).await?;
+                return Ok(json!({"subscription_id":id,"identity":existing,"duplicate":true}));
+            }
+            meta = instruments::enrich(app, meta).await?;
             let mut tx = app.db.begin().await?;
             let feed = meta["feed"].as_str().unwrap();
             if let Some(row)=sqlx::query("SELECT id,identity FROM market_subscriptions WHERE provider=? AND symbol=? AND timeframe=? AND feed=? AND json_extract(identity,'$.session')=? AND desired=1").bind(provider).bind(symbol).bind(tf).bind(feed).bind(meta["session"].as_str()).fetch_optional(&mut *tx).await?{let existing:Value=serde_json::from_str(&row.get::<String,_>("identity"))?;return Ok(json!({"subscription_id":row.get::<String,_>("id"),"identity":existing,"duplicate":true}));}
@@ -422,7 +442,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                     .fetch_all(&app.db)
                     .await?
             };
-            Ok(json!(rows.iter().map(|r|{let last=r.get::<Option<i64>,_>("last_event_at");json!({"id":r.get::<String,_>("id"),"identity":serde_json::from_str::<Value>(&r.get::<String,_>("identity")).unwrap(),"status":r.get::<String,_>("status"),"desired":r.get::<i64,_>("desired")!=0,"lastEventAt":last,"stalenessMs":last.map(|n|now()-n),"lastQuoteEventTime":r.get::<Option<i64>,_>("quote_time"),"lastQuoteReceivedAt":r.get::<Option<i64>,_>("quote_received"),"quoteStale":r.get::<Option<i64>,_>("quote_time").is_none_or(|t|now()-t>15000),"error":r.get::<Option<String>,_>("error")})}).collect::<Vec<_>>()))
+            Ok(json!(rows.iter().map(|r|{let last=r.get::<Option<i64>,_>("last_event_at");let identity:Value=serde_json::from_str(&r.get::<String,_>("identity")).unwrap();let market_state=period::market_state(&identity,now());json!({"id":r.get::<String,_>("id"),"identity":identity,"marketState":market_state,"status":r.get::<String,_>("status"),"desired":r.get::<i64,_>("desired")!=0,"lastEventAt":last,"stalenessMs":last.map(|n|now()-n),"lastQuoteEventTime":r.get::<Option<i64>,_>("quote_time"),"lastQuoteReceivedAt":r.get::<Option<i64>,_>("quote_received"),"quoteStale":market_state["open"]==true && r.get::<Option<i64>,_>("quote_time").is_none_or(|t|now()-t>15000),"error":r.get::<Option<String>,_>("error")})}).collect::<Vec<_>>()))
         }
         "market.events" => {
             let id = required(p, "subscription_id")?;
@@ -445,7 +465,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                     .await?;
             let oldest = Some(floor + 1);
             Ok(
-                json!({"events":events,"nextCursor":next,"retentionStartCursor":oldest,"cursorExpired":p["cursor"].as_i64().is_some_and(|c|c>0 && oldest.is_some_and(|o|c<o))}),
+                json!({"events":events,"marketState":period::market_state(&identity,now()),"nextCursor":next,"retentionStartCursor":oldest,"cursorExpired":p["cursor"].as_i64().is_some_and(|c|c>0 && oldest.is_some_and(|o|c<o))}),
             )
         }
         "market.bars" | "market.snapshot" => {
@@ -499,11 +519,34 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 }
             }
             Ok(
-                json!({"bars":bars,"forming":forming,"identity":identity,"quality":quality,"cursor":cursor,"status":sub.get::<String,_>("status"),"error":sub.get::<Option<String>,_>("error"),"lastQuote":last_quote,"quoteQuality":quote_quality}),
+                json!({"bars":bars,"forming":forming,"identity":identity,"quality":quality,"cursor":cursor,"status":sub.get::<String,_>("status"),"error":sub.get::<Option<String>,_>("error"),"lastQuote":last_quote,"quoteQuality":quote_quality,"marketState":period::market_state(&identity,now())}),
             )
         }
         _ => anyhow::bail!("Unknown market command {method}"),
     }
+}
+/// Used before changing a provider's private credentials. New charts get new source IDs.
+pub async fn disconnect_provider(app: &App, provider: &str, reason: &str) -> anyhow::Result<u64> {
+    let ids = sqlx::query_scalar::<_, String>(
+        "SELECT id FROM market_subscriptions WHERE provider=? AND desired=1",
+    )
+    .bind(provider)
+    .fetch_all(&app.db)
+    .await?;
+    let n=sqlx::query("UPDATE market_subscriptions SET desired=0,status='stopped',error=? WHERE provider=? AND desired=1").bind(reason).bind(provider).execute(&app.db).await?.rows_affected();
+    for id in ids {
+        event(
+            app,
+            &id,
+            "gap",
+            now(),
+            json!({"reason":reason,"sourceInvalidated":true,"tickContinuityLost":true}),
+            false,
+            Some(reason),
+        )
+        .await?;
+    }
+    Ok(n)
 }
 pub async fn resume(app: &App) -> anyhow::Result<()> {
     let ids =

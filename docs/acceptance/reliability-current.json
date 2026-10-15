@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-15T07:06:05Z",
+  "ok": true,
+  "fixtureOnly": true,
+  "externalNetworkDisabled": true,
+  "realAccountsUsed": false,
+  "previewWrites": false,
+  "checks": [
+    "Persisted quote cross catches up after restart exactly once",
+    "Realtime Pine alerts persist all/per-bar/per-close occurrences and do not duplicate on replay",
+    "Wrong-side external feedback rejects nonterminally; valid partials, duplicate ID and journal replay preserve position",
+    "Committed outbox recovers lost local-order binding/acknowledgement without another market event or duplicate order",
+    "REST-only repair failure preserves host; explicit lost-tick event freezes execution and cancels outstanding order"
+  ],
+  "binarySha256": "c846fc1a304461fd32e125bbe26c600a201e08df57cccd383478bba288dd1991",
+  "sourceHashes": {
+    "server/src/account.rs": "a43adc722c4af17ee91b8ecc9820336b850b135efb1e664a6fcb1f7aef09a100",
+    "server/src/alerts.rs": "3795a05003aad26ddc6120c628d460fd0892d9bcf215cdbf2b9021c8f565befe",
+    "server/src/pine_host.rs": "0ec98d2c86e160ab09cb7d2ab7c7594056a364f3f80bad03acb37724ec94560c",
+    "scripts/pine-host-worker.cjs": "eaace35679eb171bf7b8d6db992672ae32cae7c9e37959a1089a1d8a70fdde87",
+    "src/pine/host.ts": "ff77a440dde32e757a1714eaa1e7ead48141d3f52f117961a26e32c8310d0af8",
+    "src/pine/broker.ts": "f56f1b00c301fc79538266d88a35dbc3592d51057a6a9e7d243faacc0847149a",
+    "src/pine/intent.ts": "34cb1ea8ac68499dbe7b93ea6804fcec16dc0ff70d9cc23d94d588f04c7a6a10"
+  },
+  "limitations": [
+    "Synthetic deterministic fixtures; no external brokerage/data entitlement acceptance",
+    "Transaction fault injection and unsupported-order cases also run in Rust/Node unit tests"
+  ]
+}

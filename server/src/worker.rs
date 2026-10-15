@@ -211,15 +211,20 @@ async fn finish(
                         .and_then(|f| f["time"].as_i64())
                         .unwrap_or(i64::MAX)
                         .saturating_mul(1000);
-                    for alert in result["alerts"].as_array().into_iter().flatten() {
+                    for (index, alert) in result["alerts"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .enumerate()
+                    {
                         if let Some(time) = alert["time"].as_i64().filter(|t| *t > cutoff) {
                             let session_id: String = session.get("id");
                             let alert_id = crate::commands::hash(&format!(
-                                "{session_id}:{time}:{}:{}",
+                                "{session_id}:{time}:{index}:{}:{}",
                                 alert["id"], alert["message"]
                             ));
                             sqlx::query(
-                                "INSERT OR IGNORE INTO pine_alert_history VALUES(?,?,?,?,?,?)",
+                                "INSERT OR IGNORE INTO pine_alert_history(id,session_id,job_id,event_time,payload,received_at) VALUES(?,?,?,?,?,?)",
                             )
                             .bind(alert_id)
                             .bind(session_id)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Lock, ShieldCheck } from "lucide-react";
 import { execute } from "../../core/commands";
-import { isDemoData, marketRequest } from "../../data/feed";
+import { isDemoData, marketRequest, marketSeries } from "../../data/feed";
 import { useAccount } from "../../service/account";
 import { useConnection } from "../../service/workspaceSync";
 import { MarketBadge } from "../../service/MarketPanel";
@@ -45,6 +45,9 @@ export default function OrderTicket() {
   const executable =
     demo ||
     (!!account && account.quotePolicy.executableProviders?.includes(identity.provider) === true);
+  const market = marketSeries(symbol, timeframe);
+  const needsQuote = !demo && (market.error || market.streamError ||
+    ["disconnected", "reconnecting", "connecting", "stopped"].includes(market.status));
   const submit = async () => {
     setSubmitting(true);
     try {
@@ -183,6 +186,10 @@ export default function OrderTicket() {
           <p className="text-xs text-demo">This connection is read-only for paper trading.</p>
         )}
         {!demo && !account && <p className="text-xs text-muted">Loading paper account…</p>}
+        {needsQuote && <div role="status" className="rounded-lg bg-demo/10 p-2 text-xs text-demo">
+          <p>This chart is showing cached data or its source is reconnecting. Simulated fills require a fresh, valid quote from this source.</p>
+          <button className="mt-1 underline" onClick={() => useApp.getState().setView("market")}>Open data settings</button>
+        </div>}
         {!executable && account && (
           <p className="text-xs text-demo">
             This source has no verified executable quote policy. Select Coinbase or a configured

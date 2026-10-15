@@ -28,7 +28,11 @@ import {
   dataPineOptions,
   marketSeries,
   marketRequest,
+  loadMarketHistory,
+  loadOlderHistory,
 } from "../../data/feed";
+import { historyPresentation, prependedBarCount } from "../../data/history";
+import { useTick } from "../../ui/hooks";
 import { useAccount } from "../../service/account";
 import { defaultInputs, getIndicator, type IndicatorOutput } from "../../indicators/registry";
 import { runPineInWorker } from "../../pine/client";
@@ -123,6 +127,10 @@ export default function ChartCanvas({
     draft,
     selected,
   };
+  useTick();
+  const history = marketSeries(state.symbol, state.tf);
+  const historyState = historyPresentation(history);
+  const showHistory = !authoritative && !isDemoData();
 
   const pineSources = useMemo(
     () =>
@@ -207,7 +215,23 @@ export default function ChartCanvas({
       };
       setSelected(hitTest(v, drawRef.current.drawings, param.point.x, param.point.y));
     });
+    const loadVisibleHistory = (range: { from: number; to: number } | null) => {
+      const s = stateRef.current;
+      if (!range || range.from > 20 || s.replayCursor != null || authoritative || isDemoData())
+        return;
+      const entry = marketSeries(s.symbol, s.tf);
+      if (
+        entry.loadedAt &&
+        entry.hasMore &&
+        !entry.loading &&
+        !entry.loadingOlder &&
+        !entry.olderError
+      )
+        void loadOlderHistory(s.symbol, s.tf).catch(() => {});
+    };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(loadVisibleHistory);
     return () => {
+      chart.timeScale().unsubscribeVisibleLogicalRangeChange(loadVisibleHistory);
       offBus();
       chartControls.delete(state.id);
       chart.remove();
@@ -385,6 +409,18 @@ export default function ChartCanvas({
     let cancelled = false;
     const abort = new AbortController();
     const bars = barsRef.current;
+    if (!bars.length) {
+      onLegend([]);
+      setPineSignals([]);
+      pineVisuals.current = [];
+      for (const item of indRef.current) {
+        try {
+          chart.removeSeries(item.s);
+        } catch {}
+      }
+      indRef.current = [];
+      return;
+    }
     pineComputing.current++;
     (async () => {
       type Built = {
@@ -642,7 +678,16 @@ export default function ChartCanvas({
       cancelled = true;
       abort.abort();
     };
-  }, [state.indicators, pineSources, mainVersion, pineRevision, authoritative?.result]);
+  }, [
+    state.symbol,
+    state.tf,
+    state.replayCursor,
+    state.indicators,
+    pineSources,
+    mainVersion,
+    pineRevision,
+    authoritative?.result,
+  ]);
 
   /* trade markers */
   useEffect(() => {
@@ -729,6 +774,9 @@ export default function ChartCanvas({
               rendered.current.revision !== rev
             ) {
               const firstLoad = rendered.current.count === 0;
+              const firstTime = barsRef.current[0]?.time;
+              const visible = chartRef.current?.timeScale().getVisibleLogicalRange();
+              const addedBefore = prependedBarCount(firstTime, bars);
               barsRef.current = bars;
               rendered.current = { count: bars.length, revision: rev };
               main.setData(
@@ -753,6 +801,11 @@ export default function ChartCanvas({
                 chartRef.current?.timeScale().setVisibleLogicalRange({
                   from: Math.max(0, bars.length - 170),
                   to: bars.length + 6,
+                });
+              else if (addedBefore > 0 && visible)
+                chartRef.current?.timeScale().setVisibleLogicalRange({
+                  from: visible.from + addedBefore,
+                  to: visible.to + addedBefore,
                 });
               setMainVersion((v) => v + 1);
             }
@@ -936,6 +989,7 @@ export default function ChartCanvas({
   return (
     <div
       className="absolute inset-0"
+      data-history-state={showHistory ? historyState : "ready"}
       onDoubleClick={(e) => {
         if (tool !== "cursor" || (e.target as HTMLElement).tagName === "INPUT") return;
         const n = barsRef.current.length;
@@ -943,6 +997,95 @@ export default function ChartCanvas({
       }}
     >
       <div ref={el} className="absolute inset-0" />
+      {showHistory && !history.bars.length && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center bg-panel/85 px-5 text-center"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="max-w-sm space-y-2 text-xs">
+            <div className="font-medium text-text">
+              {historyState === "loading"
+                ? `Loading ${state.symbol.split(":").at(-1)} · ${state.tf}…`
+                : historyState === "error"
+                  ? "History could not be loaded"
+                  : "No bars in this range"}
+            </div>
+            <p className="break-words text-muted">
+              {historyState === "loading"
+                ? "Fetching history from your data source. Indicators will start when it is ready."
+                : history.error ||
+                  history.coverageReason ||
+                  "Try an earlier trading day, another interval, or a different data source."}
+            </p>
+            {historyState !== "loading" && history.hasMore && (
+              <button
+                disabled={history.loadingOlder}
+                className="mr-2 rounded-md border border-line px-3 py-2 hover:bg-panel-2 disabled:opacity-50"
+                onClick={() => void loadOlderHistory(state.symbol, state.tf).catch(() => {})}
+              >
+                {history.loadingOlder ? "Loading earlier history…" : "Load earlier history"}
+              </button>
+            )}
+            {history.olderError && <p className="text-demo">{history.olderError}</p>}
+            {historyState !== "loading" && (
+              <button
+                className="rounded-md border border-line px-3 py-2 hover:bg-panel-2"
+                onClick={() =>
+                  void loadMarketHistory(state.symbol, state.tf, undefined, { force: true }).catch(
+                    () => {},
+                  )
+                }
+              >
+                Retry history
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      {showHistory && history.bars.length > 0 && (
+        <div
+          className="absolute bottom-7 left-2 z-10 flex max-w-[calc(100%-5rem)] items-center gap-2 rounded-md bg-panel/90 px-2 py-1 text-[11px] text-muted"
+          role="status"
+        >
+          {history.loadingOlder ? (
+            "Loading earlier history…"
+          ) : history.olderError ? (
+            <button
+              title={history.olderError}
+              className="text-demo underline"
+              onClick={() => void loadOlderHistory(state.symbol, state.tf).catch(() => {})}
+            >
+              Earlier history unavailable · Retry
+            </button>
+          ) : history.loading ? (
+            "Refreshing history…"
+          ) : history.error ? (
+            <button
+              title={history.error}
+              className="text-demo underline"
+              onClick={() =>
+                void loadMarketHistory(state.symbol, state.tf, undefined, { force: true }).catch(
+                  () => {},
+                )
+              }
+            >
+              Showing cached history · Retry
+            </button>
+          ) : history.hasMore ? (
+            <button
+              className="hover:text-text"
+              onClick={() => void loadOlderHistory(state.symbol, state.tf).catch(() => {})}
+            >
+              ← Load earlier history
+            </button>
+          ) : (
+            <span title={history.coverageReason}>
+              History from {new Date(history.bars[0].time * 1000).toISOString().slice(0, 10)}
+            </span>
+          )}
+        </div>
+      )}
       <canvas
         ref={canvasRef}
         className={cx(

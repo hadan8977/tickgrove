@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { command } from "./client";
 import { Button, Input } from "../ui/primitives";
 import SourceEditor from "./SourceEditor";
-export default function PineLibraries() {
+import { dependencyFields, type DependencyRequest } from "../features/pine/dependencies";
+export default function PineLibraries({ initial, onSaved }: { initial?: DependencyRequest; onSaved?: () => void } = {}) {
+  const fields = dependencyFields(initial?.reference);
+  const installing = useRef(false);
   const [libraries, setLibraries] = useState<any[]>([]),
-    [publisher, setPublisher] = useState("local"),
-    [name, setName] = useState("MathTools"),
-    [version, setVersion] = useState(1),
+    [publisher, setPublisher] = useState(fields?.publisher ?? "local"),
+    [name, setName] = useState(fields?.name ?? initial?.source?.match(/\blibrary\s*\(\s*["']([A-Za-z_]\w*)["']/)?.[1] ?? "MathTools"),
+    [version, setVersion] = useState(fields?.version ?? 1),
     [license, setLicense] = useState(""),
     [sourceUrl, setSourceUrl] = useState("");
   const [source, setSource] = useState(
-      '//@version=6\nlibrary("MathTools")\nexport twice(float value) =>\n    value * 2\n',
+      initial?.source ?? (initial?.reference ? "" : '//@version=6\nlibrary("MathTools")\nexport twice(float value) =>\n    value * 2\n'),
     ),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -23,6 +26,8 @@ export default function PineLibraries() {
     void refresh().catch((e) => setError(String(e)));
   }, []);
   async function save() {
+    if (installing.current) return;
+    installing.current = true;
     setBusy(true);
     setError("");
     try {
@@ -36,9 +41,11 @@ export default function PineLibraries() {
       });
       setSaved(result.reference ?? `${publisher}/${name}/${version}`);
       await refresh();
+      onSaved?.();
     } catch (e) {
       setError(String(e));
     } finally {
+      installing.current = false;
       setBusy(false);
     }
   }
@@ -50,6 +57,7 @@ export default function PineLibraries() {
         separate from your indicators and strategies. Install the library source with its publisher,
         name and version; saved versions cannot be overwritten.
       </p>
+      {initial?.reference && <p className="mb-4 rounded bg-panel-2 p-3 text-sm">Required by your script: <b>{initial.reference}</b>. Paste or upload this library's source below. Tickgrove does not download protected TradingView code.</p>}
       <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
         <aside className="space-y-2">
           {libraries.map((l) => (
@@ -117,8 +125,8 @@ export default function PineLibraries() {
           </div>
           <SourceEditor value={source} onChange={setSource} kind="pine" />
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <Button disabled={busy} variant="primary" onClick={() => void save()}>
-              {busy ? "Saving…" : "Save immutable library version"}
+            <Button disabled={busy || !source.trim() || !publisher.trim() || !name.trim() || !Number.isInteger(version) || version < 1} variant="primary" onClick={() => void save()}>
+              {busy ? "Installing…" : "Install dependency"}
             </Button>
             <label className="text-xs">
               Import .pine file
@@ -139,7 +147,7 @@ export default function PineLibraries() {
           </div>
           {saved && (
             <div className="mt-4 rounded bg-panel-2 p-3 text-xs">
-              <p>Import this version in a script:</p>
+              <p role="status">Installed {saved}. Return to your script and add it to the chart again.</p>
               <code className="mt-2 block">import {saved} as tools</code>
             </div>
           )}

@@ -1,6 +1,7 @@
 import type { DockviewApi } from "dockview-react";
 import type { ChartState } from "../../core/types";
 import { useApp, useCharts, useWorkspaces } from "../../store";
+import { gridChartOrder } from "./layoutCharts";
 
 let api: DockviewApi | null = null;
 export const setDockApi = (a: DockviewApi | null) => {
@@ -13,7 +14,7 @@ export const PANEL_TITLES: Record<string, string> = {
   watchlist: "Watchlist",
   detail: "Symbol · Depth",
   pine: "Pine Editor",
-  libraries: "Pine imports",
+  libraries: "Pine dependencies",
   builder: "Strategy Builder",
   backtest: "Backtest Report",
   ticket: "Order Ticket",
@@ -38,6 +39,61 @@ export const PRESETS: { id: PresetId; label: string; hint: string }[] = [
   { id: "strategy", label: "Strategy", hint: "Builder, Pine, backtest" },
   { id: "trade", label: "Trade", hint: "Chart, ticket, account" },
 ];
+export const GRID_PRESETS = PRESETS.filter((p) => p.id.startsWith("charts"));
+export const WORKSPACE_TEMPLATES = PRESETS.filter((p) => !p.id.startsWith("charts"));
+
+type LayoutUndo = { layout: unknown; chartOrder: string[]; activeChartId: string | null };
+const layoutUndo = new Map<string, LayoutUndo>();
+let rebuilding = false;
+function pruneUnusedCharts() {
+  const retained = new Set<string>();
+  const collect = (value: any) => {
+    if (!value || typeof value !== "object") return;
+    if (typeof value.chartId === "string") retained.add(value.chartId);
+    for (const child of Object.values(value)) collect(child);
+  };
+  for (const doc of useWorkspaces.getState().workspaces) {
+    collect(doc.layout); collect(doc.mobileLayout);
+    if (Array.isArray(doc.chartOrder)) doc.chartOrder.forEach((id) => retained.add(id));
+  }
+  for (const prior of layoutUndo.values()) prior.chartOrder.forEach((id) => retained.add(id));
+  const current = useCharts.getState().charts;
+  const charts = Object.fromEntries(Object.entries(current).filter(([id]) => retained.has(id)));
+  if (Object.keys(charts).length !== Object.keys(current).length) useCharts.setState({ charts });
+}
+
+export function replaceWorkspaceTemplate(preset: PresetId) {
+  if (!api) return;
+  const saved = useWorkspaces.getState();
+  const doc = saved.workspaces.find((w) => w.id === saved.activeId);
+  layoutUndo.set(saved.activeId, {
+    layout: api.toJSON(),
+    chartOrder: gridChartOrder(visibleChartIds(), doc?.chartOrder, useCharts.getState().charts, null, 100),
+    activeChartId: useApp.getState().activeChartId,
+  });
+  applyPreset(preset, true);
+  pruneUnusedCharts();
+  useApp.setState({ layoutUndoAvailable: true });
+}
+
+export function undoWorkspaceTemplate() {
+  if (!api) return;
+  const saved = useWorkspaces.getState(), prior = layoutUndo.get(saved.activeId);
+  if (!prior) return;
+  rebuilding = true;
+  try {
+    api.fromJSON(prior.layout as any);
+    saved.setChartOrder(saved.activeId, prior.chartOrder);
+    if (prior.activeChartId && useCharts.getState().charts[prior.activeChartId]) {
+      useApp.getState().setActiveChart(prior.activeChartId);
+      focusChartPanel(prior.activeChartId);
+    }
+  } finally { rebuilding = false; }
+  layoutUndo.delete(saved.activeId);
+  useApp.setState({ layoutUndoAvailable: false });
+  saveCurrentWorkspace();
+  pruneUnusedCharts();
+}
 
 let pseq = 0;
 const pid = (c: string) => `${c}-${Date.now().toString(36)}-${pseq++}`;
@@ -94,107 +150,116 @@ const SYMS = ["NVDA", "AAPL", "SPY", "BTCUSD", "MSFT", "TSLA"];
 const GROUPS = ["violet", "teal", null, "amber", "rose", null] as const;
 const TFS = ["1D", "1D", "1H", "4H", "1D", "15m"] as const;
 
-export function applyPreset(preset: PresetId) {
+export function applyPreset(preset: PresetId, replace = false) {
   if (!api) return;
   const charts = useCharts.getState();
-  const saved = useWorkspaces.getState(),
-    retained = new Set<string>();
-  const collect = (value: any) => {
-    if (!value || typeof value !== "object") return;
-    if (typeof value.chartId === "string") retained.add(value.chartId);
-    for (const child of Object.values(value)) collect(child);
-  };
-  for (const doc of saved.workspaces) {
-    if (doc.id !== saved.activeId) {
-      collect(doc.layout);
-      collect(doc.mobileLayout);
-    } else collect(window.innerWidth < 768 ? doc.layout : doc.mobileLayout);
-  }
-  for (const p of api.panels) {
-    const id = (p.params as any)?.chartId;
-    if (id && !retained.has(id)) charts.removeChart(id);
-  }
-  api.clear();
-  const mk = (i: number, extra: Partial<ChartState> = {}) =>
-    charts.createChart({
-      symbol: SYMS[i],
-      group: GROUPS[i] as ChartState["group"],
-      tf: TFS[i],
-      ...extra,
-    });
-  const add = (
-    component: string,
-    params: Record<string, unknown>,
-    reference?: string,
-    direction?: "right" | "left" | "above" | "below" | "within",
-    size?: { w?: number; h?: number },
-  ) => {
-    const id = pid(component);
-    const chartId = params.chartId as string | undefined;
-    api!.addPanel({
-      id,
-      component,
-      title:
-        component === "chart"
-          ? chartTitle(useCharts.getState().charts[chartId!])
-          : PANEL_TITLES[component],
-      params: { ...params, component },
-      position: reference
-        ? { referencePanel: reference, direction: direction ?? "within" }
-        : undefined,
-      initialWidth: size?.w,
-      initialHeight: size?.h,
-    });
-    return id;
-  };
+  const saved = useWorkspaces.getState();
+  const doc = saved.workspaces.find((w) => w.id === saved.activeId);
   const n = { charts1: 1, charts2: 2, charts4: 4, charts6: 6 }[preset as "charts1"];
-  if (n) {
-    const ids: string[] = [];
-    const first = add("chart", { chartId: mk(0) });
-    ids.push(first);
-    const wl = add("watchlist", {}, first, "right", { w: 300 });
-    add("detail", {}, wl, "below", { h: 300 });
-    if (n === 2) ids.push(add("chart", { chartId: mk(1) }, first, "right"));
-    if (n === 4) {
-      const b = add("chart", { chartId: mk(1) }, first, "right");
-      add("chart", { chartId: mk(2) }, first, "below");
+  const activeId = useApp.getState().activeChartId;
+  const existing = !replace && n
+    ? gridChartOrder(visibleChartIds(), doc?.chartOrder, charts.charts, activeId, n)
+    : [];
+  const extraPanels = !replace && n ? api.panels
+    .filter((p) => !["chart", "watchlist", "detail"].includes((p.params as any)?.component))
+    .map((p) => ({ component: (p.params as any).component as string, params: { ...p.params } })) : [];
+  const basis = charts.charts[activeId ?? ""] ?? charts.charts[existing[0]];
+  rebuilding = true;
+  try {
+    api.clear();
+    const mk = (i: number, extra: Partial<ChartState> = {}) => {
+      if (n && existing[i]) return existing[i];
+      const { id: _id, ...copy } = basis ? structuredClone(basis) : { id: "" };
+      const id = charts.createChart(!replace && n && basis ? { ...copy, group: null } : {
+        symbol: SYMS[i],
+        group: GROUPS[i] as ChartState["group"],
+        tf: TFS[i],
+        ...extra,
+      });
+      existing[i] = id;
+      return id;
+    };
+    const add = (
+      component: string,
+      params: Record<string, unknown>,
+      reference?: string,
+      direction?: "right" | "left" | "above" | "below" | "within",
+      size?: { w?: number; h?: number },
+    ) => {
+      const id = pid(component);
+      const chartId = params.chartId as string | undefined;
+      api!.addPanel({
+        id,
+        component,
+        title:
+          component === "chart"
+            ? chartTitle(useCharts.getState().charts[chartId!])
+            : PANEL_TITLES[component],
+        params: { ...params, component },
+        position: reference
+          ? { referencePanel: reference, direction: direction ?? "within" }
+          : undefined,
+        initialWidth: size?.w,
+        initialHeight: size?.h,
+      });
+      return id;
+    };
+    if (n) {
+      const ids: string[] = [];
+      const first = add("chart", { chartId: mk(0) });
+      ids.push(first);
+      // Six charts need the available width; tools remain accessible from Add panel.
+      const wl = n < 6 ? add("watchlist", {}, first, "right", { w: 300 }) : undefined;
+      if (wl) add("detail", {}, wl, "below", { h: 300 });
+      if (n === 2) ids.push(add("chart", { chartId: mk(1) }, first, "right"));
+      if (n === 4) {
+        const b = add("chart", { chartId: mk(1) }, first, "right");
+        add("chart", { chartId: mk(2) }, first, "below");
+        add("chart", { chartId: mk(3) }, b, "below");
+      }
+      if (n === 6) {
+        const b = add("chart", { chartId: mk(1) }, first, "right");
+        const c = add("chart", { chartId: mk(2) }, b, "right");
+        add("chart", { chartId: mk(3) }, first, "below");
+        add("chart", { chartId: mk(4) }, b, "below");
+        add("chart", { chartId: mk(5) }, c, "below");
+      }
+      for (const panel of extraPanels) add(panel.component, panel.params, wl ?? first, "within");
+      api.getPanel(first)?.api.setActive();
+    } else if (preset === "research") {
+      const a = add("chart", { chartId: mk(0, { indicators: [] }) });
+      const b = add("chart", { chartId: mk(0, { tf: "1H", group: null }) }, a, "right");
+      add("chart", { chartId: mk(2) }, a, "below");
       add("chart", { chartId: mk(3) }, b, "below");
+      const wl = add("watchlist", {}, b, "right", { w: 300 });
+      add("detail", {}, wl, "below", { h: 300 });
+      api.getPanel(a)?.api.setActive();
+    } else if (preset === "strategy") {
+      const bld = add("builder", {});
+      add("pine", {}, bld, "within");
+      const ch = add("chart", { chartId: mk(0) }, bld, "right");
+      add("backtest", {}, ch, "below");
+      api.getPanel(bld)?.api.setActive();
+      api.getPanel(ch)?.api.setActive();
+    } else if (preset === "trade") {
+      const ch = add("chart", { chartId: mk(0) });
+      const tk = add("ticket", {}, ch, "right", { w: 320 });
+      add("detail", {}, tk, "below");
+      add("positions", {}, ch, "below", { h: 260 });
+      add("watchlist", {}, ch, "left", { w: 260 });
+      api.getPanel(ch)?.api.setActive();
     }
-    if (n === 6) {
-      const b = add("chart", { chartId: mk(1) }, first, "right");
-      const c = add("chart", { chartId: mk(2) }, b, "right");
-      add("chart", { chartId: mk(3) }, first, "below");
-      add("chart", { chartId: mk(4) }, b, "below");
-      add("chart", { chartId: mk(5) }, c, "below");
+    const first = Object.keys(useCharts.getState().charts).find((id) =>
+      api!.panels.some((p) => (p.params as any)?.chartId === id),
+    );
+    const selected = activeId && visibleChartIds().includes(activeId) ? activeId : first;
+    if (selected) {
+      useApp.getState().setActiveChart(selected);
+      focusChartPanel(selected);
     }
-    api.getPanel(first)?.api.setActive();
-  } else if (preset === "research") {
-    const a = add("chart", { chartId: mk(0, { indicators: [] }) });
-    const b = add("chart", { chartId: mk(0, { tf: "1H", group: null }) }, a, "right");
-    add("chart", { chartId: mk(2) }, a, "below");
-    add("chart", { chartId: mk(3) }, b, "below");
-    const wl = add("watchlist", {}, b, "right", { w: 300 });
-    add("detail", {}, wl, "below", { h: 300 });
-    api.getPanel(a)?.api.setActive();
-  } else if (preset === "strategy") {
-    const bld = add("builder", {});
-    add("pine", {}, bld, "within");
-    const ch = add("chart", { chartId: mk(0) }, bld, "right");
-    add("backtest", {}, ch, "below");
-    api.getPanel(bld)?.api.setActive();
-    api.getPanel(ch)?.api.setActive();
-  } else if (preset === "trade") {
-    const ch = add("chart", { chartId: mk(0) });
-    const tk = add("ticket", {}, ch, "right", { w: 320 });
-    add("detail", {}, tk, "below");
-    add("positions", {}, ch, "below", { h: 260 });
-    add("watchlist", {}, ch, "left", { w: 260 });
-    api.getPanel(ch)?.api.setActive();
-  }
-  const first = Object.keys(useCharts.getState().charts).find((id) =>
-    api!.panels.some((p) => (p.params as any)?.chartId === id),
-  );
-  if (first) useApp.getState().setActiveChart(first);
+    saved.setChartOrder(saved.activeId, n && !replace ? existing : visibleChartIds());
+  } finally { rebuilding = false; }
+  saveCurrentWorkspace();
   balanceSidebar();
 }
 
@@ -220,11 +285,14 @@ export function balanceSidebar(attempt = 0) {
 }
 
 export function saveCurrentWorkspace() {
-  if (!api) return;
+  if (!api || rebuilding) return;
   const { activeId, save, workspaces } = useWorkspaces.getState();
   const layout = api.toJSON();
   const mobile = window.innerWidth < 768,
     workspace = workspaces.find((w) => w.id === activeId);
+  const order = gridChartOrder(visibleChartIds(), workspace?.chartOrder, useCharts.getState().charts, null, 100);
+  if (JSON.stringify(order) !== JSON.stringify(workspace?.chartOrder))
+    useWorkspaces.getState().setChartOrder(activeId, order);
   if (
     JSON.stringify(mobile ? workspace?.mobileLayout : workspace?.layout) === JSON.stringify(layout)
   )
@@ -236,6 +304,7 @@ export function loadWorkspace(id: string) {
   if (!api) return;
   const ws = useWorkspaces.getState().workspaces.find((w) => w.id === id);
   if (!ws) return;
+  useApp.setState({ layoutUndoAvailable: layoutUndo.has(id) });
   const layout = window.innerWidth < 768 ? (ws.mobileLayout ?? ws.layout) : ws.layout;
   if (layout) {
     try {
@@ -244,7 +313,8 @@ export function loadWorkspace(id: string) {
       const chartIds = api.panels.map((p) => (p.params as any)?.chartId).filter(Boolean);
       const missing = chartIds.filter((c: string) => !useCharts.getState().charts[c]);
       if (!missing.length) {
-        useApp.getState().setActiveChart(chartIds[0]);
+        const active = useApp.getState().activeChartId;
+        if (chartIds.length) useApp.getState().setActiveChart(active && chartIds.includes(active) ? active : chartIds[0]);
         balanceSidebar();
         return;
       }
@@ -252,7 +322,7 @@ export function loadWorkspace(id: string) {
       /* fall through to preset */
     }
   }
-  applyPreset(ws.preset as PresetId);
+  applyPreset(ws.preset as PresetId, true);
   useWorkspaces.getState().save(id, api.toJSON(), window.innerWidth < 768 ? "mobile" : "desktop");
 }
 

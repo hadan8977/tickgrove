@@ -41,6 +41,8 @@ interface AppState {
   theme: ThemeId;
   view: View;
   activeChartId: string | null;
+  layoutUndoAvailable: boolean;
+  paperSessionId: string | null;
   tool: DrawingTool;
   paletteOpen: boolean;
   liveDialog: boolean;
@@ -61,6 +63,8 @@ export const useApp = create<AppState>()(
       theme: "dark",
       view: "workspace",
       activeChartId: null,
+      layoutUndoAvailable: false,
+      paperSessionId: null,
       tool: "cursor",
       paletteOpen: false,
       liveDialog: false,
@@ -391,6 +395,8 @@ export interface WorkspaceDoc {
   name: string;
   layout: unknown | null;
   mobileLayout?: unknown | null;
+  /** Includes charts temporarily hidden by a smaller grid. */
+  chartOrder?: string[];
   preset: string;
   updatedAt: number;
 }
@@ -402,6 +408,7 @@ interface WorkspacesState {
   rename: (id: string, name: string) => void;
   remove: (id: string) => void;
   setActive: (id: string) => void;
+  setChartOrder: (id: string, chartOrder: string[]) => void;
 }
 export const useWorkspaces = create<WorkspacesState>()(
   persist(
@@ -431,6 +438,9 @@ export const useWorkspaces = create<WorkspacesState>()(
       ],
       activeId: "w-research",
       add: (w) => set((s) => ({ workspaces: [...s.workspaces, w], activeId: w.id })),
+      setChartOrder: (id, chartOrder) => set((s) => ({
+        workspaces: s.workspaces.map((w) => w.id === id ? { ...w, chartOrder } : w),
+      })),
       save: (id, layout, formFactor = "desktop") =>
         set((s) => ({
           workspaces: s.workspaces.map((w) =>

@@ -23,3 +23,11 @@ CARGO_BUILD_JOBS=1 cargo build --manifest-path server/Cargo.toml --bin tickgrove
 node --test tests/pine-host.test.cjs tests/pine-broker.test.cjs
 python3 scripts/acceptance/pine-event-service.py > /tmp/pine-event-service.json
 ```
+
+## Dispatch and recovery
+
+A host frame commits its event cursor, result, generated alerts and desired-order outbox together. Recovery drains unacknowledged intents before processing a newer event, and does not resubmit acknowledged rows. Reusing a Pine order ID with a changed side or type cancels and replaces the old order; cancellation must be confirmed first. Pausing or stopping atomically cancels pending dispatch intentions. Source gaps, corrections and cancellations stop execution rather than fabricating a continuous tick history.
+
+The event broker accepts supported absolute single-leg limit/stop orders and entry stop-limit orders. Relative profit/loss fields, trailing orders, immediate fills and OCA/bracket groups are rejected explicitly; they are never downgraded into market orders. External feedback validates the issued order, side, remaining quantity and timing before modifying positions; malformed feedback leaves the worker alive. Partial fills and valid reversals remain supported. These limits describe the continuous event host, independently of the native closed-bar backtest engine.
+
+Realtime Pine alert frequency and deduplication state is persistent across worker restart. Alert history includes source event, market cursor, version, snapshot and inputs for review.

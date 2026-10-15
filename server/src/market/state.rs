@@ -50,7 +50,8 @@ impl Builder {
             gap = Some("Missing trade IDs; current candle is incomplete".into());
         }
         self.last_trade = Some(id);
-        let bucket = (time_ms / 1000).div_euclid(self.step) * self.step;
+        let offset = if self.step == 604800 { 4 * 86400 } else { 0 };
+        let bucket = (time_ms / 1000 - offset).div_euclid(self.step) * self.step + offset;
         let mut closed = None;
         if let Some(bar) = &self.forming {
             if bucket < bar.time {

@@ -64,7 +64,7 @@ function PluginHost({ id }: { id: string }) {
       <Empty
         icon={<Puzzle size={18} />}
         title="Plugin disabled"
-        body="Enable this plugin in Integrations → Plugins to restore the panel."
+        body="Enable this plugin in Settings → Extensions to restore the panel."
       />
     );
   const C = entry.component;
@@ -76,7 +76,7 @@ export const PANEL_MENU = [
   { id: "watchlist", label: "Watchlist", icon: List },
   { id: "detail", label: "Symbol · Depth", icon: BookOpenText },
   { id: "pine", label: "Pine Editor", icon: FileCode2 },
-  { id: "libraries", label: "Pine imports", icon: BookOpenText },
+  { id: "libraries", label: "Pine dependencies", icon: BookOpenText },
   { id: "builder", label: "Strategy Builder", icon: Boxes },
   { id: "backtest", label: "Backtest Report", icon: FlaskConical },
   { id: "ticket", label: "Order Ticket", icon: Receipt },

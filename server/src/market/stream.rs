@@ -1,7 +1,5 @@
 use super::*;
-use futures_util::{SinkExt, StreamExt};
 use std::time::Duration;
-use tokio_tungstenite::tungstenite::Message;
 pub fn spawn(app: App, id: String) {
     tokio::spawn(async move {
         let repair_task = tokio::spawn(yahoo_reconcile(app.clone(), id.clone()));
@@ -11,6 +9,7 @@ pub fn spawn(app: App, id: String) {
                 Ok(()) => break,
                 Err(error) => {
                     let _ = status(&app, &id, "reconnecting", Some(error.to_string())).await;
+                    let _ = event(&app,&id,"gap",now(),json!({"reason":error.to_string(),"tickContinuityLost":true,"stage":"stream consumer failed"}),false,None).await;
                     tokio::time::sleep(Duration::from_secs(3)).await;
                     if !wanted(&app, &id).await.unwrap_or(false) {
                         break;
@@ -32,12 +31,17 @@ async fn wanted(app: &App, id: &str) -> anyhow::Result<bool> {
     )
 }
 async fn status(app: &App, id: &str, value: &str, error: Option<String>) -> anyhow::Result<()> {
-    sqlx::query("UPDATE market_subscriptions SET status=?,error=? WHERE id=?")
-        .bind(value)
-        .bind(&error)
-        .bind(id)
-        .execute(&app.db)
-        .await?;
+    let changed =
+        sqlx::query("UPDATE market_subscriptions SET status=?,error=? WHERE id=? AND desired=1")
+            .bind(value)
+            .bind(&error)
+            .bind(id)
+            .execute(&app.db)
+            .await?
+            .rows_affected();
+    if changed == 0 {
+        return Ok(());
+    }
     event(
         app,
         id,
@@ -218,123 +222,104 @@ fn repair_later(app: &App, id: &str, symbol: &str, tf: &str) {
     });
 }
 async fn run(app: &App, id: &str) -> anyhow::Result<()> {
-    let provider: String =
-        sqlx::query_scalar("SELECT provider FROM market_subscriptions WHERE id=?")
-            .bind(id)
-            .fetch_one(&app.db)
-            .await?;
+    let row = sqlx::query(
+        "SELECT provider,symbol,timeframe,feed,identity FROM market_subscriptions WHERE id=?",
+    )
+    .bind(id)
+    .fetch_one(&app.db)
+    .await?;
+    let provider: String = row.get("provider");
+    let symbol: String = row.get("symbol");
+    let tf: String = row.get("timeframe");
+    let feed: String = row.get("feed");
+    let mut meta: Value = serde_json::from_str(&row.get::<String, _>("identity"))?;
+    super::apply_feed_policy(&mut meta);
+    sqlx::query("UPDATE market_subscriptions SET identity=? WHERE id=?")
+        .bind(meta.to_string())
+        .bind(id)
+        .execute(&app.db)
+        .await?;
+    if provider == "yahoo" && feed == "quote-polling-60s" {
+        return yahoo_loop(app, id).await;
+    }
     if provider == "yahoo" {
-        let meta: String =
-            sqlx::query_scalar("SELECT identity FROM market_subscriptions WHERE id=?")
-                .bind(id)
-                .fetch_one(&app.db)
-                .await?;
-        let meta: Value = serde_json::from_str(&meta)?;
-        if meta["feed"] == "quote-polling-60s" {
-            return yahoo_loop(app, id).await;
-        }
         return yahoo_socket(app, id).await;
     }
     if provider == "alpaca" {
         return alpaca_socket(app, id).await;
     }
-
-    let row = sqlx::query("SELECT symbol,timeframe FROM market_subscriptions WHERE id=?")
-        .bind(id)
-        .fetch_one(&app.db)
-        .await?;
-    let symbol: String = row.get("symbol");
-    let tf: String = row.get("timeframe");
+    let (mut receiver, connected) = super::hub::subscribe(app, &provider, &feed).await?;
+    status(
+        app,
+        id,
+        if connected { "connected" } else { "connecting" },
+        None,
+    )
+    .await?;
     let mut builder = restore_builder(app, id, seconds(&tf)?).await?;
-    let mut backoff = 1u64;
-    while wanted(app, id).await? {
-        status(app, id, "connecting", None).await?;
-        let url = std::env::var("TRADING_COINBASE_WS_MOCK")
-            .unwrap_or("wss://ws-feed.exchange.coinbase.com".into());
-        if url.starts_with("ws://") {
-            let parsed = reqwest::Url::parse(&url)?;
-            anyhow::ensure!(
-                ["127.0.0.1", "localhost"].contains(&parsed.host_str().unwrap_or("")),
-                "Websocket mock must be loopback"
-            );
-        } else {
-            anyhow::ensure!(
-                url == "wss://ws-feed.exchange.coinbase.com",
-                "Unexpected Coinbase websocket endpoint"
-            );
-        }
-        let connection = tokio::time::timeout(
-            Duration::from_secs(15),
-            tokio_tungstenite::connect_async(&url),
+    if let Err(e) = repair(app, id, &symbol, &tf).await {
+        event(
+            app,
+            id,
+            "gap",
+            now(),
+            json!({"reason":"REST repair failed","error":e.to_string()}),
+            false,
+            None,
         )
-        .await;
-        let (mut socket, _) = match connection {
-            Ok(Ok(c)) => c,
-            result => {
-                status(
-                    app,
-                    id,
-                    "reconnecting",
-                    Some(format!("Connect failed: {result:?}")),
-                )
-                .await?;
-                tokio::time::sleep(Duration::from_secs(backoff)).await;
-                backoff = (backoff * 2).min(30);
-                continue;
-            }
-        };
-        socket.send(Message::Text(json!({"type":"subscribe","product_ids":[symbol],"channels":["ticker","matches","heartbeat"]}).to_string().into())).await?;
-        status(app, id, "connected", None).await?;
-        if let Err(e) = repair(app, id, &symbol, &tf).await {
-            event(
-                app,
-                id,
-                "gap",
-                now(),
-                json!({"reason":"REST repair failed","error":e.to_string()}),
-                false,
-                Some("repair failed"),
-            )
-            .await?;
-        }
-        backoff = 1;
-        let mut last_received = tokio::time::Instant::now();
-        let mut poll = tokio::time::interval(Duration::from_secs(1));
-        let failure = loop {
-            tokio::select! {_ = poll.tick()=>{if !wanted(app,id).await?{let _=socket.close(None).await;return Ok(())}if last_received.elapsed()>Duration::from_secs(15){break "Heartbeat/tick timeout".to_string()}},msg=socket.next()=>{let msg=match msg {Some(Ok(m))=>m,Some(Err(e))=>break e.to_string(),None=>break "Websocket closed".into()};last_received=tokio::time::Instant::now();if let Message::Ping(p)=msg {socket.send(Message::Pong(p)).await?;continue}let Message::Text(text)=msg else{continue};let value:Value=match serde_json::from_str(text.as_str()){Ok(v)=>v,Err(_)=>{event(app,id,"gap",now(),json!({"reason":"malformed provider message"}),false,None).await?;continue}};
-            if value["type"]=="error"{break value.to_string()}if value["product_id"].as_str().is_some_and(|s|s!=symbol){continue}let time=value["time"].as_str().and_then(|s|chrono::DateTime::parse_from_rfc3339(s).ok()).map(|t|t.timestamp_millis()).unwrap_or(now());
-            match value["type"].as_str().unwrap_or("") {
-            "ticker"=>event(app,id,"quote",time,value,true,None).await?,
-            "heartbeat"=>{let last=value["last_trade_id"].as_i64();if last.is_some_and(|n|builder.last_trade.is_some_and(|old|n>old)){builder.disconnected();event(app,id,"gap",time,json!({"lastReceivedTrade":builder.last_trade,"providerLastTrade":last}),false,Some("heartbeat detects dropped trades")).await?;}event(app,id,"heartbeat",time,value,true,None).await?;if let Some((bar,complete))=builder.watermark(time){persist_bar(app,id,&bar,true,complete).await?;if !complete{repair_later(app,id,&symbol,&tf);}}},
-            "match"=>{let trade_id=value["trade_id"].as_i64().ok_or_else(||anyhow::anyhow!("Missing trade ID"))?;let price=value["price"].as_str().and_then(|s|s.parse().ok()).ok_or_else(||anyhow::anyhow!("Invalid trade price"))?;let size=value["size"].as_str().and_then(|s|s.parse().ok()).ok_or_else(||anyhow::anyhow!("Invalid trade size"))?;let inserted=sqlx::query("INSERT OR IGNORE INTO market_trade_ids VALUES(?,?)").bind(id).bind(trade_id).execute(&app.db).await?.rows_affected();if inserted==0{continue}if trade_id%1000==0{sqlx::query("DELETE FROM market_trade_ids WHERE subscription_id=? AND trade_id<?").bind(id).bind(trade_id-super::retention("TRADING_MARKET_TRADE_ID_RETENTION",100000,10000,1000000)).execute(&app.db).await?;}let change=builder.trade(trade_id,time,price,size)?;if change.duplicate{continue}event(app,id,"trade",time,value,true,None).await?;if let Some(reason)=change.gap{event(app,id,"gap",time,json!({"reason":reason}),false,None).await?;}if let Some((bar,complete))=change.closed{persist_bar(app,id,&bar,true,complete).await?;if !complete{repair_later(app,id,&symbol,&tf);}}if let Some(bar)=change.forming{persist_bar(app,id,&bar,false,builder.complete).await?;}},_=>{}}
-            }}
-        };
-        builder.disconnected();
-        if let Some(bar) = &builder.forming {
-            persist_bar(app, id, bar, false, false).await?;
-        }
-        status(app, id, "reconnecting", Some(failure)).await?;
-        tokio::time::sleep(Duration::from_secs(backoff)).await;
-        backoff = (backoff * 2).min(30);
+        .await?;
     }
-    Ok(())
+    let mut poll = tokio::time::interval(Duration::from_secs(1));
+    loop {
+        tokio::select! {
+            _=poll.tick()=>{if !wanted(app,id).await?{return Ok(())}},
+            message=receiver.recv()=>{
+                let value=match message {
+                    Ok(super::hub::HubEvent::Connected)=>{status(app,id,"connected",None).await?;repair_later(app,id,&symbol,&tf);continue},
+                    Ok(super::hub::HubEvent::Disconnected(reason))=>{builder.disconnected();status(app,id,"reconnecting",Some(reason.clone())).await?;event(app,id,"gap",now(),json!({"reason":reason,"tickContinuityLost":true}),false,None).await?;continue},
+                    Ok(super::hub::HubEvent::Data(value))=>value,
+                    Err(tokio::sync::broadcast::error::RecvError::Lagged(n))=>{builder.disconnected();event(app,id,"gap",now(),json!({"reason":"Upstream consumer overrun; unrecovered trade ticks","missedMessages":n,"tickContinuityLost":true}),false,None).await?;repair_later(app,id,&symbol,&tf);continue},
+                    Err(e)=>return Err(e.into())
+                };
+                if value["product_id"].as_str().is_some_and(|s|s!=symbol){continue}
+                let time=value["time"].as_str().and_then(|s|chrono::DateTime::parse_from_rfc3339(s).ok()).map(|t|t.timestamp_millis()).unwrap_or(now());
+                match value["type"].as_str().unwrap_or(""){
+                    "ticker"=>{event(app,id,"quote",time,value,true,None).await?;},
+                    "heartbeat"=>{
+                        let last=value["last_trade_id"].as_i64();if last.is_some_and(|n|builder.last_trade.is_some_and(|old|n>old)){builder.disconnected();event(app,id,"gap",time,json!({"lastReceivedTrade":builder.last_trade,"providerLastTrade":last,"tickContinuityLost":true}),false,Some("heartbeat detects dropped trades")).await?;}
+                        event(app,id,"heartbeat",time,value,true,None).await?;
+                        if let Some((bar,complete))=builder.watermark(time){persist_bar(app,id,&bar,true,complete).await?;if !complete{repair_later(app,id,&symbol,&tf);}}
+                    },
+                    "match"=>{
+                        let trade_id=value["trade_id"].as_i64().ok_or_else(||anyhow::anyhow!("Missing trade ID"))?;
+                        let price=value["price"].as_str().and_then(|s|s.parse().ok()).ok_or_else(||anyhow::anyhow!("Invalid trade price"))?;
+                        let size=value["size"].as_str().and_then(|s|s.parse().ok()).ok_or_else(||anyhow::anyhow!("Invalid trade size"))?;
+                        let inserted=sqlx::query("INSERT OR IGNORE INTO market_trade_ids VALUES(?,?)").bind(id).bind(trade_id).execute(&app.db).await?.rows_affected();if inserted==0{continue}
+                        if trade_id%1000==0{sqlx::query("DELETE FROM market_trade_ids WHERE subscription_id=? AND trade_id<?").bind(id).bind(trade_id-super::retention("TRADING_MARKET_TRADE_ID_RETENTION",100000,10000,1000000)).execute(&app.db).await?;}
+                        let skipped=builder.last_trade.is_some_and(|last|trade_id>last+1);let change=builder.trade(trade_id,time,price,size)?;if change.duplicate{continue}
+                        event(app,id,"trade",time,value,true,None).await?;
+                        if let Some(reason)=change.gap{let lost=skipped||reason.starts_with("Missing trade IDs")||reason.starts_with("Late trade");event(app,id,"gap",time,json!({"reason":reason,"tickContinuityLost":lost}),false,None).await?;}
+                        if let Some((bar,complete))=change.closed{persist_bar(app,id,&bar,true,complete).await?;if !complete{repair_later(app,id,&symbol,&tf);}}
+                        if let Some(bar)=change.forming{persist_bar(app,id,&bar,false,builder.complete).await?;}
+                    },_=>{}
+                }
+            }
+        }
+    }
 }
 
 pub async fn yahoo_quote(symbol: &str) -> anyhow::Result<Value> {
     let identity = identity("yahoo", symbol, "1D", "quote-polling", "raw")?;
-    let response = client()?
-        .get(format!(
-            "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-        ))
-        .query(&[("interval", "1d"), ("range", "1d")])
-        .send()
-        .await?;
-    anyhow::ensure!(
-        response.status().is_success(),
-        "Yahoo quote response {}",
-        response.status()
-    );
-    let v: Value = response.json().await?;
+    let v = super::http::get(
+        &format!("https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"),
+        &[
+            ("interval".into(), "1d".into()),
+            ("range".into(), "1d".into()),
+        ],
+        None,
+        30,
+    )
+    .await?;
     let meta = &v["chart"]["result"][0]["meta"];
     let price = meta["regularMarketPrice"]
         .as_f64()
@@ -345,7 +330,7 @@ pub async fn yahoo_quote(symbol: &str) -> anyhow::Result<Value> {
         .ok_or_else(|| anyhow::anyhow!("Yahoo missing quote time"))?
         * 1000;
     Ok(
-        json!({"identity":super::instruments::from_yahoo(identity,meta),"provider":"yahoo","symbol":symbol,"kind":"delayed-quote-polling","price":price,"previousClose":meta.get("previousClose").or_else(||meta.get("chartPreviousClose")),"previousCloseSource":"Yahoo chart range=1d metadata","eventTime":event,"receivedAt":now(),"delaySeconds":meta["exchangeDataDelayedBy"],"metadata":meta,"stale":now()-event>60000}),
+        json!({"identity":super::instruments::from_yahoo(identity,meta),"provider":"yahoo","symbol":symbol,"kind":"delayed-quote-polling","priceKind":"reference","price":price,"previousClose":meta.get("previousClose").or_else(||meta.get("chartPreviousClose")),"previousCloseSource":"Yahoo chart range=1d metadata","eventTime":event,"receivedAt":now(),"delaySeconds":meta["exchangeDataDelayedBy"],"metadata":meta,"stale":now()-event>60000}),
     )
 }
 async fn yahoo_loop(app: &App, id: &str) -> anyhow::Result<()> {
@@ -381,21 +366,33 @@ async fn yahoo_loop(app: &App, id: &str) -> anyhow::Result<()> {
 }
 
 async fn yahoo_socket(app: &App, id: &str) -> anyhow::Result<()> {
-    let symbol: String = sqlx::query_scalar("SELECT symbol FROM market_subscriptions WHERE id=?")
+    let row = sqlx::query("SELECT symbol,feed,identity FROM market_subscriptions WHERE id=?")
         .bind(id)
         .fetch_one(&app.db)
         .await?;
-    let (mut socket, _) =
-        tokio_tungstenite::connect_async("wss://streamer.finance.yahoo.com/?version=2").await?;
-    socket
-        .send(Message::Text(
-            json!({"subscribe":[symbol]}).to_string().into(),
-        ))
-        .await?;
-    status(app, id, "connected", None).await?;
-    let mut keepalive = tokio::time::interval(Duration::from_secs(15));
+    let symbol: String = row.get("symbol");
+    let feed: String = row.get("feed");
+    let identity: Value = serde_json::from_str(&row.get::<String, _>("identity"))?;
+    let (mut receiver, connected) = super::hub::subscribe(app, "yahoo", &feed).await?;
+    status(
+        app,
+        id,
+        if connected { "connected" } else { "connecting" },
+        None,
+    )
+    .await?;
+    let mut poll = tokio::time::interval(Duration::from_secs(1));
     loop {
-        tokio::select! {_ = keepalive.tick()=>{if !wanted(app,id).await?{let _=socket.close(None).await;return Ok(())}socket.send(Message::Text(json!({"subscribe":[symbol]}).to_string().into())).await?;},message=socket.next()=>{let message=message.ok_or_else(||anyhow::anyhow!("Yahoo pricing socket closed"))??;if let Message::Ping(p)=message{socket.send(Message::Pong(p)).await?;continue}let Message::Text(text)=message else{continue};let wrapper:Value=serde_json::from_str(text.as_str())?;let encoded=wrapper["message"].as_str().unwrap_or(text.as_str());let mut quote=super::yahoo_proto::decode(encoded)?;if quote["symbol"]!=symbol{continue}quote["provider"]=json!("yahoo");quote["kind"]=json!("public-pricing-websocket; exchange delay not guaranteed");quote["receivedAt"]=json!(now());let identity:Value=serde_json::from_str(&sqlx::query_scalar::<_,String>("SELECT identity FROM market_subscriptions WHERE id=?").bind(id).fetch_one(&app.db).await?)?;provisional_quote(app,id,&identity,&quote).await?;event(app,id,"quote",quote["eventTime"].as_i64().unwrap(),quote,true,Some("Unofficial Yahoo push quote; no completeness claim for exchange trades")).await?;}}
+        tokio::select! {
+            _=poll.tick()=>{if !wanted(app,id).await?{return Ok(())}},
+            message=receiver.recv()=>{match message{
+                Ok(super::hub::HubEvent::Connected)=>status(app,id,"connected",None).await?,
+                Ok(super::hub::HubEvent::Disconnected(reason))=>status(app,id,"reconnecting",Some(reason)).await?,
+                Ok(super::hub::HubEvent::Data(quote))=>{if quote["symbol"]!=symbol{continue}provisional_quote(app,id,&identity,&quote).await?;event(app,id,"quote",quote["eventTime"].as_i64().unwrap(),quote,true,Some("Unofficial Yahoo push quote; no exchange trade completeness guarantee")).await?;},
+                Err(tokio::sync::broadcast::error::RecvError::Lagged(n))=>{event(app,id,"gap",now(),json!({"reason":"Quote consumer overrun","missedMessages":n}),false,None).await?;},
+                Err(e)=>return Err(e.into())
+            }}
+        }
     }
 }
 async fn yahoo_reconcile(app: App, id: String) {
@@ -550,29 +547,35 @@ async fn alpaca_socket(app: &App, id: &str) -> anyhow::Result<()> {
     let symbol: String = row.get("symbol");
     let meta: Value = serde_json::from_str(&row.get::<String, _>("identity"))?;
     let feed = meta["feed"].as_str().unwrap_or("iex");
-    anyhow::ensure!(
-        ["iex", "sip", "boats", "overnight"].contains(&feed),
-        "Unsupported Alpaca stream feed"
-    );
-    let key = std::env::var("ALPACA_API_KEY")
-        .map_err(|_| anyhow::anyhow!("Dedicated Alpaca key not configured"))?;
-    let secret = std::env::var("ALPACA_API_SECRET")
-        .map_err(|_| anyhow::anyhow!("Dedicated Alpaca secret not configured"))?;
-    let (mut socket, _) =
-        tokio_tungstenite::connect_async(format!("wss://stream.data.alpaca.markets/v2/{feed}"))
-            .await?;
-    socket
-        .send(Message::Text(
-            json!({"action":"auth","key":key,"secret":secret})
-                .to_string()
-                .into(),
-        ))
-        .await?;
-    let mut authenticated = false;
+    let (mut receiver, connected) = super::hub::subscribe(app, "alpaca", feed).await?;
+    status(
+        app,
+        id,
+        if connected { "connected" } else { "connecting" },
+        None,
+    )
+    .await?;
     let mut poll = tokio::time::interval(Duration::from_secs(1));
-    let mut last = tokio::time::Instant::now();
     loop {
-        tokio::select! {_ = poll.tick()=>{if !wanted(app,id).await?{let _=socket.close(None).await;return Ok(())}if last.elapsed()>Duration::from_secs(30){anyhow::bail!("Alpaca stream stale/timeout")}},message=socket.next()=>{let message=message.ok_or_else(||anyhow::anyhow!("Alpaca websocket closed"))??;last=tokio::time::Instant::now();let Message::Text(text)=message else{continue};let values:Value=serde_json::from_str(text.as_str())?;for v in values.as_array().ok_or_else(||anyhow::anyhow!("Invalid Alpaca websocket envelope"))?{match v["T"].as_str().unwrap_or("") {"error"=>anyhow::bail!("Alpaca stream entitlement/auth error code {}: {}",v["code"],v["msg"]),"success" if v["msg"]=="authenticated"=>{authenticated=true;socket.send(Message::Text(json!({"action":"subscribe","quotes":[symbol],"trades":[symbol],"bars":[symbol],"updatedBars":[symbol]}).to_string().into())).await?;status(app,id,"connected",None).await?;},"q"|"t"|"b"|"u"=>{anyhow::ensure!(authenticated,"Alpaca data before authentication");if v["S"]!=symbol{continue}let time=chrono::DateTime::parse_from_rfc3339(v["t"].as_str().ok_or_else(||anyhow::anyhow!("Missing Alpaca time"))?)?.timestamp_millis();match v["T"].as_str().unwrap(){"q"=>{match super::alpaca_wire::quote(v){Ok(q)=>{provisional_quote(app,id,&meta,&q).await?;event(app,id,"quote",time,q,true,None).await?;},Err(e)=>{event(app,id,"gap",time,json!({"reason":e.to_string(),"source":v}),false,None).await?;}}},"t"=>{event(app,id,"trade",time,super::alpaca_wire::trade(v)?,true,None).await?;},_=>{official_minute(app,id,&meta,&super::alpaca_wire::minute_bar(v)?).await?;}}},_=>{}}}}}
+        tokio::select! {
+            _=poll.tick()=>{if !wanted(app,id).await?{return Ok(())}},
+            message=receiver.recv()=>{match message{
+                Ok(super::hub::HubEvent::Connected)=>status(app,id,"connected",None).await?,
+                Ok(super::hub::HubEvent::Disconnected(reason))=>{status(app,id,"reconnecting",Some(reason)).await?;event(app,id,"gap",now(),json!({"reason":"Alpaca disconnected; missed trade ticks require source replay","tickContinuityLost":true}),false,None).await?;},
+                Ok(super::hub::HubEvent::Data(v))=>{
+                    if v["S"]!=symbol{continue}let time=super::alpaca_wire::timestamp(&v)?;
+                    match v["T"].as_str().unwrap_or(""){
+                        "q"=>match super::alpaca_wire::quote(&v){Ok(mut q)=>{q["quoteKind"]=meta["quoteKind"].clone();provisional_quote(app,id,&meta,&q).await?;event(app,id,"quote",time,q,true,None).await?;},Err(e)=>event(app,id,"gap",time,json!({"reason":e.to_string(),"source":v,"tickContinuityLost":true}),false,None).await?},
+                        "t"=>event(app,id,"trade",time,super::alpaca_wire::trade(&v)?,true,None).await?,
+                        "b"|"u"=>official_minute(app,id,&meta,&super::alpaca_wire::minute_bar(&v)?).await?,
+                        "c"|"x"=>{event(app,id,if v["T"]=="c"{"trade.corrected"}else{"trade.canceled"},time,v,true,None).await?;event(app,id,"gap",time,json!({"reason":"Provider trade revision; tick-sensitive strategies must reconcile accepted input","tickContinuityLost":true}),false,None).await?;},
+                        "s"|"l"=>event(app,id,"market.status",time,v,true,None).await?,_=>{}
+                    }
+                },
+                Err(tokio::sync::broadcast::error::RecvError::Lagged(n))=>{event(app,id,"gap",now(),json!({"reason":"Alpaca consumer overrun; unrecovered trade ticks","missedMessages":n}),false,None).await?;},
+                Err(e)=>return Err(e.into())
+            }}
+        }
     }
 }
 #[cfg(test)]

@@ -6,6 +6,7 @@ import {linkPineLibraries,type PineLibraryLock} from './library'
 import {installPineCompatibility} from './compat'
 import {PineBrokerLedger,type BrokerFill} from './broker'
 import {captureMutableState,removeNewSeries} from './rollback'
+import {validateBrokerOrder} from './intent'
 installPineCompatibility()
 export interface PineHostEvent {id:string;kind:'forming'|'closed';bar:Omit<Bar,'volume'>&{volume:number|null};eventTime:number;executionTime?:number}
 export class PineEventHost {
@@ -17,6 +18,7 @@ export class PineEventHost {
   if(declaration.getDeclarationType()==='strategy'&&!options.broker)throw Error('Event strategy requires configured BrokerHost starting account; native backtest is a separate contract');
   if(declaration.getDeclarationType()==='strategy'&&declaration.prop.calc_on_every_tick!==true)throw Error('Event BrokerHost requires calc_on_every_tick=true; use closed-bar native deployment for close-only strategies');
   if(declaration.prop.calc_on_order_fills===true)throw Error('Fill-triggered recursive calculation needs configured broker event scheduling');
+  if(options.broker&&declaration.prop.close_entries_rule!=null&&declaration.prop.close_entries_rule!=='FIFO')throw Error('Event broker supports FIFO close accounting only');
   // Namespace/scope keys are compiler-owned. Only explicit global primitive varip declarations are verified here.
   const names=[...linked.matchAll(/^varip\s+(?:(?:float|int|bool|string|color)\s+)?([A-Za-z_]\w*)\s*=/gm)].map(m=>m[1]);
   if([...linked.matchAll(/^varip\b[^\n]*/gm)].length!==names.length)throw Error('Non-primitive varip storage is not yet verified');
@@ -79,10 +81,29 @@ export class PineEventHost {
    }
   }else await withClock(event.executionTime??event.eventTime,()=>engine._executeIterations(ctx,engine.transpiledCode,engine.data.length-1,engine.data.length));
   for(const key of this.varip)if(typeof ctx.var[key].data.at(-1)==='object')throw Error(`Composite varip ${key} storage is not verified`);
+  if(this.broker)for(const order of ctx.strategy.pending_orders)validateBrokerOrder(order);
   this.elapsed=performance.now()-executionStarted;
   this.events.set(event.id,serialized);return {duplicate:false,context:this.context};
  }
- applyBrokerFill(fill:BrokerFill){if(!this.broker)throw Error('No BrokerHost configured');if(this.broker.hasFill(fill.id))return this.broker.applyFill(fill);const state=this.context.strategy!,order=state.pending_orders.find(o=>o.id===fill.orderId);if(!order)throw Error('Broker fill has no issued Pine order');const requested=order.qty>0?order.qty:state.opentrades.filter(t=>!order.from_entry||t.entry_id===order.from_entry).reduce((n,t)=>n+Math.abs(t.size),0)*(order.qty_percent??100)/100;if(fill.qty>requested+1e-9)throw Error('Broker fill exceeds remaining native order quantity');const outcome=this.broker.applyFill(fill);if(requested-fill.qty>1e-9){order.qty=requested-fill.qty}else state.pending_orders=state.pending_orders.filter(o=>o.id!==fill.orderId);return outcome}
+ applyBrokerFill(fill:BrokerFill){
+  if(!this.broker)throw Error('No BrokerHost configured');
+  if(this.broker.hasFill(fill.id))return this.broker.applyFill(fill);
+  const state=this.context.strategy!,order=state.pending_orders.find(o=>o.id===fill.orderId);
+  if(!order)throw Error('Broker fill has no issued Pine order');
+  validateBrokerOrder(order);
+  const lots=state.opentrades.filter(t=>!order.from_entry||t.entry_id===order.from_entry);
+  const exitSize=lots.reduce((n,t)=>n+t.size,0);
+  const side=order.category==='exit'?(exitSize>0?'sell':exitSize<0?'buy':null):(order.direction>0?'buy':'sell');
+  if(side!==fill.side)throw Error('Broker fill side does not match issued order');
+  if(!Number.isSafeInteger(fill.time)||fill.time<order.time||!Number.isInteger(fill.barIndex)||fill.barIndex<order.bar||fill.barIndex>this.context.idx)throw Error('Broker fill time/bar does not match issued order lifetime');
+  const available=order.category==='exit'?Math.abs(exitSize):Infinity;
+  const requested=Math.min(available,order.qty>0?order.qty:available*(order.qty_percent??100)/100);
+  if(!Number.isFinite(requested)||requested<=0||fill.qty>requested+1e-9)throw Error('Broker fill exceeds remaining native order quantity');
+  const outcome=this.broker.applyFill(fill);
+  if(requested-fill.qty>1e-9)order.qty=requested-fill.qty;
+  else state.pending_orders=state.pending_orders.filter(o=>o.id!==fill.orderId);
+  return outcome;
+ }
  clearPendingOrders(){if(this.context.strategy)this.context.strategy.pending_orders=[]}
  get pendingOrders(){return structuredClone(this.context.strategy?.pending_orders??[])}
  get account(){return this.broker?.account}

@@ -1,0 +1,85 @@
+{
+  "at": "2026-10-15T07:26:17.001Z",
+  "scope": "Free-source history/realtime workflow, first reviewed correctness and usability repairs, redesigned identity. Not a full TradingView equivalence or 96-feature release certification.",
+  "checks": {
+    "node": {
+      "command": "pnpm test",
+      "passed": 108,
+      "failed": 0
+    },
+    "rust": {
+      "command": "cargo test --locked --offline --manifest-path server/Cargo.toml --lib -- --test-threads=1",
+      "passed": 27,
+      "failed": 0
+    },
+    "typescript": {
+      "command": "pnpm exec tsc --noEmit",
+      "passed": true
+    },
+    "nativeBuild": {
+      "command": "CARGO_BUILD_JOBS=1 CARGO_PROFILE_DEV_DEBUG=0 cargo build --locked --offline --manifest-path server/Cargo.toml --bins",
+      "binaries": 8,
+      "passed": true
+    },
+    "frontendBuild": {
+      "command": "pnpm exec vite build --outDir var/free-data-dist",
+      "passed": true,
+      "entry": "index-BecLKarF.js",
+      "entrySha256": "7f2c22f3ed99190135449025bb2f4bf8ddb11fe3002214df1b3f0576b2800752"
+    },
+    "publicProviders": {
+      "passed": 11,
+      "report": "server/tests/market-data-report.json"
+    },
+    "reliabilityApi": {
+      "passed": 5,
+      "report": "docs/acceptance/reliability-current.json"
+    },
+    "sourceWorkflow": {
+      "passed": true,
+      "report": "docs/acceptance/free-data-workflow.json"
+    },
+    "workspaceBrowser": {
+      "passed": 5,
+      "report": "docs/acceptance/workspace-interactions.json"
+    },
+    "dataBrowserFixtures": {
+      "passed": 8,
+      "report": "docs/acceptance/free-data-browser.json"
+    },
+    "realDataBrowser": {
+      "passed": true,
+      "report": "docs/acceptance/real-free-data-browser.json"
+    },
+    "canvasThemes": {
+      "passed": true,
+      "report": "docs/acceptance/real-data-screenshots.json"
+    },
+    "preview": {
+      "passed": true,
+      "report": "docs/acceptance/free-data-preview.json"
+    },
+    "docker": {
+      "status": "in_progress",
+      "note": "First clean image build and isolated runtime validation are still running."
+    }
+  },
+  "binarySha256": "c846fc1a304461fd32e125bbe26c600a201e08df57cccd383478bba288dd1991",
+  "sourceHashes": {
+    "src/data/feed.ts": "3ec65bbd333d16940bf1bce45dd82e467fa938ef6ed2d4e40a60148d784d7270",
+    "src/service/client.ts": "4f78760cb0fc8d21781b9742fce95f1197d1812bfe06fb43b032d250e4155451",
+    "src/App.tsx": "a8a7582f9aabce1dcb9525136b90d64ea0d316434cc436d8c19b72de8f340bd7",
+    "src/brand/mark.json": "ecf30c16a33f0476d9f63ee05d13cb08d876f7f133c2b38eed09c3b705a0a3ed",
+    "server/src/connections.rs": "f6652997068b032758c252f86cefdb677c23600b83049de069739ad20277f9f3",
+    "server/src/market/history.rs": "c0a7ea0049f35b5f73aa6c53d5d9a6778e19b15a48f9014e2579ed3ae2f4fcfe",
+    "server/src/market/hub.rs": "c309530fa8d00cbe6a22dfba15a4d056baaf74a3a1c5432dd55ecc2d0e1179e0",
+    "server/src/account.rs": "a43adc722c4af17ee91b8ecc9820336b850b135efb1e664a6fcb1f7aef09a100",
+    "server/src/pine_host.rs": "0ec98d2c86e160ab09cb7d2ab7c7594056a364f3f80bad03acb37724ec94560c"
+  },
+  "remaining": [
+    "Dedicated Alpaca account/data/venue order acceptance unavailable without user-owned credentials",
+    "Guaranteed consolidated US realtime/night coverage is not supplied by the public Yahoo fallback",
+    "Full Pine/TradingView numerical and order equivalence remains unverified",
+    "Historical tick loss, permanent archival objects, full release gate and original frontend licensing remain separate tracked work"
+  ]
+}

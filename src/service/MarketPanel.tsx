@@ -15,6 +15,9 @@ import { useApp, useCharts, targetChartId } from "../store";
 import { Button, Input, Select, Popover, cx, fmt } from "../ui/primitives";
 import type { MarketSubscription } from "../core/marketTypes";
 import PortfolioData from "./PortfolioData";
+import DataConnections from "./DataConnections";
+import { marketStatus } from "../data/marketStatus";
+import { useConnection } from "./workspaceSync";
 
 export function MarketBadge({
   symbol,
@@ -30,36 +33,7 @@ export function MarketBadge({
     identity = data.identity;
   if (isDemoData()) return <span className="text-xs text-demo">Demo</span>;
   const age = data.quoteReceivedAt ? Math.max(0, Date.now() - data.quoteReceivedAt) : undefined;
-  const fresh =
-    age !== undefined &&
-    age < 15000 &&
-    data.eventTime !== undefined &&
-    Date.now() - data.eventTime < 15000 &&
-    data.status === "connected";
-  const label = data.error
-    ? "Data error"
-    : data.streamError
-      ? "Feed issue"
-      : data.loading
-        ? "Loading"
-        : identity?.delay.kind === "delayed"
-          ? "Delayed"
-          : identity?.delay.kind === "unknown"
-            ? "Unverified"
-            : fresh
-              ? "Live"
-              : age !== undefined
-                ? "Stale"
-                : "Waiting";
-  const warning =
-    ["Delayed", "Unverified", "Stale", "Feed issue"].includes(label) || !!data.gaps?.length;
-  const tone = data.error
-    ? "text-down"
-    : warning
-      ? "text-demo"
-      : label === "Live"
-        ? "text-up"
-        : "text-muted";
+  const { label, tone } = marketStatus(data);
   const date = (value?: number) =>
     value ? new Date(value).toISOString().replace("T", " ").slice(0, 19) + " UTC" : "Not received";
   return (
@@ -100,7 +74,8 @@ export function MarketBadge({
           <dd>{identity?.venue ?? "—"}</dd>
           <dt>Session</dt>
           <dd>
-            {identity?.session ?? "—"} · {identity?.timezone ?? "—"}
+            {identity?.session ?? "—"} · {data.marketState?.state ?? "unknown"} ·{" "}
+            {identity?.timezone ?? "—"}
           </dd>
           <dt>Data policy</dt>
           <dd className={tone}>
@@ -115,7 +90,17 @@ export function MarketBadge({
           <dd>{age === undefined ? "No live quote received" : Math.floor(age / 1000) + "s ago"}</dd>
           <dt>History</dt>
           <dd>
-            {data.bars.length} bars{data.gaps?.length ? " · " + data.gaps.length + " gaps" : ""}
+            {data.bars.length.toLocaleString()} bars
+            {data.gaps?.length ? " · " + data.gaps.length + " gaps" : ""}
+            {data.bars.length > 0 && (
+              <span className="mt-1 block">
+                {new Date(data.bars[0].time * 1000).toISOString().slice(0, 10)} —{" "}
+                {new Date(data.bars.at(-1)!.time * 1000).toISOString().slice(0, 10)}
+              </span>
+            )}
+            {data.coverageReason && (
+              <span className="mt-1 block text-muted">{data.coverageReason}</span>
+            )}
           </dd>
         </dl>
         {identity?.delay.disclaimer && (
@@ -128,7 +113,12 @@ export function MarketBadge({
         )}
         <div className="flex gap-2">
           {data.error && (
-            <Button size="sm" onClick={() => void loadMarketHistory(symbol, tf).catch(() => {})}>
+            <Button
+              size="sm"
+              onClick={() =>
+                void loadMarketHistory(symbol, tf, undefined, { force: true }).catch(() => {})
+              }
+            >
               Retry history
             </Button>
           )}
@@ -162,15 +152,26 @@ export default function MarketPanel() {
     ),
     [end, setEnd] = useState(new Date().toISOString().slice(0, 16));
   const [customRange, setCustomRange] = useState(false);
+  const [cache, setCache] = useState<{ entries: number; bytes: number; maxBytes: number }>();
+  const [cacheBusy, setCacheBusy] = useState(false);
+  const canWriteData = useConnection((s) => s.permissions.includes("data.write"));
   const refresh = async () => {
-    const [c, s] = await Promise.all([
+    const [c, s, cache] = await Promise.all([
       command("market.capabilities"),
       command<MarketSubscription[]>("market.list"),
+      command("market.cacheInfo"),
     ]);
     setCapabilities(c);
     setSubscriptions(s);
+    setCache(cache);
   };
   useEffect(() => {
+    const preferred = sessionStorage.getItem("tickgrove.data-source-selection");
+    if (preferred && ["yahoo", "coinbase", "alpaca"].includes(preferred)) {
+      setProvider(preferred);
+      setSymbol(preferred === "coinbase" ? "BTC-USD" : "SPY");
+      sessionStorage.removeItem("tickgrove.data-source-selection");
+    }
     void refresh().catch((e) => setError(String(e)));
     const id = setInterval(() => void refresh().catch((e) => setError(String(e))), 3000);
     return () => clearInterval(id);
@@ -189,7 +190,8 @@ export default function MarketPanel() {
     try {
       const canonical = `${provider.toUpperCase()}:${
         provider === "alpaca"
-          ? feed + ":"
+          ? feed +
+            (session === "extended" && !["boats", "overnight"].includes(feed) ? ":extended:" : ":")
           : provider === "yahoo" && session === "extended"
             ? "extended:"
             : ""
@@ -200,10 +202,16 @@ export default function MarketPanel() {
         providerSymbol: symbol.toUpperCase().trim(),
         kind: provider === "coinbase" ? "crypto" : "stock",
       });
-      await loadMarketHistory(canonical, tf, {
-        start: Date.parse(start + "Z") / 1000,
-        end: Date.parse(end + "Z") / 1000,
-      });
+      await loadMarketHistory(
+        canonical,
+        tf,
+        customRange
+          ? {
+              start: Date.parse(start + "Z") / 1000,
+              end: Date.parse(end + "Z") / 1000,
+            }
+          : undefined,
+      );
       const id = targetChartId();
       if (id) {
         useCharts.getState().setSymbol(id, canonical);
@@ -221,7 +229,19 @@ export default function MarketPanel() {
         Search instruments from a provider or enter its exact symbol. Coverage and real-time access
         depend on the selected source. Gaps never switch to synthetic prices.
       </p>
-      <div className="my-4 flex flex-wrap items-end gap-3">
+      <DataConnections
+        onChoose={(next) => {
+          setProvider(next);
+          setSymbol(next === "coinbase" ? "BTC-USD" : "SPY");
+          setSession("regular");
+          setCustomRange(false);
+          document
+            .getElementById("market-history-form")
+            ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }}
+      />
+      <h2 className="mt-6 text-sm font-semibold">Open a chart or choose a history range</h2>
+      <div id="market-history-form" className="my-4 flex flex-wrap items-end gap-3">
         <label className="text-xs">
           Provider
           <Select
@@ -261,7 +281,8 @@ export default function MarketPanel() {
             </Select>
           </label>
         )}
-        {provider === "yahoo" && (
+        {(provider === "yahoo" ||
+          (provider === "alpaca" && !["boats", "overnight"].includes(feed))) && (
           <label className="text-xs">
             Session
             <Select
@@ -295,40 +316,77 @@ export default function MarketPanel() {
             ))}
           </Select>
         </label>
-        <label className="text-xs">
-          Start (UTC)
-          <Input
-            className="mt-1"
-            type="datetime-local"
-            value={start}
-            onChange={(e) => {
-              setCustomRange(true);
-              setStart(e.target.value);
-            }}
-          />
-        </label>
-        <label className="text-xs">
-          End (UTC)
-          <Input
-            className="mt-1"
-            type="datetime-local"
-            value={end}
-            onChange={(e) => {
-              setCustomRange(true);
-              setEnd(e.target.value);
-            }}
-          />
-        </label>
+        <details
+          className="rounded-lg border border-line p-2 text-xs"
+          open={customRange}
+          onToggle={(e) => setCustomRange(e.currentTarget.open)}
+        >
+          <summary className="cursor-pointer text-muted">Custom date range (UTC)</summary>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <label className="text-xs">
+              Start (UTC)
+              <Input
+                className="mt-1"
+                type="datetime-local"
+                value={start}
+                onChange={(e) => {
+                  setCustomRange(true);
+                  setStart(e.target.value);
+                }}
+              />
+            </label>
+            <label className="text-xs">
+              End (UTC)
+              <Input
+                className="mt-1"
+                type="datetime-local"
+                value={end}
+                onChange={(e) => {
+                  setCustomRange(true);
+                  setEnd(e.target.value);
+                }}
+              />
+            </label>
+          </div>
+        </details>
         <Button
           variant="primary"
           disabled={
-            loading || !symbol.trim() || !start || !end || Date.parse(start) >= Date.parse(end)
+            loading || !symbol.trim() || (customRange && (!Number.isFinite(Date.parse(start)) || !Number.isFinite(Date.parse(end)) || Date.parse(start) >= Date.parse(end)))
           }
           onClick={() => void act(load)}
         >
-          {loading ? "Loading…" : "Load real data on chart"}
+          {loading ? "Loading…" : customRange ? "Load selected range" : "Open chart"}
         </Button>
       </div>
+      <p className="text-xs leading-relaxed text-muted">
+        Charts start with recent history. Pan left or use “Load earlier history” to download older
+        pages. Source limits are shown on the chart; your saved snapshots and imported archives stay
+        on this server.
+      </p>
+      <details className="my-4 rounded-xl border border-line p-4">
+        <summary className="cursor-pointer text-sm font-semibold">
+          Local history cache
+          {cache ? ` · ${cache.entries} entries · ${(cache.bytes / 1048576).toFixed(1)} MB` : ""}
+        </summary>
+        <p className="my-3 text-xs text-muted">
+          Downloaded history is cached on this server to reuse requests. Limit:{" "}
+          {cache ? (cache.maxBytes / 1048576).toFixed(0) : "—"} MB. Clearing this cache keeps saved
+          strategy snapshots, runs and accounts.
+        </p>
+        <Button
+          size="sm"
+          disabled={!canWriteData || cacheBusy}
+          onClick={() => {
+            setCacheBusy(true);
+            void act(async () => {
+              await command("market.cacheClear");
+            }).finally(() => setCacheBusy(false));
+          }}
+        >
+          {cacheBusy ? "Clearing…" : "Clear downloaded cache"}
+        </Button>
+      </details>
       {error && (
         <p role="alert" className="text-sm text-down">
           {error}
@@ -340,29 +398,6 @@ export default function MarketPanel() {
         </summary>
         <PortfolioData />
       </details>
-      <h2 className="mb-2 mt-6 font-semibold">Source coverage</h2>
-      <div className="grid gap-3 md:grid-cols-3">
-        {capabilities?.providers?.map((p: any) => (
-          <div key={p.id} className="rounded-xl border border-line p-3">
-            <b>{p.id}</b>
-            <div className="mt-1 text-xs text-muted">
-              History: {String(p.history)} · Credentials:{" "}
-              {p.configured === false
-                ? "not configured"
-                : p.credentials === false
-                  ? "not required"
-                  : "server configuration"}
-            </div>
-            <p className="mt-2 text-xs leading-relaxed text-muted">
-              {p.id === "coinbase"
-                ? "Exchange history and live crypto quotes, 24/7."
-                : p.id === "yahoo"
-                  ? "Stock and ETF history with public reference quotes. Quote delay and availability are not guaranteed."
-                  : "Dedicated account and feed permission required. Overnight integration still needs correction and verification."}
-            </p>
-          </div>
-        ))}
-      </div>
       <details className="mt-5 rounded-xl border border-line p-4">
         <summary className="cursor-pointer text-sm font-semibold">
           Connections and diagnostics ({subscriptions.filter((s) => s.desired).length} active)
@@ -401,7 +436,8 @@ export default function MarketPanel() {
             <b>{s.key}</b> · {s.bars} bars · {s.status}{" "}
             {s.error && <span className="text-down">{s.error}</span>}
             <div className="text-muted">
-              Snapshot {s.snapshotId ?? "not loaded"} · {s.identity?.adjustment ?? "—"}
+              Snapshot {s.snapshotId ?? "created when you run a backtest"} ·{" "}
+              {s.identity?.adjustment ?? "—"}
             </div>
           </div>
         ))}

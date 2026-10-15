@@ -6,6 +6,7 @@ import { runServerStrategy } from "../service/runs";
 import { command } from "../service/client";
 import { accountAction, useAccount } from "../service/account";
 import { saveWorkspaceState } from "../service/workspaceSync";
+import { showPaperSession } from "../service/paperSelection";
 import { detectKind, detectTitle } from "../pine/runtime";
 import { runPineInWorker } from "../pine/client";
 import { demoPineOptions } from "../pine/demo";
@@ -31,6 +32,10 @@ import {
   loadWorkspace,
   openPanel,
   PRESETS,
+  GRID_PRESETS,
+  WORKSPACE_TEMPLATES,
+  replaceWorkspaceTemplate,
+  undoWorkspaceTemplate,
   saveCurrentWorkspace,
   type PresetId,
 } from "../features/workspace/dock";
@@ -168,6 +173,7 @@ export async function backtestBuilder(defId?: string) {
 }
 
 const pineReplays = new Map<string, PineReplayFrame[]>();
+const pendingPaperDeployments = new Map<string, Promise<string>>();
 
 export async function deployToPaper(backtestId?: string) {
   const bt = useBacktests.getState();
@@ -175,24 +181,32 @@ export async function deployToPaper(backtestId?: string) {
   if (!r) throw new Error("No backtest to deploy");
   if (!isDemoData()) {
     if (!r.server) throw Error("Run this strategy on the server before deploying");
-    const subscription_id = await subscribeMarket(r.symbol, r.tf);
-    const session = await command(
-      "paper.deploy",
-      {
-        version_id: r.server.versionId,
-        snapshot_id: r.server.snapshotId,
-        inputs: r.server.inputs,
-        execution: "closed_bar_native",
-        subscription_id,
-      },
-      crypto.randomUUID(),
-    );
-    useApp.getState().toast({
-      title: `Deployed ${r.name}`,
-      body: "Server session follows its bound market stream",
-    });
-    openPanel("positions", {}, { direction: "below" });
-    return session.session_id;
+    const server = r.server;
+    const pending = pendingPaperDeployments.get(r.id);
+    if (pending) return pending;
+    const deployment = (async () => {
+      const subscription_id = await subscribeMarket(r.symbol, r.tf);
+      const session = await command(
+        "paper.deploy",
+        {
+          version_id: server.versionId,
+          snapshot_id: server.snapshotId,
+          inputs: server.inputs,
+          execution: "closed_bar_native",
+          subscription_id,
+        },
+        crypto.randomUUID(),
+      );
+      useApp.getState().toast({
+        title: `Started ${r.name}`,
+        body: "Its independent simulated account follows confirmed market bars.",
+      });
+      showPaperSession(session.session_id);
+      return session.session_id as string;
+    })();
+    pendingPaperDeployments.set(r.id, deployment);
+    try { return await deployment; }
+    finally { pendingPaperDeployments.delete(r.id); }
   }
   const s: PaperStrategy = {
     id: uid("ps"),
@@ -221,7 +235,7 @@ export async function deployToPaper(backtestId?: string) {
         : `${r.symbol} · ${r.tf} · evaluates on each tick`,
     tone: "demo",
   });
-  openPanel("positions", {}, { direction: "below" });
+  showPaperSession(s.id);
   return s.id;
 }
 
@@ -493,14 +507,14 @@ export function registerCoreCommands() {
   });
   registerCommand<{ preset: string }>({
     id: "workspace.applyLayout",
-    title: "Apply layout preset",
+    title: "Change chart grid",
     category: "Workspace",
-    description: "Rebuild the current workspace from a preset.",
+    description: "Change the chart grid, retaining chart settings and temporarily hidden charts.",
     scope: "workspace",
     params: {
       preset: {
         type: "enum",
-        enum: PRESETS.map((p) => p.id),
+        enum: GRID_PRESETS.map((p) => p.id),
         required: true,
         description: "Preset",
       },
@@ -509,6 +523,24 @@ export function registerCoreCommands() {
       useApp.getState().setView("workspace");
       applyPreset(preset as PresetId);
     },
+  });
+  registerCommand<{ preset: string }>({
+    id: "workspace.replaceTemplate",
+    title: "Replace workspace with template",
+    category: "Workspace",
+    description: "Replace the visible workspace with a template. Undo restores the previous layout and charts.",
+    scope: "workspace",
+    params: { preset: { type: "enum", enum: WORKSPACE_TEMPLATES.map((p) => p.id), required: true, description: "Workspace template" } },
+    run: ({ preset }) => {
+      useApp.getState().setView("workspace");
+      replaceWorkspaceTemplate(preset as PresetId);
+      return "Template applied. Use Layout → Undo template replacement to restore your charts.";
+    },
+  });
+  registerCommand({
+    id: "workspace.undoLayout", title: "Undo template replacement", category: "Workspace",
+    description: "Restore the chart layout and settings from before the last template replacement.",
+    scope: "workspace", run: () => undoWorkspaceTemplate(),
   });
   registerCommand({
     id: "workspace.save",

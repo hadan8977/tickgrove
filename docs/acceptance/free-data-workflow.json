@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-15T06:53:16.091Z",
+  "ok": true,
+  "scope": "isolated real Yahoo VOO history and Coinbase/Yahoo read-only connection tests; native simulated backtest only; no broker orders or public-preview writes",
+  "sourceTests": [
+    {
+      "provider": "yahoo",
+      "latencyMs": 503,
+      "sampleAvailable": true
+    },
+    {
+      "provider": "coinbase",
+      "latencyMs": 82,
+      "sampleAvailable": true
+    }
+  ],
+  "symbol": "VOO",
+  "source": {
+    "adjustment": "raw",
+    "assetClass": "etf",
+    "currency": "USD",
+    "delay": {
+      "disclaimer": "Unofficial Yahoo chart endpoint; personal research fallback, availability/delay not guaranteed; not an executable quote",
+      "kind": "delayed",
+      "seconds": null
+    },
+    "executionEligible": false,
+    "feed": "public",
+    "pricePrecision": 2,
+    "provider": "yahoo",
+    "quoteKind": "display-only",
+    "session": "regular",
+    "symbol": "VOO",
+    "symbolId": "YAHOO:PCX:VOO",
+    "tickSize": 0.01,
+    "timeframe": "1D",
+    "timezone": "America/New_York",
+    "venue": "PCX",
+    "venueName": "NYSEArca"
+  },
+  "bars": 250,
+  "gaps": 0,
+  "snapshotId": "0f748455-39ed-40ff-83c9-785e0803cc2e",
+  "jobId": "e661ade6-1723-41fe-addd-2fcda76dd1d7",
+  "trade": {
+    "commission": 0,
+    "entryBar": 2,
+    "entryId": "L",
+    "entryPrice": 613.510009765625,
+    "entryTime": 1760967000,
+    "exitBar": 4,
+    "exitId": "Close entry(s) order L",
+    "exitPrice": 617.8300170898438,
+    "exitTime": 1761139800,
+    "id": 1,
+    "pnl": 8.6400146484375,
+    "pnlPct": 0.7041461843253531,
+    "qty": 2,
+    "reason": "pine",
+    "side": "long"
+  },
+  "checks": [
+    "free sources work without configured keys",
+    "connection test does not claim sustained stream verification",
+    "chart page is not a strategy snapshot",
+    "exact selected range freezes with zero gaps",
+    "real-source backtest uses recorded bar opens and persists the expected native ledger"
+  ]
+}

@@ -4,7 +4,7 @@ import ConnectionGate from "./service/ConnectionGate";
 import MarketPanel from "./service/MarketPanel";
 import AlertsPanel from "./service/AlertsPanel";
 import { useConnection } from "./service/workspaceSync";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { execute, listCommands, commandSchema, getActivity } from "./core/commands";
 import { exportState, registerCoreCommands, tickPaperStrategies } from "./core/actions";
@@ -82,7 +82,7 @@ export default function App() {
   useEffect(() => {
     boot();
   }, []);
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function App() {
       document.head.appendChild(link);
     }
     link.type = "image/svg+xml";
-    link.href = "/favicon.svg?v=tickgrove-1";
+    link.href = "/favicon.svg?v=tickgrove-2";
   }, []);
   if (serviceMode && !connected) return <ConnectionGate />;
   return (

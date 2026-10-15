@@ -14,6 +14,6 @@ export interface MarketEvent {
  quality:{complete:boolean;stale:boolean;reason?:string};
 }
 export interface MarketSubscription {id:string;identity:MarketIdentity;status:'connecting'|'connected'|'reconnecting'|'stopped';desired:boolean;lastEventAt:number|null;stalenessMs:number|null;error:string|null}
-export interface MarketHistoryResult {snapshot_id:string;hash:string;bars:number;data:{symbol:string;timeframe:string;metadata:Record<string,unknown>;bars:MarketBar[]};identity:MarketIdentity;gaps:{start:number;end:number}[];provenance:Record<string,unknown>}
+export interface MarketHistoryResult {snapshot_id:string|null;hash:string;bars:number;data:{symbol:string;timeframe:string;metadata:Record<string,unknown>;bars:MarketBar[]};identity:MarketIdentity;gaps:{start:number;end:number}[];provenance:Record<string,unknown>;page?:{hasMore:boolean;nextBefore:number|null;limit:number;requestedStart:number;requestedEnd:number;coverageStart?:number;reason?:string};cache?:{hit:boolean;expiresAt?:number;policy?:string}}
 
 export interface MarketSnapshot {bars:MarketBar[];forming:{bar:MarketBar;quality:Record<string,unknown>}|null;identity:MarketIdentity;quality:Record<string,unknown>[];cursor:number;status:string;error:string|null;lastQuote:Record<string,unknown>|null;quoteQuality:Record<string,unknown>|null}

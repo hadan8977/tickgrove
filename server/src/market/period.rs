@@ -29,20 +29,20 @@ pub fn bounds(identity: &Value, time: i64) -> anyhow::Result<Option<(i64, i64)>>
         if calendar::session(day)?.is_none() {
             return Ok(None);
         }
-        let start = New_York
-            .from_local_datetime(
-                &(day - chrono::Duration::days(1))
-                    .and_hms_opt(20, 0, 0)
-                    .unwrap(),
-            )
-            .single()
-            .unwrap()
-            .timestamp();
-        let end = New_York
-            .from_local_datetime(&day.and_hms_opt(4, 0, 0).unwrap())
-            .single()
-            .unwrap()
-            .timestamp();
+        let (start, end) = overnight_session(day)?.unwrap();
+        if step == 604800 {
+            let monday = day - chrono::Duration::days(day.weekday().num_days_from_monday() as i64);
+            let mut sessions = Vec::new();
+            for n in 0..7 {
+                if let Some(s) = overnight_session(monday + chrono::Duration::days(n))? {
+                    sessions.push(s)
+                }
+            }
+            return Ok(Some((
+                sessions.first().unwrap().0,
+                sessions.last().unwrap().1,
+            )));
+        }
         let anchor = if step >= 86400 {
             start
         } else {
@@ -106,6 +106,19 @@ pub fn bounds(identity: &Value, time: i64) -> anyhow::Result<Option<(i64, i64)>>
     let anchor = segment_start + (time - segment_start).div_euclid(step) * step;
     Ok(Some((anchor, (anchor + step).min(segment_end))))
 }
+fn overnight_session(day: chrono::NaiveDate) -> anyhow::Result<Option<(i64, i64)>> {
+    if calendar::session(day)?.is_none() {
+        return Ok(None);
+    }
+    let at = |day: chrono::NaiveDate, h| {
+        New_York
+            .from_local_datetime(&day.and_hms_opt(h, 0, 0).unwrap())
+            .single()
+            .unwrap()
+            .timestamp()
+    };
+    Ok(Some((at(day - chrono::Duration::days(1), 20), at(day, 4))))
+}
 pub fn expected_base_times(
     identity: &Value,
     start: i64,
@@ -125,11 +138,27 @@ pub fn expected_base_times(
         .unwrap()
         .with_timezone(&New_York)
         .date_naive();
+    if identity["session"] == "overnight" {
+        day -= chrono::Duration::days(1);
+    }
     let last = DateTime::<Utc>::from_timestamp(end - 1, 0)
         .unwrap()
         .with_timezone(&New_York)
         .date_naive();
     while day <= last {
+        if identity["session"] == "overnight" {
+            if let Some((a, b)) = overnight_session(day)? {
+                let mut t = a;
+                while t < b {
+                    if t >= start && t < end {
+                        times.push(t)
+                    }
+                    t += base;
+                }
+            }
+            day += chrono::Duration::days(1);
+            continue;
+        }
         if let Some((open, close)) = calendar::session(day)? {
             let pre = New_York
                 .from_local_datetime(&day.and_hms_opt(4, 0, 0).unwrap())
@@ -169,12 +198,15 @@ pub fn last_closed(identity: &Value, now: i64) -> anyhow::Result<Option<(i64, i6
     for n in 0..14 {
         let date = local.date_naive() - chrono::Duration::days(n);
         if let Some((_, close)) = calendar::session(date)? {
-            let end = close
-                + if identity["session"] == "extended" {
-                    4 * 3600
-                } else {
-                    0
-                };
+            let end = if identity["session"] == "overnight" {
+                overnight_session(date)?.unwrap().1
+            } else {
+                close
+            } + if identity["session"] == "extended" {
+                4 * 3600
+            } else {
+                0
+            };
             if end <= now {
                 if let Some(period) = bounds(identity, end - 1)? {
                     if period.1 <= now {
@@ -266,4 +298,92 @@ pub fn next(identity: &Value, after: i64) -> anyhow::Result<Option<(i64, i64)>> 
         }
     }
     Ok(None)
+}
+
+#[cfg(test)]
+mod night_tests {
+    use super::*;
+    fn at(s: &str) -> i64 {
+        DateTime::parse_from_rfc3339(s).unwrap().timestamp()
+    }
+    #[test]
+    fn overnight_week_has_all_five_sessions_and_regular_excludes_post() {
+        let mut i = identity("alpaca", "SPY", "1W", "boats", "raw").unwrap();
+        let (a, b) = bounds(&i, at("2026-10-13T01:00:00Z")).unwrap().unwrap();
+        assert_eq!(a, at("2026-10-12T00:00:00Z"));
+        assert_eq!(b, at("2026-10-16T08:00:00Z"));
+        let times = expected_base_times(&i, a, b, 3600).unwrap();
+        assert_eq!(times.len(), 40);
+        assert_eq!(times[0], a);
+        assert_eq!(*times.last().unwrap() + 3600, b);
+        i["timeframe"] = json!("1D");
+        assert_eq!(
+            last_closed(&i, at("2026-10-13T12:00:00Z"))
+                .unwrap()
+                .unwrap(),
+            (at("2026-10-13T00:00:00Z"), at("2026-10-13T08:00:00Z"))
+        );
+        let mut day = identity("alpaca", "SPY", "1m", "sip", "raw").unwrap();
+        assert!(bounds(&day, at("2026-10-14T21:00:00Z")).unwrap().is_none());
+        day["session"] = json!("extended");
+        let period = bounds(&day, at("2026-10-14T21:00:00Z")).unwrap().unwrap();
+        assert_eq!(period.1 - period.0, 60);
+    }
+    #[test]
+    fn overnight_holiday_and_dst() {
+        let i = identity("alpaca", "SPY", "1D", "boats", "raw").unwrap();
+        assert!(bounds(&i, at("2026-11-26T02:00:00Z")).unwrap().is_none());
+        let (a, b) = bounds(&i, at("2026-11-27T02:00:00Z")).unwrap().unwrap();
+        assert_eq!(a, at("2026-11-27T01:00:00Z"));
+        assert_eq!(b, at("2026-11-27T09:00:00Z"));
+    }
+}
+
+/// Calendar/session state is independent of quote age and transport connectivity.
+pub fn market_state(identity: &Value, at_ms: i64) -> Value {
+    if identity["provider"] == "coinbase" {
+        return json!({"state":"24x7","open":true,"asOf":at_ms});
+    }
+    let Some(utc) = DateTime::<Utc>::from_timestamp(at_ms / 1000, 0) else {
+        return json!({"state":"unknown","open":false,"asOf":at_ms});
+    };
+    let local = utc.with_timezone(&New_York);
+    let day = local.date_naive();
+    let at = at_ms / 1000;
+    let Ok(session) = calendar::session(day) else {
+        return json!({"state":"unknown","open":false,"asOf":at_ms,"reason":"Calendar outside supported range"});
+    };
+    let state = if let Some((open, close)) = session {
+        let pre = New_York
+            .from_local_datetime(&day.and_hms_opt(4, 0, 0).unwrap())
+            .single()
+            .unwrap()
+            .timestamp();
+        if at >= pre && at < open {
+            "pre"
+        } else if at >= open && at < close {
+            "regular"
+        } else if at >= close && at < close + 4 * 3600 {
+            "post"
+        } else {
+            "closed"
+        }
+    } else {
+        "closed"
+    };
+    let mut night = identity.clone();
+    night["session"] = json!("overnight");
+    night["timeframe"] = json!("1m");
+    let state = if state == "closed" && bounds(&night, at).ok().flatten().is_some() {
+        "overnight"
+    } else {
+        state
+    };
+    let selected = identity["session"].as_str().unwrap_or("regular");
+    let open = match selected {
+        "overnight" => state == "overnight",
+        "extended" => ["pre", "regular", "post"].contains(&state),
+        _ => state == "regular",
+    };
+    json!({"state":state,"open":open,"asOf":at_ms,"timezone":"America/New_York","selectedSession":selected})
 }

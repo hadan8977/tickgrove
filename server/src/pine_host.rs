@@ -111,6 +111,7 @@ fn adapter(app: &App) -> anyhow::Result<String> {
         "scripts/register-typescript.cjs",
         "src/pine/host.ts",
         "src/pine/broker.ts",
+        "src/pine/intent.ts",
         "src/pine/rollback.ts",
         "src/pine/library.ts",
         "src/pine/data.ts",
@@ -196,6 +197,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             let fill_id = required(fill, "id")?;
             anyhow::ensure!(fill_id.len() <= 128, "Fill id too long");
             required(fill, "orderId")?;
+            let mut workers = processes().lock().await;
             let row = sqlx::query("SELECT execution,status FROM pine_host_sessions WHERE id=?")
                 .bind(id)
                 .fetch_one(&app.db)
@@ -217,7 +219,6 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 anyhow::ensure!(old == fill.to_string(), "fill_id_conflict");
                 return Ok(json!({"duplicate":true}));
             }
-            let mut workers = processes().lock().await;
             let worker = workers
                 .get_mut(id)
                 .ok_or_else(|| anyhow::anyhow!("Host recovering; retry after ready state"))?;
@@ -276,13 +277,19 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 if let Some(worker) = workers.get_mut(id) {
                     worker.call(json!({"operation":"clearOrders"})).await?;
                 }
-                sqlx::query("INSERT INTO pine_host_events(session_id,event_id,kind,payload,market_cursor) VALUES(?,?,'clear','{}',0)").bind(id).bind(uuid::Uuid::new_v4().to_string()).execute(&app.db).await?;
+            }
+            let mut tx = app.db.begin().await?;
+            if status == "active" {
+                sqlx::query("INSERT INTO pine_host_events(session_id,event_id,kind,payload,market_cursor) VALUES(?,?,'clear','{}',0)").bind(id).bind(uuid::Uuid::new_v4().to_string()).execute(&mut *tx).await?;
             }
             sqlx::query("UPDATE pine_host_sessions SET status=? WHERE id=?")
                 .bind(status)
                 .bind(id)
-                .execute(&app.db)
+                .execute(&mut *tx)
                 .await?;
+            sqlx::query("UPDATE pine_host_dispatch SET status='canceled' WHERE session_id=? AND status='pending'").bind(id).execute(&mut *tx).await?;
+            sqlx::query("UPDATE pine_host_intents SET status='canceled' WHERE session_id=? AND status='pending'").bind(id).execute(&mut *tx).await?;
+            tx.commit().await?;
             if ["paused", "stopped"].contains(&status) {
                 let orders=sqlx::query_scalar::<_,String>("SELECT id FROM local_orders WHERE client_order_id LIKE ? AND status IN ('working','triggered')").bind(format!("pine:{id}:%")).fetch_all(&app.db).await?;
                 for order in orders {
@@ -330,10 +337,12 @@ async fn tick(app: &App) -> anyhow::Result<()> {
         if let Err(error) = advance(app, &row).await {
             processes().lock().await.remove(&id);
             sqlx::query("UPDATE pine_host_sessions SET status='failed',error=? WHERE id=? AND status!='stopped'").bind(error.to_string()).bind(&id).execute(&app.db).await?;
+            sqlx::query("UPDATE pine_host_dispatch SET status='canceled' WHERE session_id=? AND status='pending'").bind(&id).execute(&app.db).await?;
+            sqlx::query("UPDATE pine_host_intents SET status='canceled' WHERE session_id=? AND status='pending'").bind(&id).execute(&app.db).await?;
             let orders = sqlx::query_scalar::<_, String>(
-                "SELECT local_order_id FROM pine_host_orders WHERE session_id=?",
+                "SELECT id FROM local_orders WHERE client_order_id LIKE ? AND status IN ('working','triggered')",
             )
-            .bind(&id)
+            .bind(format!("pine:{id}:%"))
             .fetch_all(&app.db)
             .await?;
             for order in orders {
@@ -459,6 +468,9 @@ async fn advance(app: &App, row: &sqlx::sqlite::SqliteRow) -> anyhow::Result<()>
             return Ok(());
         }
     }
+    // Replay has rebuilt committed computation. Drain its durable desired-order
+    // set before processing newer source events or fill projections.
+    drain_dispatch(app, &id, &sub).await?;
     let process = workers.get_mut(&id).unwrap();
     let fills=sqlx::query("SELECT f.*,f.rowid AS sequence,h.pine_order_id FROM local_fills f JOIN pine_host_orders h ON h.local_order_id=f.order_id WHERE h.session_id=? AND f.rowid>? ORDER BY f.rowid LIMIT 100").bind(&id).bind(row.get::<i64,_>("fill_cursor")).fetch_all(&app.db).await?;
     for fill in fills {
@@ -494,29 +506,24 @@ async fn advance(app: &App, row: &sqlx::sqlite::SqliteRow) -> anyhow::Result<()>
         if kind == "bar.revised" {
             anyhow::bail!("Committed source bar revised; event host frozen")
         }
+        if ["trade.corrected", "trade.canceled"].contains(&kind.as_str())
+            || (kind == "gap" && payload["tickContinuityLost"] == true)
+        {
+            anyhow::bail!(
+                "Source tick continuity changed ({kind}); event host frozen pending a verified new deployment"
+            )
+        }
         if ["bar.update", "bar.closed"].contains(&kind.as_str())
             && (quality["complete"] == true
                 || (row.get::<String, _>("execution") == "indicator"
                     && quality["source"] == "quote-derived"))
         {
             let host_event = json!({"id":format!("market:{next}"),"kind":if kind=="bar.closed"{"closed"}else{"forming"},"bar":payload,"eventTime":event.get::<i64,_>("event_time"),"executionTime":event.get::<i64,_>("received_at")});
-            sqlx::query("INSERT OR IGNORE INTO pine_host_events(session_id,event_id,kind,payload,market_cursor) VALUES(?,?,'market',?,?)").bind(&id).bind(format!("market:{next}")).bind(host_event.to_string()).bind(next).execute(&app.db).await?;
             let response = process
-                .call(json!({"operation":"market","event":host_event}))
+                .call(json!({"operation":"market","event":host_event.clone()}))
                 .await?;
-            sqlx::query(
-                "UPDATE pine_host_sessions SET result=?,cursor=? WHERE id=? AND status IN ('active','paused')",
-            )
-            .bind(response.to_string())
-            .bind(next)
-            .bind(&id)
-            .execute(&app.db)
-            .await?;
-            if row.get::<String, _>("execution") == "local_broker"
-                && row.get::<String, _>("status") == "active"
-            {
-                dispatch(app, &id, &sub, next, &response).await?;
-            }
+            commit_market_response(app, &id, next, &host_event, &response).await?;
+            drain_dispatch(app, &id, &sub).await?;
         } else {
             sqlx::query("UPDATE pine_host_sessions SET cursor=? WHERE id=? AND status IN ('active','paused')")
                 .bind(next)
@@ -527,36 +534,55 @@ async fn advance(app: &App, row: &sqlx::sqlite::SqliteRow) -> anyhow::Result<()>
     }
     Ok(())
 }
-async fn dispatch(
-    app: &App,
-    id: &str,
-    sub: &str,
-    cursor: i64,
-    response: &Value,
-) -> anyhow::Result<()> {
-    let active: String = sqlx::query_scalar("SELECT status FROM pine_host_sessions WHERE id=?")
-        .bind(id)
-        .fetch_one(&app.db)
-        .await?;
-    if active != "active" {
-        return Ok(());
-    }
-    let identity: String =
-        sqlx::query_scalar("SELECT identity FROM market_subscriptions WHERE id=?")
-            .bind(sub)
-            .fetch_one(&app.db)
-            .await?;
-    let identity: Value = serde_json::from_str(&identity)?;
-    let mut desired = std::collections::HashSet::new();
-    for order in response["pendingOrders"].as_array().into_iter().flatten() {
-        let pine_id = required(order, "id")?;
-        desired.insert(pine_id.to_string());
+/// Validate the whole desired order set before any submission or cancellation.
+fn normalize_intents(response: &Value) -> anyhow::Result<Vec<Value>> {
+    let orders = response["pendingOrders"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("Missing pending order set"))?;
+    let mut result = Vec::new();
+    let mut ids = std::collections::HashSet::new();
+    for order in orders {
+        let id = required(order, "id")?;
         anyhow::ensure!(
-            order["oca_name"].as_str().is_none_or(|n| n.is_empty()),
-            "BrokerHost OCA reduction needs an explicit host group policy"
+            ids.insert(id.to_string()),
+            "Duplicate native order id requires explicit grouping"
         );
-        let mut qty = order["qty"].as_f64().unwrap_or(0.);
-        let direction = order["direction"].as_f64().unwrap_or(0.);
+        anyhow::ensure!(order["status"] == "pending", "Invalid pending order status");
+        anyhow::ensure!(
+            ["market", "limit", "stop", "stop-limit"]
+                .contains(&order["type"].as_str().unwrap_or("")),
+            "Unsupported broker order type"
+        );
+        for key in [
+            "profit",
+            "loss",
+            "trail_price",
+            "trail_points",
+            "trail_offset",
+        ] {
+            anyhow::ensure!(
+                order[key].is_null(),
+                "Unsupported event broker order field {key}; no market substitution"
+            );
+        }
+        anyhow::ensure!(
+            order["oca_name"].as_str().is_none_or(str::is_empty)
+                && (order["oca_type"].is_null() || order["oca_type"] == "none"),
+            "BrokerHost OCA group execution is not supported"
+        );
+        anyhow::ensure!(
+            order["immediately"] != true,
+            "Immediate fills are unavailable in the next-quote broker"
+        );
+        anyhow::ensure!(
+            order["category"].is_null()
+                || ["entry", "exit"].contains(&order["category"].as_str().unwrap_or("")),
+            "Unsupported order category"
+        );
+        let mut qty = order["qty"]
+            .as_f64()
+            .filter(|q| q.is_finite() && *q >= 0.)
+            .ok_or_else(|| anyhow::anyhow!("Invalid broker intent quantity"))?;
         let side = if order["category"] == "exit" {
             let lots: Vec<&Value> = response["openTrades"]
                 .as_array()
@@ -572,29 +598,50 @@ async fn dispatch(
             if size == 0. {
                 continue;
             }
-            if qty <= 0. {
-                qty = size.abs() * order["qty_percent"].as_f64().unwrap_or(100.) / 100.
+            anyhow::ensure!(
+                size.is_finite()
+                    && lots.iter().all(|t| t["size"]
+                        .as_f64()
+                        .is_some_and(|n| n.signum() == size.signum())),
+                "Mixed or invalid broker exit lots"
+            );
+            let percent = order["qty_percent"].as_f64().unwrap_or(100.);
+            anyhow::ensure!(
+                percent.is_finite() && percent > 0. && percent <= 100.,
+                "Invalid broker exit percentage"
+            );
+            if qty == 0. {
+                qty = size.abs() * percent / 100.;
             }
             qty = qty.min(size.abs());
             if size > 0. { "sell" } else { "buy" }
         } else {
-            if direction > 0. {
-                "buy"
-            } else if direction < 0. {
-                "sell"
-            } else {
-                anyhow::bail!("Unrecognized native order direction")
+            match order["direction"].as_f64() {
+                Some(1.) => "buy",
+                Some(-1.) => "sell",
+                _ => anyhow::bail!("Invalid broker order direction"),
             }
         };
         anyhow::ensure!(
             qty.is_finite() && qty > 0.,
             "Invalid broker intent quantity"
         );
-        let limit = order["limit"].as_f64();
-        let stop = order["stop"].as_f64();
+        let price = |key: &str| -> anyhow::Result<Option<f64>> {
+            if order[key].is_null() {
+                return Ok(None);
+            }
+            Ok(Some(
+                order[key]
+                    .as_f64()
+                    .filter(|n| n.is_finite() && *n > 0.)
+                    .ok_or_else(|| anyhow::anyhow!("Invalid broker {key} price"))?,
+            ))
+        };
+        let limit = price("limit")?;
+        let stop = price("stop")?;
         anyhow::ensure!(
             !(order["category"] == "exit" && limit.is_some() && stop.is_some()),
-            "Two-leg Pine exit requires OCO broker group; no implicit stop-limit substitution"
+            "Two-leg Pine exit requires OCO; no stop-limit substitution"
         );
         let kind = match (limit, stop) {
             (Some(_), Some(_)) => "stop-limit",
@@ -602,22 +649,139 @@ async fn dispatch(
             (None, Some(_)) => "stop",
             _ => "market",
         };
-        let intent = json!({"side":side,"qty":qty,"type":kind,"price":limit,"stopPrice":stop});
-        if let Some(old)=sqlx::query("SELECT h.local_order_id,h.intent,o.status FROM pine_host_orders h JOIN local_orders o ON o.id=h.local_order_id WHERE h.session_id=? AND h.pine_order_id=?").bind(id).bind(pine_id).fetch_optional(&app.db).await?{
-   if ["working","triggered"].contains(&old.get::<String,_>("status").as_str()){
-    if old.get::<String,_>("intent")!=intent.to_string(){let mut amendment=json!({"id":old.get::<String,_>("local_order_id"),"qty":qty});if let Some(price)=limit{amendment["price"]=json!(price)}if let Some(price)=stop{amendment["stopPrice"]=json!(price)}crate::account::execute(app,"account.modifyOrder",&amendment).await?;sqlx::query("UPDATE pine_host_orders SET intent=? WHERE session_id=? AND pine_order_id=?").bind(intent.to_string()).bind(id).bind(pine_id).execute(&app.db).await?;}continue
-   }
-  }
-        let request = json!({"provider":identity["provider"],"symbol":identity["symbol"],"feed":identity["feed"],"side":side,"type":kind,"qty":qty,"price":limit,"stopPrice":stop,"client_order_id":format!("pine:{id}:{cursor}:{pine_id}"),"afterEventTime":crate::market::now()});
-        let request=if let Some(pending)=sqlx::query_scalar::<_,String>("SELECT request FROM pine_host_intents WHERE session_id=? AND pine_order_id=? AND status='pending'").bind(id).bind(pine_id).fetch_optional(&app.db).await?{serde_json::from_str::<Value>(&pending)?}else{sqlx::query("INSERT INTO pine_host_intents VALUES(?,?,?,'pending') ON CONFLICT(session_id,pine_order_id) DO UPDATE SET request=excluded.request,status='pending'").bind(id).bind(pine_id).bind(request.to_string()).execute(&app.db).await?;request};
+        result.push(
+            json!({"pine_id":id,"side":side,"qty":qty,"type":kind,"price":limit,"stopPrice":stop}),
+        );
+    }
+    Ok(result)
+}
+
+async fn commit_market_response(
+    app: &App,
+    id: &str,
+    cursor: i64,
+    event: &Value,
+    response: &Value,
+) -> anyhow::Result<()> {
+    let mut tx = app.db.begin().await?;
+    let session = sqlx::query(
+        "SELECT status,execution,version_id,snapshot_id,inputs FROM pine_host_sessions WHERE id=?",
+    )
+    .bind(id)
+    .fetch_one(&mut *tx)
+    .await?;
+    let status: String = session.get("status");
+    anyhow::ensure!(
+        ["active", "paused"].contains(&status.as_str()),
+        "Host stopped before event commit"
+    );
+    let local = session.get::<String, _>("execution") == "local_broker" && status == "active";
+    if local {
+        normalize_intents(response)?;
+    }
+    let event_id = required(event, "id")?;
+    sqlx::query("INSERT INTO pine_host_events(session_id,event_id,kind,payload,market_cursor) VALUES(?,?,'market',?,?)").bind(id).bind(event_id).bind(event.to_string()).bind(cursor).execute(&mut *tx).await?;
+    let context = json!({"source":"pine_host","event_id":event_id,"marketCursor":cursor,"version_id":session.get::<String,_>("version_id"),"snapshot_id":session.get::<String,_>("snapshot_id"),"inputs":serde_json::from_str::<Value>(&session.get::<String,_>("inputs"))?});
+    for (index, alert) in response["alerts"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .enumerate()
+    {
+        let alert_id = hash(&format!("{id}:{event_id}:{index}:{}", alert));
+        sqlx::query("INSERT OR IGNORE INTO pine_alert_history(id,session_id,job_id,event_time,payload,received_at,context) VALUES(?,?,?,?,?,?,?)").bind(alert_id).bind(id).bind(format!("pine-host:{id}")).bind(event["eventTime"].as_i64().unwrap_or(0)).bind(alert.to_string()).bind(event["executionTime"].as_i64().unwrap_or(0)).bind(context.to_string()).execute(&mut *tx).await?;
+    }
+    sqlx::query("UPDATE pine_host_sessions SET result=?,cursor=? WHERE id=?")
+        .bind(response.to_string())
+        .bind(cursor)
+        .bind(id)
+        .execute(&mut *tx)
+        .await?;
+    if local {
+        sqlx::query("INSERT INTO pine_host_dispatch(session_id,market_cursor,response,decision_time,status) VALUES(?,?,?,?,'pending')").bind(id).bind(cursor).bind(response.to_string()).bind(crate::market::now()).execute(&mut *tx).await?;
+    }
+    tx.commit().await?;
+    Ok(())
+}
+
+async fn drain_dispatch(app: &App, id: &str, sub: &str) -> anyhow::Result<()> {
+    let active: String = sqlx::query_scalar("SELECT status FROM pine_host_sessions WHERE id=?")
+        .bind(id)
+        .fetch_one(&app.db)
+        .await?;
+    if active != "active" {
+        return Ok(());
+    }
+    let pending=sqlx::query("SELECT market_cursor,response,decision_time FROM pine_host_dispatch WHERE session_id=? AND status='pending' ORDER BY market_cursor LIMIT 100").bind(id).fetch_all(&app.db).await?;
+    for item in pending {
+        let cursor: i64 = item.get("market_cursor");
+        dispatch(
+            app,
+            id,
+            sub,
+            cursor,
+            item.get("decision_time"),
+            &serde_json::from_str(&item.get::<String, _>("response"))?,
+        )
+        .await?;
+        sqlx::query("UPDATE pine_host_dispatch SET status='done' WHERE session_id=? AND market_cursor=? AND status='pending'").bind(id).bind(cursor).execute(&app.db).await?;
+    }
+    Ok(())
+}
+
+async fn dispatch(
+    app: &App,
+    id: &str,
+    sub: &str,
+    cursor: i64,
+    decision_time: i64,
+    response: &Value,
+) -> anyhow::Result<()> {
+    let intents = normalize_intents(response)?;
+    let identity: String =
+        sqlx::query_scalar("SELECT identity FROM market_subscriptions WHERE id=?")
+            .bind(sub)
+            .fetch_one(&app.db)
+            .await?;
+    let identity: Value = serde_json::from_str(&identity)?;
+    crate::market::execution_eligibility(&identity, &json!({"complete":true,"stale":false}))?;
+    let desired: std::collections::HashSet<String> = intents
+        .iter()
+        .map(|v| v["pine_id"].as_str().unwrap().to_string())
+        .collect();
+    for mut intent in intents {
+        let pine_id = intent["pine_id"].as_str().unwrap().to_string();
+        intent.as_object_mut().unwrap().remove("pine_id");
+        if let Some(old)=sqlx::query("SELECT h.local_order_id,h.intent,o.status,o.client_order_id FROM pine_host_orders h JOIN local_orders o ON o.id=h.local_order_id WHERE h.session_id=? AND h.pine_order_id=?").bind(id).bind(&pine_id).fetch_optional(&app.db).await? {
+            if old.get::<String,_>("status")=="filled" && old.get::<String,_>("client_order_id")!=format!("pine:{id}:{cursor}:{pine_id}") {
+                let unseen:i64=sqlx::query_scalar("SELECT COUNT(*) FROM local_fills WHERE order_id=? AND rowid>(SELECT fill_cursor FROM pine_host_sessions WHERE id=?)").bind(old.get::<String,_>("local_order_id")).bind(id).fetch_one(&app.db).await?;
+                anyhow::ensure!(unseen==0,"Prior order filled before replacement but is not reconciled; host stopped without another submission");
+            }
+            if ["working","triggered"].contains(&old.get::<String,_>("status").as_str()) {
+                if old.get::<String,_>("intent")==intent.to_string(){continue}
+                // Full replacement preserves type/side semantics; quantity/price-only
+                // amendment could silently retain an old market or stop order type.
+                let canceled=crate::account::execute(app,"account.cancelOrder",&json!({"id":old.get::<String,_>("local_order_id")})).await?;
+                anyhow::ensure!(canceled["canceled"]==true,"Order changed during replacement; reconcile before another submission");
+            }
+        }
+        let request = json!({"provider":identity["provider"],"symbol":identity["symbol"],"feed":identity["feed"],"session":identity["session"],"side":intent["side"],"qty":intent["qty"],"type":intent["type"],"price":intent["price"],"stopPrice":intent["stopPrice"],"client_order_id":format!("pine:{id}:{cursor}:{pine_id}"),"afterEventTime":decision_time});
+        let request=if let Some(pending)=sqlx::query_scalar::<_,String>("SELECT request FROM pine_host_intents WHERE session_id=? AND pine_order_id=? AND status='pending'").bind(id).bind(&pine_id).fetch_optional(&app.db).await? {
+            let saved:Value=serde_json::from_str(&pending)?;
+            anyhow::ensure!(saved["client_order_id"]==request["client_order_id"],"Unresolved prior broker intent requires reconciliation");saved
+        } else {
+            sqlx::query("INSERT INTO pine_host_intents VALUES(?,?,?,'pending') ON CONFLICT(session_id,pine_order_id) DO UPDATE SET request=excluded.request,status='pending'").bind(id).bind(&pine_id).bind(request.to_string()).execute(&app.db).await?;request
+        };
         let placed = crate::account::execute(app, "account.placeOrder", &request).await?;
         anyhow::ensure!(
             placed["status"] != "rejected",
             "Broker rejected native intent: {}",
             placed["error"]
         );
-        sqlx::query("INSERT INTO pine_host_orders VALUES(?,?,?,?) ON CONFLICT(session_id,pine_order_id) DO UPDATE SET local_order_id=excluded.local_order_id,intent=excluded.intent").bind(id).bind(pine_id).bind(required(&placed,"id")?).bind(intent.to_string()).execute(&app.db).await?;
-        sqlx::query("UPDATE pine_host_intents SET status='submitted' WHERE session_id=? AND pine_order_id=?").bind(id).bind(pine_id).execute(&app.db).await?;
+        let mut tx = app.db.begin().await?;
+        sqlx::query("INSERT INTO pine_host_orders VALUES(?,?,?,?) ON CONFLICT(session_id,pine_order_id) DO UPDATE SET local_order_id=excluded.local_order_id,intent=excluded.intent").bind(id).bind(&pine_id).bind(required(&placed,"id")?).bind(intent.to_string()).execute(&mut *tx).await?;
+        sqlx::query("UPDATE pine_host_intents SET status='submitted' WHERE session_id=? AND pine_order_id=?").bind(id).bind(&pine_id).execute(&mut *tx).await?;
+        tx.commit().await?;
     }
     let existing =
         sqlx::query("SELECT pine_order_id,local_order_id FROM pine_host_orders WHERE session_id=?")
@@ -635,4 +799,149 @@ async fn dispatch(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod reliability_tests {
+    use super::*;
+    async fn fixture() -> anyhow::Result<App> {
+        let db = sqlx::sqlite::SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect("sqlite::memory:")
+            .await?;
+        sqlx::migrate!().run(&db).await?;
+        let app = App {
+            db,
+            token: "fixture-only".into(),
+            root: "..".into(),
+            node: "/usr/bin/node".into(),
+            execution_budget: std::sync::Arc::new(tokio::sync::Semaphore::new(1)),
+        };
+        sqlx::query("INSERT INTO strategy_versions(id,name,kind,source,hash) VALUES('v','fixture','pine','fixture','fixture')").execute(&app.db).await?;
+        sqlx::query("INSERT INTO snapshots(id,payload,hash) VALUES('s','{}','fixture')")
+            .execute(&app.db)
+            .await?;
+        let identity =
+            crate::market::identity("coinbase", "TEST-USD", "1m", "public-websocket", "none")?;
+        sqlx::query("INSERT INTO market_subscriptions(id,provider,symbol,timeframe,identity,status,feed) VALUES('sub','coinbase','TEST-USD','1m',?,'connected','public-websocket')").bind(identity.to_string()).execute(&app.db).await?;
+        sqlx::query("INSERT INTO pine_host_sessions(id,version_id,snapshot_id,subscription_id,execution,starting_cash,status,adapter_hash,created_at) VALUES('h','v','s','sub','local_broker',1000,'active','fixture',0)").execute(&app.db).await?;
+        Ok(app)
+    }
+    fn response() -> Value {
+        json!({"pendingOrders":[{"id":"L","type":"market","category":"entry","status":"pending","direction":1,"qty":2}],"openTrades":[],"alerts":[{"message":"fixture alert","freq":"all","time":1000}]})
+    }
+    fn event(cursor: i64) -> Value {
+        json!({"id":format!("market:{cursor}"),"kind":"forming","eventTime":1000+cursor,"executionTime":2000+cursor})
+    }
+    #[test]
+    fn unsupported_exit_fields_never_normalize_to_market() {
+        for key in [
+            "profit",
+            "loss",
+            "trail_price",
+            "trail_points",
+            "trail_offset",
+        ] {
+            let mut r = response();
+            r["pendingOrders"][0][key] = json!(2);
+            assert!(
+                normalize_intents(&r)
+                    .unwrap_err()
+                    .to_string()
+                    .contains("Unsupported")
+            );
+        }
+        let mut r = response();
+        r["pendingOrders"][0]["limit"] = json!(9.);
+        assert_eq!(normalize_intents(&r).unwrap()[0]["type"], "limit");
+        r["pendingOrders"][0]["stop"] = json!(10.);
+        assert_eq!(normalize_intents(&r).unwrap()[0]["type"], "stop-limit");
+        r["pendingOrders"][0]["category"] = json!("exit");
+        r["openTrades"] = json!([{"entry_id":"L","size":2}]);
+        assert!(normalize_intents(&r).is_err());
+    }
+    #[tokio::test]
+    async fn result_alert_cursor_and_outbox_commit_atomically() -> anyhow::Result<()> {
+        let app = fixture().await?;
+        sqlx::query("CREATE TRIGGER test_dispatch_crash BEFORE INSERT ON pine_host_dispatch BEGIN SELECT RAISE(ABORT,'fixture crash before dispatch commit'); END").execute(&app.db).await?;
+        assert!(
+            commit_market_response(&app, "h", 1, &event(1), &response())
+                .await
+                .is_err()
+        );
+        for table in [
+            "pine_host_events",
+            "pine_host_dispatch",
+            "pine_alert_history",
+        ] {
+            let count: i64 = sqlx::query_scalar(&format!("SELECT COUNT(*) FROM {table}"))
+                .fetch_one(&app.db)
+                .await?;
+            assert_eq!(count, 0, "{table}");
+        }
+        let cursor: i64 = sqlx::query_scalar("SELECT cursor FROM pine_host_sessions WHERE id='h'")
+            .fetch_one(&app.db)
+            .await?;
+        assert_eq!(cursor, 0);
+        sqlx::query("DROP TRIGGER test_dispatch_crash")
+            .execute(&app.db)
+            .await?;
+        commit_market_response(&app, "h", 1, &event(1), &response()).await?;
+        let history = crate::alerts::execute(&app, "alerts.strategyHistory", &json!({})).await?;
+        assert_eq!(history.as_array().unwrap().len(), 1);
+        assert_eq!(history[0]["context"]["version_id"], "v");
+        assert_eq!(history[0]["context"]["event_id"], "market:1");
+        drain_dispatch(&app, "h", "sub").await?;
+        let orders: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM local_orders")
+            .fetch_one(&app.db)
+            .await?;
+        assert_eq!(orders, 1);
+        // Acknowledged rows are never replayed, even if the order is subsequently canceled.
+        let local_id: String = sqlx::query_scalar("SELECT id FROM local_orders LIMIT 1")
+            .fetch_one(&app.db)
+            .await?;
+        crate::account::execute(&app, "account.cancelOrder", &json!({"id":local_id})).await?;
+        drain_dispatch(&app, &"h", &"sub").await?;
+        let state: String = sqlx::query_scalar("SELECT status FROM local_orders WHERE id=?")
+            .bind(&local_id)
+            .fetch_one(&app.db)
+            .await?;
+        assert_eq!(state, "canceled");
+        // Simulate a committed broker submission with lost outbox acknowledgement.
+        sqlx::query("UPDATE pine_host_dispatch SET status='pending'")
+            .execute(&app.db)
+            .await?;
+        drain_dispatch(&app.clone(), "h", "sub").await?;
+        let orders: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM local_orders")
+            .fetch_one(&app.db)
+            .await?;
+        assert_eq!(orders, 1);
+        let status: String = sqlx::query_scalar("SELECT status FROM pine_host_dispatch")
+            .fetch_one(&app.db)
+            .await?;
+        assert_eq!(status, "done");
+        Ok(())
+    }
+    #[tokio::test]
+    async fn recovered_outbox_replaces_type_and_side_instead_of_amending_prices_only()
+    -> anyhow::Result<()> {
+        let app = fixture().await?;
+        commit_market_response(&app, "h", 1, &event(1), &response()).await?;
+        drain_dispatch(&app, "h", "sub").await?;
+        let mut next = response();
+        next["pendingOrders"][0]["limit"] = json!(9.);
+        next["pendingOrders"][0]["direction"] = json!(-1);
+        commit_market_response(&app, "h", 2, &event(2), &next).await?;
+        // New application handle reads the pending desired set without a new quote.
+        drain_dispatch(&app.clone(), "h", "sub").await?;
+        let rows = sqlx::query("SELECT side,type,status FROM local_orders ORDER BY rowid")
+            .fetch_all(&app.db)
+            .await?;
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].get::<String, _>("status"), "canceled");
+        assert_eq!(rows[1].get::<String, _>("side"), "sell");
+        assert_eq!(rows[1].get::<String, _>("type"), "limit");
+        assert_eq!(rows[1].get::<String, _>("status"), "working");
+        Ok(())
+    }
 }

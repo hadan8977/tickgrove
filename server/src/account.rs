@@ -28,6 +28,40 @@ pub fn quote_mark(v: &Value) -> Option<f64> {
         })
         .filter(|n| n.is_finite() && *n > 0.)
 }
+fn order_session<'a>(provider: &str, feed: &str, request: &'a Value) -> anyhow::Result<&'a str> {
+    anyhow::ensure!(
+        request["session"].is_null() || request["session"].is_string(),
+        "Order session must be a string"
+    );
+    let default = if provider == "coinbase" {
+        "24x7"
+    } else if ["boats", "overnight"].contains(&feed) {
+        "overnight"
+    } else {
+        "regular"
+    };
+    let session = request["session"].as_str().unwrap_or(default);
+    anyhow::ensure!(
+        if provider == "coinbase" {
+            session == "24x7"
+        } else if ["boats", "overnight"].contains(&feed) {
+            session == "overnight"
+        } else {
+            ["regular", "extended"].contains(&session)
+        },
+        "Order session is not supported by its source feed"
+    );
+    Ok(session)
+}
+fn order_session_open(identity: &Value, request: &Value, event_time: i64) -> anyhow::Result<bool> {
+    let mut selected = identity.clone();
+    selected["session"] = json!(order_session(
+        required(identity, "provider")?,
+        required(identity, "feed")?,
+        request
+    )?);
+    Ok(market::period::market_state(&selected, event_time)["open"] == true)
+}
 pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value> {
     match method {
         "account.state" => state(app).await,
@@ -40,6 +74,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             } else {
                 "public-websocket"
             });
+            let session = order_session(provider, feed, p)?;
             market::identity(provider, symbol, "1m", "manual-local", "none")?;
             anyhow::ensure!(
                 provider != "yahoo",
@@ -93,7 +128,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             let subscription = match crate::market::execute(
                 app,
                 "market.subscribe",
-                &json!({"provider":provider,"symbol":symbol,"timeframe":"1m","feed":feed}),
+                &json!({"provider":provider,"symbol":symbol,"timeframe":"1m","feed":feed,"session":session}),
             )
             .await
             {
@@ -107,13 +142,24 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                     return Ok(json!({"id":id,"status":"rejected","error":error}));
                 }
             };
+            if let Err(error) = market::execution_eligibility(
+                &subscription["identity"],
+                &json!({"complete":true,"stale":false}),
+            ) {
+                sqlx::query("UPDATE local_orders SET status='rejected',error=? WHERE id=? AND status='working'").bind(error.to_string()).bind(&id).execute(&app.db).await?;
+                return Ok(json!({"id":id,"status":"rejected","error":error.to_string()}));
+            }
             if subscription["identity"]["currency"] != "USD" {
                 sqlx::query("UPDATE local_orders SET status='rejected',error='USD account has no FX conversion' WHERE id=?").bind(&id).execute(&app.db).await?;
                 return Ok(
                     json!({"id":id,"status":"rejected","error":"USD account has no FX conversion"}),
                 );
             }
-            if let Some(q)=sqlx::query("SELECT e.cursor,e.event_time,e.received_at,e.payload,s.identity,s.status FROM market_events e JOIN market_subscriptions s ON e.subscription_id=s.id WHERE s.provider=? AND s.symbol=? AND json_extract(s.identity,'$.feed')=? AND e.type='quote' ORDER BY e.cursor DESC LIMIT 1").bind(provider).bind(symbol).bind(feed).fetch_optional(&app.db).await? {if q.get::<String,_>("status")=="connected"{on_quote(app,q.get("cursor"),provider,symbol,feed,q.get("event_time"),q.get("received_at"),&serde_json::from_str(&q.get::<String,_>("payload"))?).await?;}}
+            if let Some(q)=sqlx::query("SELECT e.cursor,e.event_time,e.received_at,e.payload,e.quality,s.identity,s.status FROM market_events e JOIN market_subscriptions s ON e.subscription_id=s.id WHERE s.provider=? AND s.symbol=? AND json_extract(s.identity,'$.feed')=? AND e.type='quote' ORDER BY e.cursor DESC LIMIT 1").bind(provider).bind(symbol).bind(feed).fetch_optional(&app.db).await? {if q.get::<String,_>("status")=="connected"{
+                let identity:Value=serde_json::from_str(&q.get::<String,_>("identity"))?;
+                let quality:Value=serde_json::from_str(&q.get::<String,_>("quality"))?;
+                if market::execution_eligibility(&identity,&quality).is_ok(){on_quote(app,q.get("cursor"),provider,symbol,feed,q.get("event_time"),q.get("received_at"),&serde_json::from_str(&q.get::<String,_>("payload"))?,&identity,&quality).await?;}
+            }}
             let status: String = sqlx::query_scalar("SELECT status FROM local_orders WHERE id=?")
                 .bind(&id)
                 .fetch_one(&app.db)
@@ -181,7 +227,11 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             .await?
             .unwrap_or(0.);
             anyhow::ensure!(qty != 0., "No position to flatten");
-            Box::pin(execute(app,"account.placeOrder",&json!({"provider":provider,"symbol":symbol,"side":if qty>0.{"sell"}else{"buy"},"type":"market","qty":qty.abs(),"feed":p["feed"],"client_order_id":required(p,"client_order_id")?}))).await
+            let mut request = json!({"provider":provider,"symbol":symbol,"side":if qty>0.{"sell"}else{"buy"},"type":"market","qty":qty.abs(),"feed":p["feed"],"client_order_id":required(p,"client_order_id")?});
+            if let Some(session) = p["session"].as_str() {
+                request["session"] = json!(session)
+            }
+            Box::pin(execute(app, "account.placeOrder", &request)).await
         }
         "account.reset" => {
             anyhow::ensure!(
@@ -254,7 +304,16 @@ pub async fn on_quote(
     event_time: i64,
     received: i64,
     quote: &Value,
+    identity: &Value,
+    quality: &Value,
 ) -> anyhow::Result<()> {
+    market::execution_eligibility(identity, quality)?;
+    anyhow::ensure!(
+        identity["provider"] == provider
+            && identity["symbol"] == symbol
+            && identity["feed"] == feed,
+        "Execution quote identity mismatch"
+    );
     if market::now() - event_time > 15000
         || market::now() - received > 15000
         || event_time > market::now() + 5000
@@ -274,6 +333,11 @@ pub async fn on_quote(
     let orders=sqlx::query("SELECT * FROM local_orders WHERE provider=? AND symbol=? AND feed=? AND status IN ('working','triggered') ORDER BY created_at,rowid").bind(provider).bind(symbol).bind(feed).fetch_all(&mut *tx).await?;
     for order in orders {
         let request: Value = serde_json::from_str(&order.get::<String, _>("request"))?;
+        // Sockets can serve regular and extended charts together. The order's
+        // own session controls fills; a chart subscription cannot expand it.
+        if !order_session_open(identity, &request, event_time)? {
+            continue;
+        }
         if request["afterEventTime"]
             .as_i64()
             .is_some_and(|after| event_time < after)
@@ -419,6 +483,77 @@ mod tests {
         assert_eq!(quote_mark(&json!({"bid":99.,"ask":101.})), Some(100.));
         assert_eq!(quote_mark(&json!({"price":0})), None);
     }
+    #[test]
+    fn order_session_is_independent_of_the_chart_subscription() -> anyhow::Result<()> {
+        let at = |value: &str| {
+            chrono::DateTime::parse_from_rfc3339(value)
+                .unwrap()
+                .timestamp_millis()
+        };
+        let mut stock = market::identity("alpaca", "SPY", "1m", "sip", "none")?;
+        stock["session"] = json!("extended");
+        let regular = json!({});
+        let extended = json!({"session":"extended"});
+        assert!(order_session_open(
+            &stock,
+            &regular,
+            at("2026-10-14T14:00:00Z")
+        )?);
+        assert!(order_session_open(
+            &stock,
+            &extended,
+            at("2026-10-14T14:00:00Z")
+        )?);
+        assert!(!order_session_open(
+            &stock,
+            &regular,
+            at("2026-10-14T21:00:00Z")
+        )?);
+        assert!(order_session_open(
+            &stock,
+            &extended,
+            at("2026-10-14T21:00:00Z")
+        )?);
+        assert!(!order_session_open(
+            &stock,
+            &extended,
+            at("2026-10-15T02:00:00Z")
+        )?);
+        assert!(
+            order_session_open(
+                &stock,
+                &json!({"session":"overnight"}),
+                at("2026-10-15T02:00:00Z")
+            )
+            .is_err()
+        );
+        let night = market::identity("alpaca", "SPY", "1m", "boats", "none")?;
+        assert!(order_session_open(
+            &night,
+            &json!({}),
+            at("2026-10-15T02:00:00Z")
+        )?);
+        assert!(!order_session_open(
+            &night,
+            &json!({}),
+            at("2026-10-15T14:00:00Z")
+        )?);
+        let crypto = market::identity("coinbase", "TEST-USD", "1m", "public-websocket", "none")?;
+        assert!(order_session_open(
+            &crypto,
+            &json!({}),
+            at("2026-10-18T02:00:00Z")
+        )?);
+        assert!(
+            order_session_open(
+                &crypto,
+                &json!({"session":"regular"}),
+                at("2026-10-18T02:00:00Z")
+            )
+            .is_err()
+        );
+        Ok(())
+    }
 }
 #[cfg(test)]
 mod ledger_tests {
@@ -450,6 +585,68 @@ mod ledger_tests {
         order(&app, "a", "buy", "market", None).await?;
         let now = market::now();
         let quote = json!({"price":100,"bid":99,"ask":101});
+        let identity = json!({"provider":"coinbase","symbol":"LTC-USD","feed":"public-websocket","executionEligible":true,"quoteKind":"executable","delay":{"kind":"realtime"}});
+        let quality = json!({"complete":true,"stale":false});
+        for change in [
+            json!({"executionEligible":false}),
+            json!({"quoteKind":"indicative"}),
+            json!({"delay":{"kind":"unknown"}}),
+            json!({"delay":{"kind":"delayed"}}),
+        ] {
+            let mut denied = identity.clone();
+            for (k, v) in change.as_object().unwrap() {
+                denied[k] = v.clone();
+            }
+            assert!(
+                on_quote(
+                    &app,
+                    0,
+                    "coinbase",
+                    "LTC-USD",
+                    "public-websocket",
+                    now,
+                    now,
+                    &quote,
+                    &denied,
+                    &quality
+                )
+                .await
+                .is_err()
+            );
+        }
+        assert!(
+            on_quote(
+                &app,
+                0,
+                "coinbase",
+                "LTC-USD",
+                "public-websocket",
+                now,
+                now,
+                &quote,
+                &identity,
+                &json!({"complete":false})
+            )
+            .await
+            .is_err()
+        );
+        assert!(
+            on_quote(
+                &app,
+                0,
+                "coinbase",
+                "LTC-USD",
+                "public-websocket",
+                now,
+                now,
+                &quote,
+                &identity,
+                &json!({"complete":true,"stale":true})
+            )
+            .await
+            .is_err()
+        );
+        assert_eq!(state(&app).await?["fills"].as_array().unwrap().len(), 0);
         on_quote(
             &app,
             1,
@@ -459,6 +656,8 @@ mod ledger_tests {
             now - 20000,
             now,
             &quote,
+            &identity,
+            &quality,
         )
         .await?;
         assert_eq!(state(&app).await?["fills"].as_array().unwrap().len(), 0);
@@ -471,6 +670,8 @@ mod ledger_tests {
             now,
             now,
             &quote,
+            &identity,
+            &quality,
         )
         .await?;
         on_quote(
@@ -482,6 +683,8 @@ mod ledger_tests {
             now,
             now,
             &quote,
+            &identity,
+            &quality,
         )
         .await?;
         let s = state(&app).await?;
@@ -498,6 +701,8 @@ mod ledger_tests {
             now,
             now,
             &json!({"price":110,"bid":109,"ask":111}),
+            &identity,
+            &quality,
         )
         .await?;
         assert_eq!(state(&app).await?["fills"].as_array().unwrap().len(), 1);
@@ -511,6 +716,8 @@ mod ledger_tests {
             now,
             now,
             &json!({"price":110,"bid":109,"ask":111}),
+            &identity,
+            &quality,
         )
         .await?;
         let s = state(&app).await?;
@@ -519,6 +726,29 @@ mod ledger_tests {
         assert!((s["cash"].as_f64().unwrap() - 100015.79).abs() < 1e-8);
         assert!((s["realizedPnl"].as_f64().unwrap() - 15.79).abs() < 1e-8);
         assert!((s["totalFees"].as_f64().unwrap() - 0.21).abs() < 1e-8);
+        Ok(())
+    }
+    #[tokio::test]
+    async fn cached_indicative_quotes_cannot_fill_new_orders() -> anyhow::Result<()> {
+        let db = sqlx::sqlite::SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect("sqlite::memory:")
+            .await?;
+        sqlx::migrate!().run(&db).await?;
+        let app = App {
+            db,
+            token: "fixture-only".into(),
+            root: "..".into(),
+            node: "/usr/bin/node".into(),
+            execution_budget: std::sync::Arc::new(tokio::sync::Semaphore::new(1)),
+        };
+        let identity = market::identity("alpaca", "SPY", "1m", "overnight", "none")?;
+        sqlx::query("INSERT INTO market_subscriptions(id,provider,symbol,timeframe,identity,status,feed) VALUES('indicative','alpaca','SPY','1m',?,'connected','overnight')").bind(identity.to_string()).execute(&app.db).await?;
+        let now = market::now();
+        sqlx::query("INSERT INTO market_events(subscription_id,type,event_time,received_at,payload,quality) VALUES('indicative','quote',?,?,'{\"price\":100,\"bid\":99,\"ask\":101}','{\"complete\":true,\"stale\":false}')").bind(now).bind(now).execute(&app.db).await?;
+        let placed=execute(&app,"account.placeOrder",&json!({"provider":"alpaca","symbol":"SPY","feed":"overnight","side":"buy","type":"market","qty":1,"client_order_id":"fixture-cached-indicative"})).await?;
+        assert_eq!(placed["status"], "rejected");
+        assert_eq!(state(&app).await?["fills"].as_array().unwrap().len(), 0);
         Ok(())
     }
 }

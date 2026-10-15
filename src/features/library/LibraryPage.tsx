@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft, ChartNoAxesCombined } from "lucide-react";
+import { ChartNoAxesCombined } from "lucide-react";
 import PineEditor from "../pine/PineEditor";
 import StrategyBuilder from "../builder/StrategyBuilder";
 import BacktestReport from "../backtest/BacktestReport";
-import PineLibraries from "../../service/PineLibraries";
 import { useApp } from "../../store";
 import { Button, cx } from "../../ui/primitives";
 
 export default function LibraryPage() {
-  const [tab, setTab] = useState<"pine" | "visual" | "results" | "dependencies">("pine");
+  const [tab, setTab] = useState<"pine" | "visual" | "results">("pine");
   return (
     <section aria-label="Scripts workspace" className="flex h-full min-h-0 flex-col bg-panel">
       <header className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
@@ -52,23 +51,11 @@ export default function LibraryPage() {
         {tab === "pine" && (
           <PineEditor
             onBacktest={() => setTab("results")}
-            onLibraries={() => setTab("dependencies")}
+            onBuilder={() => setTab("visual")}
           />
         )}
         {tab === "visual" && <StrategyBuilder onBacktest={() => setTab("results")} />}
         {tab === "results" && <BacktestReport onOpenScripts={() => setTab("pine")} />}
-        {tab === "dependencies" && (
-          <div className="flex h-full flex-col">
-            <div className="p-2">
-              <Button size="sm" onClick={() => setTab("pine")}>
-                <ArrowLeft size={13} /> Back to scripts
-              </Button>
-            </div>
-            <div className="min-h-0 flex-1">
-              <PineLibraries />
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

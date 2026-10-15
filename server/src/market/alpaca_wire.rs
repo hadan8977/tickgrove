@@ -19,7 +19,7 @@ pub fn quote(v: &Value) -> anyhow::Result<Value> {
     let ask = positive(v, "ap")?;
     anyhow::ensure!(ask >= bid, "Crossed quote excluded from execution");
     Ok(
-        json!({"provider":"alpaca","symbol":v["S"],"price":(bid+ask)/2.,"bid":bid,"ask":ask,"bidSize":v["bs"],"askSize":v["as"],"bidExchange":v["bx"],"askExchange":v["ax"],"eventTime":timestamp(v)?,"receivedAt":now(),"conditions":v["c"],"source":v}),
+        json!({"provider":"alpaca","symbol":v["S"],"price":(bid+ask)/2.,"priceKind":"mid","bid":bid,"ask":ask,"bidSize":v["bs"],"askSize":v["as"],"bidExchange":v["bx"],"askExchange":v["ax"],"eventTime":timestamp(v)?,"receivedAt":now(),"conditions":v["c"],"source":v}),
     )
 }
 pub fn trade(v: &Value) -> anyhow::Result<Value> {
@@ -29,7 +29,7 @@ pub fn trade(v: &Value) -> anyhow::Result<Value> {
         .filter(|n| n.is_finite() && *n >= 0.)
         .ok_or_else(|| anyhow::anyhow!("Invalid trade size"))?;
     Ok(
-        json!({"provider":"alpaca","symbol":v["S"],"price":price,"size":size,"tradeId":v["i"],"exchange":v["x"],"conditions":v["c"],"eventTime":timestamp(v)?,"receivedAt":now(),"source":v}),
+        json!({"provider":"alpaca","symbol":v["S"],"price":price,"priceKind":"last-trade","size":size,"tradeId":v["i"],"exchange":v["x"],"conditions":v["c"],"eventTime":timestamp(v)?,"receivedAt":now(),"source":v}),
     )
 }
 pub fn minute_bar(v: &Value) -> anyhow::Result<Bar> {

@@ -2,7 +2,7 @@ import mark from "./mark.json";
 
 type Variant = "color" | "mono";
 
-/** Three candlesticks share a root: market events, a grove, and an extensible foundation. */
+/** A modular T with an open, branching counter; one solid silhouette at every size. */
 export function LogoMark({
   size = 24,
   variant = "color",
@@ -23,14 +23,7 @@ export function LogoMark({
       className={className}
       style={variant === "color" ? { color: "var(--brand, var(--accent))" } : undefined}
     >
-      <path
-        d={mark.stems}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d={mark.bodies} fill="currentColor" />
+      <path d={mark.path} fill="currentColor" />
     </svg>
   );
 }

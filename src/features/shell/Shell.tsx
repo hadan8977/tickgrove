@@ -37,7 +37,7 @@ import { useAccount } from "../../service/account";
 import { useActivity, useTick } from "../../ui/hooks";
 import { IconButton, Kbd, MenuItem, Popover, StatusBadge, cx, Button } from "../../ui/primitives";
 import { Logo, LogoMark } from "../../brand/Logo";
-import { PRESETS } from "../workspace/dock";
+import { GRID_PRESETS, WORKSPACE_TEMPLATES } from "../workspace/dock";
 import SymbolSearch from "../chart/SymbolSearch";
 import Shader from "./Shader";
 import { ADAPTERS } from "../../core/adapters";
@@ -50,6 +50,7 @@ export function TopBar() {
   const activeChart = useCharts((s) => s.charts[useApp.getState().activeChartId ?? ""]);
   useApp((s) => s.activeChartId);
   const [searchOpen, setSearchOpen] = useState(false);
+  const canUndoLayout = useApp((s) => s.layoutUndoAvailable);
   useEffect(() => {
     const h = () => setSearchOpen(true);
     window.addEventListener("tickgrove:symbol-search", h);
@@ -149,9 +150,9 @@ export function TopBar() {
           {(close) => (
             <div>
               <div className="px-2 pb-1 pt-1 text-[10.5px] font-semibold uppercase tracking-wider text-faint">
-                Apply preset to current workspace
+                Chart grid · keep your charts
               </div>
-              {PRESETS.map((p) => (
+              {GRID_PRESETS.map((p) => (
                 <MenuItem
                   key={p.id}
                   onClick={() => (execute("workspace.applyLayout", { preset: p.id }), close())}
@@ -161,6 +162,35 @@ export function TopBar() {
                 </MenuItem>
               ))}
               <div className="mx-2 my-1 h-px bg-line" />
+              <details className="px-2 py-1 text-xs">
+                <summary className="cursor-pointer text-muted">
+                  Replace with a workspace template
+                </summary>
+                <p className="py-2 text-[11px] text-muted">
+                  Replaces this layout. You can undo the change.
+                </p>
+                {WORKSPACE_TEMPLATES.map((p) => (
+                  <MenuItem
+                    key={p.id}
+                    onClick={() => {
+                      void execute("workspace.replaceTemplate", { preset: p.id });
+                      close();
+                    }}
+                  >
+                    {p.label}
+                  </MenuItem>
+                ))}
+              </details>
+              {canUndoLayout && (
+                <MenuItem
+                  onClick={() => {
+                    void execute("workspace.undoLayout");
+                    close();
+                  }}
+                >
+                  Undo template replacement
+                </MenuItem>
+              )}
               <MenuItem onClick={() => (execute("workspace.save"), close())} right={<Kbd>⌘S</Kbd>}>
                 Save layout
               </MenuItem>
@@ -370,7 +400,9 @@ export function StatusBar() {
   const connection = useConnection(),
     account = useAccount();
   const markets = marketSummary(),
-    live = markets.filter((m) => m.status === "connected").length;
+    live = markets.filter((m) => m.status === "connected").length,
+    issues = markets.filter((m) => m.error || m.streamError || m.status === "disconnected").length,
+    loading = markets.filter((m) => m.loading).length;
   const demo = isDemoData();
   const equity =
     paper.cash +
@@ -385,9 +417,18 @@ export function StatusBar() {
         }
       >
         <span
-          className={cx("size-1.5 rounded-full", demo ? "bg-demo" : live ? "bg-up" : "bg-faint")}
+          className={cx(
+            "size-1.5 rounded-full",
+            demo || issues ? "bg-demo" : live ? "bg-up" : "bg-faint",
+          )}
         />{" "}
-        {demo ? "Demo data" : `${live} connected streams`}
+        {demo
+          ? "Demo data"
+          : issues
+            ? `${issues} data issue${issues === 1 ? "" : "s"}`
+            : loading
+              ? `Loading ${loading} chart${loading === 1 ? "" : "s"}`
+              : `${live} source connections`}
       </span>
       <span
         className="num flex shrink-0 items-center gap-1.5"

@@ -21,8 +21,8 @@ export default function ConnectionGate() {
         <Logo />
         <h1 className="mb-2 mt-6 text-xl font-semibold">Connect to Tickgrove</h1>
         <p className="mb-5 text-sm text-muted">
-          Charts use the market data providers configured on this instance. Layouts, strategies,
-          runs and simulated accounts are saved by the server.
+          Your self-hosted workspace. Free stock history and crypto connections are ready without a
+          data key. Your layouts, scripts and simulated accounts stay on this server.
         </p>
         <label className="mb-2 block text-sm">Instance token</label>
         <Input
@@ -49,6 +49,19 @@ export default function ConnectionGate() {
           The token is generated when the service first starts. Market data credentials stay on the
           server.
         </p>
+        <details className="mt-3 text-xs text-muted">
+          <summary className="cursor-pointer">Where do I find the instance token?</summary>
+          <p className="mt-2">
+            On the server, read <code>var/auth-token</code>. For Docker:
+          </p>
+          <code className="mt-2 block overflow-auto rounded bg-panel-2 p-2">
+            docker compose exec trading cat /app/var/auth-token
+          </code>
+          <p className="mt-2">
+            For Paseo preview, use <code>var/paseo-preview/auth-token</code>. This token protects
+            your workspace; it is separate from any data provider key.
+          </p>
+        </details>
         <a className="mt-4 block text-xs text-muted underline" href="?mode=demo">
           Open the separate synthetic demo
         </a>

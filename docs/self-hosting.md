@@ -51,7 +51,7 @@ TICKGROVE_ROOT="$PWD" TICKGROVE_BIND=127.0.0.1:8471 server/target/debug/tickgrov
 
 Open [localhost:8471](http://localhost:8471). In another terminal, read `var/auth-token` to sign in. State is stored in `var` unless `TICKGROVE_DATA_DIR` is set. A directory lock prevents two services from sharing the same database.
 
-Use [.env.example](../.env.example) as a configuration reference. The native service does not load it automatically; export variables or configure them through your service manager. Broker credentials must be supplied separately. Alpaca account integration is unverified, and overnight data has outstanding implementation gaps.
+Use [.env.example](../.env.example) as a configuration reference. The native service does not load it automatically; export variables or configure them through your service manager. Free stock history and crypto sources require no data keys. Add optional Alpaca credentials in **Settings → Connections**, or supply dedicated `ALPACA_API_KEY` and `ALPACA_API_SECRET` variables. Saved credentials use a private `connections/alpaca.json` file beside the SQLite database (directory `0700`, file `0600`), override environment credentials, and are never returned by the API or included in workspace exports. Connection changes stop old Alpaca sources; reopen charts and review affected strategies. Outstanding broker orders must be resolved first. Real Alpaca account acceptance remains pending. See [free data and coverage](free-data.md).
 
 ### Development
 
@@ -102,7 +102,7 @@ server/target/debug/tickgrove-admin restore --input backups/run-1 --data-dir var
 TICKGROVE_ROOT="$PWD" TICKGROVE_DATA_DIR="$PWD/var-restored" TICKGROVE_BIND=127.0.0.1:8472 server/target/debug/tickgrove-server
 ```
 
-Backups contain a consistent SQLite snapshot, checksums, and the instance token. Restore requires an empty destination and verifies integrity. Keep the deployment version, custom calendars, extensions, and external credentials separately; they are not automatically included.
+Backups contain a consistent SQLite snapshot, checksums, and the instance token. Restore requires an empty destination and verifies integrity. Keep the deployment version, custom calendars, extensions, and external credentials separately; they are not automatically included. This includes the private `connections/` directory when accounts are configured through the UI. Protect that directory in your own encrypted backup process.
 
 Docker includes the same `tickgrove-admin` binary. Write backups inside the persistent volume, then copy them to independent storage:
 

@@ -15,19 +15,7 @@ async fn get(
     query: &[(String, String)],
     headers: Option<(&str, &str)>,
 ) -> anyhow::Result<Value> {
-    let mut request = client()?.get(url).query(query);
-    if let Some((key, secret)) = headers {
-        request = request
-            .header("APCA-API-KEY-ID", key)
-            .header("APCA-API-SECRET-KEY", secret)
-    }
-    let response = request.send().await?;
-    anyhow::ensure!(
-        response.status().is_success(),
-        "Provider response {}",
-        response.status()
-    );
-    Ok(response.json().await?)
+    super::http::get(url, query, headers, 1).await
 }
 fn num(v: &Value) -> anyhow::Result<f64> {
     let n = v
@@ -37,10 +25,163 @@ fn num(v: &Value) -> anyhow::Result<f64> {
     Ok(n)
 }
 pub async fn fetch(app: &App, p: &Value) -> anyhow::Result<Value> {
-    fetch_internal(app, p, true).await
+    fetch_cached(app, p, true).await
 }
 pub async fn fetch_ephemeral(app: &App, p: &Value) -> anyhow::Result<Value> {
-    fetch_internal(app, p, false).await
+    fetch_cached(app, p, false).await
+}
+async fn fetch_cached(app: &App, p: &Value, persist: bool) -> anyhow::Result<Value> {
+    let credentials = if p["provider"] == "alpaca" {
+        let (k, s) = crate::connections::alpaca_credentials(app).await?;
+        crate::commands::hash(&format!("{k}:{s}"))
+    } else {
+        String::new()
+    };
+    let key = crate::commands::hash(&format!(
+        "history-v3|{}|{}|{}",
+        p,
+        credentials,
+        super::confirmation_seconds()
+    ));
+    let _lock = super::cache::lock(app, &key).await;
+    let mut result = if let Some(v) = super::cache::get(app, &key).await? {
+        v
+    } else {
+        let mut v = fetch_internal(app, p, false).await?;
+        super::cache::put(app, &key, p, &mut v).await?;
+        v
+    };
+    if persist {
+        crate::commands::validate_data(&result["data"])?;
+        let payload = result["data"].to_string();
+        let hash = crate::commands::hash(&payload);
+        let existing: Option<String> =
+            sqlx::query_scalar("SELECT id FROM snapshots WHERE hash=? LIMIT 1")
+                .bind(&hash)
+                .fetch_optional(&app.db)
+                .await?;
+        let id = existing.unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
+        sqlx::query("INSERT OR IGNORE INTO snapshots(id,payload,hash) VALUES(?,?,?)")
+            .bind(&id)
+            .bind(payload)
+            .bind(&hash)
+            .execute(&app.db)
+            .await?;
+        result["snapshot_id"] = json!(id);
+    }
+    Ok(result)
+}
+/// Chart pages are ephemeral views, never automatically strategy snapshots.
+pub async fn page(app: &App, p: &Value) -> anyhow::Result<Value> {
+    let provider = required(p, "provider")?;
+    let symbol = required(p, "symbol")?;
+    let tf = p["timeframe"].as_str().unwrap_or("1D");
+    let step = seconds(tf)?;
+    let limit = p["limit"].as_i64().unwrap_or(1000).clamp(1, 5000);
+    let latest = now() / 1000
+        - if provider == "coinbase" {
+            super::confirmation_seconds()
+        } else {
+            0
+        };
+    let end = p["before"]
+        .as_i64()
+        .or(p["end"].as_i64())
+        .unwrap_or(latest.div_euclid(60) * 60)
+        .min(latest);
+    let guard = if provider == "yahoo" {
+        match step {
+            60 => Some(30 * 86400),
+            300 | 900 => Some(60 * 86400),
+            3600 | 14400 => Some(730 * 86400),
+            _ if p["session"] == "extended" => Some(730 * 86400),
+            _ => None,
+        }
+    } else {
+        None
+    };
+    let coverage = guard
+        .map(|age| (now() / 60000) * 60 - age + 120)
+        .unwrap_or(631152000); // adapter calendar starts 1990
+    let mut span = if provider == "coinbase" {
+        step * limit
+    } else if step < 86400 {
+        (step * limit * 3).max(4 * 86400)
+    } else {
+        step * limit * 2
+    };
+    if provider == "yahoo" && step == 60 {
+        span = span.min(7 * 86400);
+    }
+    let start = p["start"]
+        .as_i64()
+        .unwrap_or((end - span).max(coverage))
+        .max(coverage);
+    let mut params = p.clone();
+    params["start"] = json!(start);
+    params["end"] = json!(end);
+    params["timeframe"] = json!(tf);
+    params["allowGaps"] = json!(true);
+    params["allowEmpty"] = json!(true);
+    for key in ["before", "limit"] {
+        params.as_object_mut().unwrap().remove(key);
+    }
+    let mut result = if start >= end {
+        let meta = identity(
+            provider,
+            symbol,
+            tf,
+            p["feed"].as_str().unwrap_or(if provider == "alpaca" {
+                "iex"
+            } else {
+                "public"
+            }),
+            p["adjustment"].as_str().unwrap_or("raw"),
+        )?;
+        json!({"snapshot_id":null,"identity":meta,"data":{"symbol":symbol,"timeframe":tf,"metadata":{},"bars":[]},"bars":0,"gaps":[],"provenance":{}})
+    } else {
+        fetch_cached(app, &params, false).await?
+    };
+    let bars = result["data"]["bars"]
+        .as_array_mut()
+        .ok_or_else(|| anyhow::anyhow!("Invalid page bars"))?;
+    if bars.len() > limit as usize {
+        bars.drain(..bars.len() - limit as usize);
+    }
+    let first = bars.first().and_then(|b| b["time"].as_i64());
+    let last = bars.last().and_then(|b| b["closeTime"].as_i64());
+    let count = bars.len();
+    let next = first.unwrap_or(start).min(end);
+    let coverage = coverage.max(
+        result["provenance"]["rawMetadata"]["firstTradeDate"]
+            .as_i64()
+            .unwrap_or(coverage),
+    );
+    let has_more = next > coverage && next < end;
+    let visible_start = first.unwrap_or(start);
+    let visible_end = last.unwrap_or(end);
+    let gaps = result["gaps"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+        .into_iter()
+        .filter(|g| {
+            let a = g["start"]
+                .as_i64()
+                .or(g["time"].as_i64())
+                .unwrap_or(visible_start);
+            let b = g["end"].as_i64().unwrap_or(a + step);
+            a < visible_end && b > visible_start
+        })
+        .collect::<Vec<_>>();
+    result["gaps"] = json!(gaps);
+    result["provenance"]["gaps"] = json!(gaps);
+    result["data"]["metadata"]["provenance"] = result["provenance"].clone();
+    result["bars"] = json!(count);
+    result["snapshot_id"] = Value::Null;
+    result["page"] = json!({"hasMore":has_more,"nextBefore":if has_more{Some(next)}else{None},"limit":limit,"requestedStart":start,"requestedEnd":end,"coverageStart":coverage,"actualStart":first,"actualEnd":last,"reason":if start>=end{"Provider/timeframe history window reached; use a longer interval or import an archive"}else if count==0{"No bars in this window; earlier windows may contain history"}else if !has_more{"Provider/timeframe history window reached"}else{""},"coveragePolicy":if guard.is_some(){"Yahoo public intraday retention (1m:30d, 5m/15m:60d, hourly:730d); 1m requests are split into at most7d pages; availability remains provider controlled"}else{"Versioned calendar from 1990; source listing/history may start later"}});
+    result["hash"] = json!(crate::commands::hash(&result["data"].to_string()));
+    Ok(result)
 }
 async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<Value> {
     let _permit = super::HTTP_BUDGET.acquire().await?;
@@ -55,14 +196,25 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
     } else {
         0
     };
-    let end = requested_end.min(now() / 1000 - confirmation);
+    let end = requested_end.min(now() / 1000 - confirmation).min(
+        if provider == "alpaca" && p["feed"] == "overnight" {
+            now() / 1000 - 900
+        } else {
+            requested_end
+        },
+    );
     anyhow::ensure!(
         start < end && requested_end <= now() / 1000,
         "Invalid history interval/future end"
     );
+    let calendar_budget = if ["yahoo", "alpaca"].contains(&provider) && step < 86400 {
+        100_000
+    } else {
+        20_000
+    };
     anyhow::ensure!(
-        (end - start) / step <= 20_000,
-        "Requested range exceeds 20000 buckets"
+        (end - start) / step <= calendar_budget,
+        "Requested range exceeds {calendar_budget} calendar-time buckets; narrow the range or use a longer interval (snapshot limit remains 20000 actual bars)"
     );
     let adjustment = p["adjustment"]
         .as_str()
@@ -81,13 +233,15 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
         anyhow::ensure!(
             (provider == "yahoo" && ["regular", "extended"].contains(&session))
                 || (provider == "coinbase" && session == "24x7")
-                || (provider == "alpaca" && Some(session) == meta["session"].as_str()),
+                || (provider == "alpaca"
+                    && (Some(session) == meta["session"].as_str()
+                        || (meta["session"] == "regular" && session == "extended"))),
             "Unsupported provider/session selection"
         );
         meta["session"] = json!(session);
     }
     if provider != "yahoo" {
-        meta = instruments::enrich(meta).await?;
+        meta = instruments::enrich(app, meta).await?;
     }
     let mut bars = BTreeMap::new();
     let mut gaps = Vec::new();
@@ -187,98 +341,110 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
                 }
                 _ => anyhow::bail!("Yahoo timeframe unavailable"),
             };
-            let response = get(
-                &format!("https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"),
-                &[
-                    ("period1".into(), start.to_string()),
-                    ("period2".into(), end.to_string()),
-                    ("interval".into(), interval.into()),
-                    (
-                        "includePrePost".into(),
-                        if meta["session"] == "extended" {
-                            "true"
-                        } else {
-                            "false"
-                        }
-                        .into(),
-                    ),
-                    ("events".into(), "div,splits".into()),
-                ],
-                None,
-            )
-            .await?;
-            pages = 1;
-            let result = &response["chart"]["result"][0];
-            anyhow::ensure!(
-                response["chart"]["error"].is_null() && !result.is_null(),
-                "Yahoo chart unavailable: {}",
-                response["chart"]["error"]
-            );
-            raw_meta = result["meta"].clone();
-            meta = instruments::from_yahoo(meta, &raw_meta);
-            anyhow::ensure!(
-                meta["timezone"] == "America/New_York",
-                "History requires supported exchange calendar; this instrument timezone is not XNYS"
-            );
-            meta["venue"] = result["meta"]["exchangeName"].clone();
-            meta["currency"] = result["meta"]["currency"].clone();
-            meta["timezone"] = result["meta"]["exchangeTimezoneName"].clone();
-            meta["delay"]["seconds"] = result["meta"]["exchangeDataDelayedBy"].clone();
-            let times = result["timestamp"]
-                .as_array()
-                .ok_or_else(|| anyhow::anyhow!("Yahoo returned no timestamps"))?;
-            let quote = &result["indicators"]["quote"][0];
-            let adj = &result["indicators"]["adjclose"][0]["adjclose"];
-            let mut base_identity = meta.clone();
-            base_identity["timeframe"] = json!(if step >= 86400 && meta["session"] != "extended" {
-                "1D"
-            } else if step >= 3600 {
-                "1H"
-            } else {
-                tf
-            });
-            for (i, t) in times.iter().enumerate() {
-                let time = t
-                    .as_i64()
-                    .ok_or_else(|| anyhow::anyhow!("Bad Yahoo timestamp"))?;
-                if time < start || time >= end {
-                    continue;
-                }
-                let Some((_, close_time)) = super::period::bounds(&base_identity, time)? else {
-                    trimmed.push(json!({"time":time,"reason":"provider timestamp outside selected session; source row excluded without rewriting"}));
-                    continue;
+            let mut request_start = start;
+            while request_start < end {
+                let request_end = if step == 60 {
+                    (request_start + 7 * 86400).min(end)
+                } else {
+                    end
                 };
-                let values = [
-                    &quote["open"][i],
-                    &quote["high"][i],
-                    &quote["low"][i],
-                    &quote["close"][i],
-                    &quote["volume"][i],
-                ];
-                if values.iter().any(|v| v.is_null()) {
-                    gaps.push(json!({"start":time,"reason":"Yahoo null OHLCV"}));
-                    continue;
+                let response = get(
+                    &format!("https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"),
+                    &[
+                        ("period1".into(), request_start.to_string()),
+                        ("period2".into(), request_end.to_string()),
+                        ("interval".into(), interval.into()),
+                        (
+                            "includePrePost".into(),
+                            if meta["session"] == "extended" {
+                                "true"
+                            } else {
+                                "false"
+                            }
+                            .into(),
+                        ),
+                        ("events".into(), "div,splits".into()),
+                    ],
+                    None,
+                )
+                .await?;
+                pages += 1;
+                let result = &response["chart"]["result"][0];
+                anyhow::ensure!(
+                    response["chart"]["error"].is_null() && !result.is_null(),
+                    "Yahoo chart unavailable: {}",
+                    response["chart"]["error"]
+                );
+                raw_meta = result["meta"].clone();
+                meta = instruments::from_yahoo(meta, &raw_meta);
+                anyhow::ensure!(
+                    meta["timezone"] == "America/New_York",
+                    "History requires supported exchange calendar; this instrument timezone is not XNYS"
+                );
+                meta["venue"] = result["meta"]["exchangeName"].clone();
+                meta["currency"] = result["meta"]["currency"].clone();
+                meta["timezone"] = result["meta"]["exchangeTimezoneName"].clone();
+                meta["delay"]["seconds"] = result["meta"]["exchangeDataDelayedBy"].clone();
+                let empty = Vec::new();
+                let times = result["timestamp"].as_array().unwrap_or(&empty);
+                let quote = &result["indicators"]["quote"][0];
+                let adj = &result["indicators"]["adjclose"][0]["adjclose"];
+                let mut base_identity = meta.clone();
+                base_identity["timeframe"] =
+                    json!(if step >= 86400 && meta["session"] != "extended" {
+                        "1D"
+                    } else if step >= 3600 {
+                        "1H"
+                    } else {
+                        tf
+                    });
+                for (i, t) in times.iter().enumerate() {
+                    let time = t
+                        .as_i64()
+                        .ok_or_else(|| anyhow::anyhow!("Bad Yahoo timestamp"))?;
+                    if time < request_start || time >= request_end {
+                        continue;
+                    }
+                    let Some((_, close_time)) = super::period::bounds(&base_identity, time)? else {
+                        trimmed.push(json!({"time":time,"reason":"provider timestamp outside selected session; source row excluded without rewriting"}));
+                        continue;
+                    };
+                    let values = [
+                        &quote["open"][i],
+                        &quote["high"][i],
+                        &quote["low"][i],
+                        &quote["close"][i],
+                        &quote["volume"][i],
+                    ];
+                    if values.iter().any(|v| v.is_null()) {
+                        gaps.push(json!({"start":time,"reason":"Yahoo null OHLCV"}));
+                        continue;
+                    }
+                    let mut b = Bar {
+                        time,
+                        close_time,
+                        open: num(values[0])?,
+                        high: num(values[1])?,
+                        low: num(values[2])?,
+                        close: num(values[3])?,
+                        volume: num(values[4])?,
+                    };
+                    if adjustment == "split-dividend-adjusted" {
+                        let ratio = num(&adj[i])? / b.close;
+                        anyhow::ensure!(
+                            ratio.is_finite() && ratio > 0.,
+                            "Missing adjustment factor"
+                        );
+                        b.open *= ratio;
+                        b.high *= ratio;
+                        b.low *= ratio;
+                        b.close *= ratio;
+                    }
+                    if b.close_time <= end {
+                        bars.insert(time, b);
+                    }
                 }
-                let mut b = Bar {
-                    time,
-                    close_time,
-                    open: num(values[0])?,
-                    high: num(values[1])?,
-                    low: num(values[2])?,
-                    close: num(values[3])?,
-                    volume: num(values[4])?,
-                };
-                if adjustment == "split-dividend-adjusted" {
-                    let ratio = num(&adj[i])? / b.close;
-                    anyhow::ensure!(ratio.is_finite() && ratio > 0., "Missing adjustment factor");
-                    b.open *= ratio;
-                    b.high *= ratio;
-                    b.low *= ratio;
-                    b.close *= ratio;
-                }
-                if b.close_time <= end {
-                    bars.insert(time, b);
-                }
+                request_start = request_end;
             }
         }
         "alpaca" => {
@@ -290,11 +456,13 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
                 ["raw", "split", "dividend", "all"].contains(&adjustment),
                 "Unsupported Alpaca adjustment"
             );
-            let key = std::env::var("ALPACA_API_KEY")
-                .map_err(|_| anyhow::anyhow!("Dedicated Alpaca market key not configured"))?;
-            let secret = std::env::var("ALPACA_API_SECRET")
-                .map_err(|_| anyhow::anyhow!("Dedicated Alpaca market secret not configured"))?;
-            let tf = match step {
+            let (key, secret) = crate::connections::alpaca_credentials(app).await?;
+            let source_step = if step >= 86400 && meta["session"] == "regular" {
+                86400
+            } else {
+                60
+            };
+            let tf = match source_step {
                 60 => "1Min",
                 300 => "5Min",
                 900 => "15Min",
@@ -320,7 +488,10 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
                             .to_rfc3339(),
                     ),
                     ("timeframe".into(), tf.into()),
-                    ("feed".into(), feed.into()),
+                    (
+                        "feed".into(),
+                        if feed == "overnight" { "boats" } else { feed }.into(),
+                    ),
                     ("adjustment".into(), adjustment.into()),
                     ("limit".into(), "10000".into()),
                 ];
@@ -345,24 +516,26 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
                             .ok_or_else(|| anyhow::anyhow!("Missing bar timestamp"))?,
                     )?
                     .timestamp();
-                    let time = if step >= 86400 && feed != "boats" && feed != "overnight" {
+                    let mut base_meta = meta.clone();
+                    base_meta["timeframe"] = json!(if source_step == 86400 { "1D" } else { "1m" });
+                    let time = if source_step == 86400 {
                         let date = DateTime::from_timestamp(time, 0)
                             .unwrap()
                             .with_timezone(&chrono_tz::America::New_York)
                             .date_naive();
-                        calendar::session(date)?
-                            .ok_or_else(|| anyhow::anyhow!("Daily bar on closed session"))?
-                            .0
+                        let Some((open, _)) = calendar::session(date)? else {
+                            continue;
+                        };
+                        open
                     } else {
                         time
                     };
+                    let Some((_, close_time)) = super::period::bounds(&base_meta, time)? else {
+                        continue;
+                    };
                     let bar = Bar {
                         time,
-                        close_time: if feed == "boats" || feed == "overnight" {
-                            time + step
-                        } else {
-                            calendar::bar_close(time, if step == 604800 { 86400 } else { step })?
-                        },
+                        close_time,
                         open: num(&row["o"])?,
                         high: num(&row["h"])?,
                         low: num(&row["l"])?,
@@ -405,11 +578,14 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
             }
         }
     }
-    if (provider != "alpaca" && step == 14400)
+    if (provider == "alpaca" && (step != 60 && (step < 86400 || meta["session"] != "regular")))
+        || (provider != "alpaca" && step == 14400)
         || step == 604800
         || (provider == "yahoo" && meta["session"] == "extended" && step == 86400)
     {
-        let base = if step == 604800 && meta["session"] != "extended" {
+        let base = if provider == "alpaca" && (step < 86400 || meta["session"] != "regular") {
+            60
+        } else if step == 604800 && meta["session"] != "extended" {
             86400
         } else {
             3600
@@ -456,7 +632,7 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
         }
     }
     anyhow::ensure!(
-        !bars.is_empty(),
+        !bars.is_empty() || p["allowEmpty"] == true,
         "Provider returned no complete closed bars"
     );
     anyhow::ensure!(bars.len() <= 20_000, "Normalized snapshot exceeds budget");
@@ -465,9 +641,18 @@ async fn fetch_internal(app: &App, p: &Value, persist: bool) -> anyhow::Result<V
         "Provider missing {} buckets; retry narrower interval or explicitly accept gaps",
         gaps.len()
     );
-    let provenance = json!({"provider":provider,"feed":feed,"requestedStart":start,"requestedEnd":requested_end,"confirmedThrough":end,"confirmationLagSeconds":confirmation,"receivedAt":now(),"eventTime":bars.values().last().unwrap().close_time*1000,"pages":pages,"realMarketData":true,"synthetic":false,"rawMetadata":raw_meta,"trimmedPartialPeriods":trimmed,"calendarPolicy":if provider=="coinbase"{"UTC 24x7 buckets"}else{"Versioned XNYS 1990–2035 exchange_calendars 4.11.2; IANA New York DST; future unscheduled closures need update; outside range rejects"},"gaps":gaps});
+    if provider == "alpaca" && feed == "overnight" {
+        meta["feed"] = json!("boats");
+        meta["requestedFeed"] = json!("overnight");
+        meta["delay"]["kind"] = json!("delayed");
+        meta["delay"]["seconds"] = json!(900);
+        meta["executionEligible"] = json!(false);
+    }
+    let provenance = json!({"provider":provider,"feed":if provider=="alpaca"&&feed=="overnight"{"boats"}else{feed},"requestedFeed":feed,"requestedStart":start,"requestedEnd":requested_end,"confirmedThrough":end,"confirmationLagSeconds":confirmation,"receivedAt":now(),"eventTime":bars.values().last().map(|b|b.close_time*1000),"pages":pages,"realMarketData":true,"synthetic":false,"rawMetadata":raw_meta,"trimmedPartialPeriods":trimmed,"calendarPolicy":if provider=="coinbase"{"UTC 24x7 buckets"}else{"Versioned XNYS 1990–2035 exchange_calendars 4.11.2; IANA New York DST; future unscheduled closures need update; outside range rejects"},"gaps":gaps});
     let data = json!({"symbol":symbol,"timeframe":tf,"metadata":{"type":meta["assetClass"],"prefix":meta["venue"],"mintick":meta["tickSize"],"mincontract":meta["sizeIncrement"].as_f64().unwrap_or(1.),"minmove":1,"pricescale":meta["tickSize"].as_f64().map(|tick|1./tick),"basecurrency":meta["baseCurrency"],"pricePrecision":meta["pricePrecision"],"timezone":meta["timezone"],"currency":meta["currency"],"session":meta["session"],"provider":provider,"adjustment":adjustment,"identity":meta,"provenance":provenance},"bars":bars.values().collect::<Vec<_>>()});
-    crate::commands::validate_data(&data)?;
+    if !bars.is_empty() {
+        crate::commands::validate_data(&data)?;
+    }
     let payload = data.to_string();
     let digest = crate::commands::hash(&payload);
     let id = uuid::Uuid::new_v4().to_string();

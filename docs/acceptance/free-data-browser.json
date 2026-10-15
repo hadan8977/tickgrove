@@ -1,0 +1,190 @@
+{
+  "at": "2026-10-15T06:49:29.286Z",
+  "base": "http://127.0.0.1:18894",
+  "fixtureData": true,
+  "serverRequestsForwarded": 0,
+  "publicPreviewWrites": false,
+  "checks": [
+    "Actual ChartCanvas calculates Pine SMA=120.85 before and after delayed 1m→1H; transition shows Loading, never Empty/No bars/No data supplied.",
+    "Actual OrderTicket explains cached/reconnecting data and the fresh server quote requirement without changing execution policy.",
+    "Initial refresh and older-page failures preserve all cached candles; visible Retry recovers and prepends 120 bars without duplication.",
+    "Empty initial page with hasMore offers Load earlier history and recovers to a populated chart.",
+    "Actual MarketPanel/DataConnections: source card selects symbol, test gives sample status, key form requires values, fixture save updates Configured, Open chart targets the chosen source. No credentials sent to a server.",
+    "Actual tiny-price chart: all OHLC fields retain instrument precision 8, and Pine SMA retains 0.00012085 instead of 0.00.",
+    "4/6 actual chart layouts retain a single-row toolbar and at least 70% chart height; source metadata stays in an on-screen popover with actionable Data settings.",
+    "390px data connections and history form stay within the viewport."
+  ],
+  "layouts": [
+    {
+      "preset": "charts4",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "panels": [
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        }
+      ]
+    },
+    {
+      "preset": "charts6",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "panels": [
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 418,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 300,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 422,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 390,
+          "chartAreaHeight": 252,
+          "plotWidth": 304,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 422,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 390,
+          "chartAreaHeight": 252,
+          "plotWidth": 304,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 426,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 394,
+          "chartAreaHeight": 252,
+          "plotWidth": 308,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        },
+        {
+          "width": 426,
+          "height": 284,
+          "toolbarHeight": 32,
+          "toolbarOverflow": 0,
+          "chartAreaWidth": 394,
+          "chartAreaHeight": 252,
+          "plotWidth": 308,
+          "plotHeight": 224,
+          "plotRatio": 0.7887323943661971,
+          "longMetadataVisible": false,
+          "closeVisible": true
+        }
+      ]
+    }
+  ],
+  "apiCounts": {
+    "market.historyPage": 16,
+    "market.depth": 7,
+    "market.subscribe": 11,
+    "market.quote": 5,
+    "market.bars": 12,
+    "market.events": 208,
+    "connections.list": 3,
+    "market.capabilities": 4,
+    "market.list": 4,
+    "market.cacheInfo": 4,
+    "connections.test": 1,
+    "connections.save": 1
+  },
+  "errors": [],
+  "transitionSamples": 8,
+  "lowPrice": {
+    "ohlc": "O 0.00011995 · H 0.00012295 · L 0.00011795 · C 0.00012095",
+    "pineSma": "0.00012085",
+    "pricePrecision": 8
+  },
+  "mobileOverflow": 0,
+  "ok": true
+}

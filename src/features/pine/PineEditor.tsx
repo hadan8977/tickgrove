@@ -42,6 +42,8 @@ import {
   useCharts,
 } from "../../store";
 import ImportPine from "./ImportPine";
+import DependencyDialog from "./DependencyDialog";
+import { dependencyFromError, pineDependencies, type DependencyRequest } from "./dependencies";
 import { useConnection } from "../../service/workspaceSync";
 import { uid } from "../../builder/model";
 import {
@@ -69,12 +71,14 @@ plot(basis, "Basis", color=#8b7dff)
 
 export default function PineEditor({
   onBacktest,
-  onLibraries,
-}: { onBacktest?: () => void; onLibraries?: () => void } = {}) {
+  onBuilder,
+}: { onBacktest?: () => void; onBuilder?: () => void } = {}) {
   const { scripts, openIds, activeId, open, close, upsert, remove } = useScripts();
   const active = scripts.find((s) => s.id === activeId);
   const [importing, setImporting] = useState(false),
     [query, setQuery] = useState("");
+  const [dependencyRequest, setDependencyRequest] = useState<DependencyRequest>();
+  const [dependencyRevision, setDependencyRevision] = useState(0);
   const chartId = useApp((s) => s.activeChartId);
   const chart = useCharts((s) => s.charts[chartId ?? ""]);
   const applied =
@@ -213,7 +217,8 @@ export default function PineEditor({
     if (b.defs.some((d) => d.id === res.def.id)) b.setDef(res.def);
     else b.addDef(res.def);
     b.setActive(res.def.id);
-    openPanel("builder");
+    if (onBuilder) onBuilder();
+    else openPanel("builder");
   };
   const goto = (line: number) => {
     const v = viewRef.current;
@@ -242,7 +247,13 @@ export default function PineEditor({
 
   return (
     <div ref={pane} className="pine-workbench relative flex h-full min-h-0 bg-panel">
-      {importing && <ImportPine onClose={() => setImporting(false)} />}
+      {importing && <ImportPine onClose={() => setImporting(false)} onDependency={!isDemoData() ? setDependencyRequest : undefined} />}
+      {dependencyRequest && <DependencyDialog request={dependencyRequest}
+        onClose={() => setDependencyRequest(undefined)}
+        onInstalled={() => {
+          setDependencyRevision((n) => n + 1);
+          if (active) setResults((previous) => { const { [active.id]: _, ...rest } = previous; return rest; });
+        }} />}
       {libOpen && (
         <aside className="pine-sidebar flex w-[210px] shrink-0 flex-col border-r border-line bg-panel">
           <div className="flex h-9 items-center justify-between border-b border-line px-2.5">
@@ -442,8 +453,7 @@ export default function PineEditor({
                 {!isDemoData() && (
                   <MenuItem
                     onClick={() => {
-                      if (onLibraries) onLibraries();
-                      else openPanel("libraries");
+                      setDependencyRequest({});
                       close();
                     }}
                   >
@@ -536,6 +546,8 @@ export default function PineEditor({
               setTab={setConsoleTab}
               onGoto={goto}
               scriptId={active.id}
+              dependencyRevision={dependencyRevision}
+              onDependencies={!isDemoData() ? (reference) => setDependencyRequest({ reference }) : undefined}
             />
           </>
         ) : (
@@ -629,12 +641,16 @@ function Console({
   setTab,
   onGoto,
   scriptId,
+  dependencyRevision,
+  onDependencies,
 }: {
   result?: PineRunResult & { at: number };
   tab: "console" | "inputs";
   setTab: (t: "console" | "inputs") => void;
   onGoto: (l: number) => void;
   scriptId: string;
+  dependencyRevision: number;
+  onDependencies?: (reference?: string) => void;
 }) {
   const script = useScripts((s) => s.scripts.find((x) => x.id === scriptId));
   const [resolved, setResolved] = useState<{
@@ -660,7 +676,11 @@ function Console({
       canceled = true;
       clearTimeout(timer);
     };
-  }, [script?.source]);
+  }, [script?.source, dependencyRevision]);
+  const dependencies = pineDependencies(script?.source ?? "");
+  const dependencyError = resolved?.source === script?.source ? resolved?.error : undefined;
+  const problemReference = dependencyFromError(result?.error?.message ?? dependencyError ?? "")
+    ?? (result?.error?.reference !== "strategy" ? result?.error?.reference : undefined);
   const inputs = useMemo(
     () =>
       script
@@ -697,6 +717,15 @@ function Console({
         )}
       </div>
       <div className="num min-h-0 flex-1 overflow-auto px-3 pb-2 text-[11.5px]">
+        {!!dependencies.length && <div className="mb-2 flex flex-wrap items-center gap-2 font-sans text-xs">
+          <span className={dependencyError ? "text-down" : "text-muted"}>
+            {isDemoData() ? "Dependencies require a connected server workspace" : dependencyError ? "A dependency needs attention" : resolved?.source === script?.source && resolved?.lock ? `${resolved.lock.libraries.length} dependencies ready` : "Checking dependencies…"}
+          </span>
+          {onDependencies && <Button size="sm" onClick={() => onDependencies(problemReference ?? dependencies[0].reference)}>
+            {dependencyError || problemReference ? "Resolve dependency" : "Manage dependencies"}
+          </Button>}
+          {dependencyError && <span role="alert" className="basis-full break-words text-down">{dependencyError}</span>}
+        </div>}
         {tab === "console" ? (
           !result ? (
             <div className="text-faint">
@@ -725,7 +754,7 @@ function Console({
             <button
               onClick={() =>
                 result.error?.reference && result.error.reference !== "strategy"
-                  ? openPanel("libraries")
+                  ? onDependencies?.(result.error.reference)
                   : result.error?.line && onGoto(result.error.line)
               }
               className="flex items-start gap-1.5 text-left text-down"

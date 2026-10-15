@@ -1,37 +1,24 @@
 use super::*;
 pub async fn coinbase_products() -> anyhow::Result<Vec<Value>> {
-    let response = client()?
-        .get("https://api.exchange.coinbase.com/products")
-        .send()
-        .await?;
-    anyhow::ensure!(
-        response.status().is_success(),
-        "Coinbase products response {}",
-        response.status()
-    );
-    let values: Value = response.json().await?;
+    let values =
+        super::http::get("https://api.exchange.coinbase.com/products", &[], None, 300).await?;
     let rows = values
         .as_array()
         .ok_or_else(|| anyhow::anyhow!("Invalid product catalog"))?;
     Ok(rows.iter().map(|v|json!({"symbol":v["id"],"symbolId":format!("COINBASE:{}",v["id"].as_str().unwrap_or("")),"venue":"COINBASE","assetClass":"crypto","currency":v["quote_currency"],"baseCurrency":v["base_currency"],"provider":"coinbase","name":v["display_name"],"priceIncrement":v["quote_increment"],"quantityIncrement":v["base_increment"],"status":v["status"],"tradingDisabled":v["trading_disabled"]})).collect())
 }
-pub async fn enrich(mut identity: Value) -> anyhow::Result<Value> {
+pub async fn enrich(app: &App, mut identity: Value) -> anyhow::Result<Value> {
     let provider = identity["provider"].as_str().unwrap_or("");
     let symbol = identity["symbol"].as_str().unwrap_or("").to_string();
     match provider {
         "coinbase" => {
-            let response = client()?
-                .get(format!(
-                    "https://api.exchange.coinbase.com/products/{symbol}"
-                ))
-                .send()
-                .await?;
-            anyhow::ensure!(
-                response.status().is_success(),
-                "Unknown Coinbase product {symbol}: {}",
-                response.status()
-            );
-            let value: Value = response.json().await?;
+            let value = super::http::get(
+                &format!("https://api.exchange.coinbase.com/products/{symbol}"),
+                &[],
+                None,
+                300,
+            )
+            .await?;
             identity["currency"] = value["quote_currency"].clone();
             identity["baseCurrency"] = value["base_currency"].clone();
             identity["priceIncrement"] = value["quote_increment"].clone();
@@ -61,30 +48,23 @@ pub async fn enrich(mut identity: Value) -> anyhow::Result<Value> {
             identity = from_yahoo(identity, metadata);
         }
         "alpaca" => {
-            let key = std::env::var("ALPACA_API_KEY")
-                .map_err(|_| anyhow::anyhow!("Dedicated Alpaca key not configured"))?;
-            let secret = std::env::var("ALPACA_API_SECRET")
-                .map_err(|_| anyhow::anyhow!("Dedicated Alpaca secret not configured"))?;
-            let response = client()?
-                .get(format!(
-                    "https://paper-api.alpaca.markets/v2/assets/{symbol}"
-                ))
-                .header("APCA-API-KEY-ID", key)
-                .header("APCA-API-SECRET-KEY", secret)
-                .send()
-                .await?;
-            anyhow::ensure!(
-                response.status().is_success(),
-                "Alpaca asset unavailable: {}",
-                response.status()
-            );
-            let value: Value = response.json().await?;
+            let (key, secret) = crate::connections::alpaca_credentials(app).await?;
+            let value = super::http::get(
+                &format!("https://paper-api.alpaca.markets/v2/assets/{symbol}"),
+                &[],
+                Some((&key, &secret)),
+                300,
+            )
+            .await?;
             identity["venue"] = value["exchange"].clone();
             identity["assetClass"] = value["class"].clone();
             identity["symbolId"] = json!(format!(
                 "ALPACA:{}:{symbol}",
                 value["exchange"].as_str().unwrap_or("unknown")
             ));
+            identity["assetId"] = value["id"].clone();
+            identity["overnightTradable"] = value["overnight_tradable"].clone();
+            identity["overnightHalted"] = value["overnight_halted"].clone();
             identity["tradable"] = value["tradable"].clone();
             identity["fractionable"] = value["fractionable"].clone();
         }

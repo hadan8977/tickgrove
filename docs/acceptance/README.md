@@ -4,6 +4,15 @@ These files record actual offline, local and public-market network checks. Each 
 
 | Evidence | Scope |
 | --- | --- |
+| [free-data-release.json](free-data-release.json) | Current integration checks, exact frontend/binary hashes and explicit remaining release boundaries |
+| [free-data-preview.json](free-data-preview.json) | Updated HTTPS preview; preserved user workspace, account and token; current frontend and vector favicon |
+| [market-data-report.json](../../server/tests/market-data-report.json) | Actual public Yahoo/Coinbase paging, 28-day minute snapshots, shared live connections and bounded cache |
+| [free-data-workflow.json](free-data-workflow.json) | Real VOO history → immutable zero-gap snapshot → recorded-price native Pine backtest |
+| [real-free-data-browser.json](real-free-data-browser.json) | Actual ETF/crypto search, periods, older pages, live quote updates, four themes and mobile UI |
+| [real-data-screenshots.json](real-data-screenshots.json) | Real market 4/6 charts and actual canvas text colors following the selected theme |
+| [free-data-browser.json](free-data-browser.json) | Controlled delayed/error/empty responses, retry and pagination, low-price precision; actual components with API fixtures |
+| [workspace-interactions.json](workspace-interactions.json) | Chart retention/Undo, exact ticker Enter, search races, local Pine dependencies and paper-run navigation |
+| [reliability-current.json](reliability-current.json) | Five isolated service paths: alert recovery, Pine alert persistence, valid/invalid fills, outbox recovery and explicit tick loss |
 | [rebrand-preview.json](rebrand-preview.json) | Deployed Tickgrove service, unchanged workspace/account/token, HTTPS preview and API authentication after restart |
 | [rebrand-browser.json](rebrand-browser.json) | Tickgrove browser identity, legacy storage/token migration, four themes and mobile width; isolated review instance |
 | [branding-report.json](../../server/tests/branding-report.json) | Old-to-new database continuity, canonical/legacy CLI, two official MCP clients, backup/restore, eight Rust binaries; image rebuild excluded |

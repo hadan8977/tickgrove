@@ -99,19 +99,6 @@ pub fn session(date: NaiveDate) -> anyhow::Result<Option<(i64, i64)>> {
         .timestamp();
     Ok(Some((open, close)))
 }
-pub fn bar_close(time: i64, step: i64) -> anyhow::Result<i64> {
-    let date = chrono::DateTime::from_timestamp(time, 0)
-        .ok_or_else(|| anyhow::anyhow!("Invalid session timestamp"))?
-        .with_timezone(&New_York)
-        .date_naive();
-    let (_, close) = session(date)?
-        .ok_or_else(|| anyhow::anyhow!("Provider bar appears on closed NYSE regular session"))?;
-    Ok(if step >= 86400 {
-        close
-    } else {
-        (time + step).min(close)
-    })
-}
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { command } from "./client";
+import { showPaperSession } from "./paperSelection";
 export default function ServicePaper({
   version,
   snapshot,
@@ -15,8 +16,11 @@ export default function ServicePaper({
     [error, setError] = useState("");
   const [stream, setStream] = useState<"market" | "manual">("market"),
     [busy, setBusy] = useState(false);
+  const acting = useRef(false);
   const refresh = async () => setSessions(await command("paper.list"));
   const act = async (fn: () => Promise<unknown>) => {
+    if (acting.current) return;
+    acting.current = true;
     try {
       setError("");
       setBusy(true);
@@ -25,6 +29,7 @@ export default function ServicePaper({
     } catch (e) {
       setError(String(e));
     } finally {
+      acting.current = false;
       setBusy(false);
     }
   };
@@ -53,13 +58,14 @@ export default function ServicePaper({
       });
       subscription_id = subscribed.subscription_id;
     }
-    await command("paper.deploy", {
+    const session = await command("paper.deploy", {
       version_id: version,
       snapshot_id: snapshot,
       inputs: JSON.parse(inputs),
       execution: "closed_bar_native",
       subscription_id,
     });
+    showPaperSession(session.session_id);
   };
   const start = async () => {
     const data = await (await fetch("/examples/composer/synthetic-etfs.json")).json();

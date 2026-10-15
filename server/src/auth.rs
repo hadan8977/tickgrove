@@ -1,5 +1,8 @@
 use serde_json::Value;
 pub fn permission(method: &str) -> &'static str {
+    if method.starts_with("connections.") && method != "connections.list" {
+        return "connections.manage";
+    }
     if method == "pine.host.feedback" {
         return "broker.feedback";
     }
@@ -30,6 +33,8 @@ pub fn permission(method: &str) -> &'static str {
         "workspace.write"
     } else if [
         "market.history",
+        "market.historyPage",
+        "market.cacheClear",
         "market.bundle",
         "market.subscribe",
         "market.stop",
@@ -85,6 +90,7 @@ pub fn scopes(owner: &str, provided: &str) -> anyhow::Result<Vec<String>> {
         "paper.manage",
         "broker.paper",
         "plugins.manage",
+        "connections.manage",
     ]
     .into_iter()
     .map(String::from)

@@ -3,8 +3,8 @@
   "date": "2026-10-15",
   "reviewedSha": "ec039649fe9f4b8729b977e819509910bf95cc2a",
   "verdict": "ISSUES",
-  "implementationStarted": false,
-  "dataDeliveryDecision": "pending user evaluation of free/BYOK/project-funded/hybrid options",
+  "implementationStarted": true,
+  "dataDeliveryDecision": "User-selected: free open-source self-hosted software; built-in public-source adapters and optional personal account connections; no shared Tickgrove data service or project-funded feed",
   "scopePolicy": "All 96 original required features retained; proposed tasks do not change verified status",
   "counts": {
     "required": 96,
@@ -37,7 +37,7 @@
         "相反方向/超额/冲突成交反馈不改账本",
         "部分成交、反转、改类型、重试的事件与账本一致"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T02",
@@ -64,7 +64,7 @@
         "事件游标和订单意图原子提交",
         "关键边界崩溃注入、重启重放不漏不重"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T03",
@@ -90,7 +90,7 @@
         "搜索不能选择过期查询结果",
         "部署后直达对应运行，重复提交不会产生多个对象"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T04",
@@ -116,7 +116,7 @@
         "夜盘端点/历史映射/扩展时段/日历fixture通过",
         "未知/延迟/指示性不可默认撮合；LastTrade和BBO分离"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T05",
@@ -147,7 +147,7 @@
         "乱序重复修正取消停牌缺口有可回放合同",
         "无成交、休市和丢数据不混为一种gap；复权与标的变更可追溯"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T06",
@@ -178,7 +178,7 @@
         "多图与后台消费者共享源并保持各自生命周期",
         "记录源/接收/持久化/绘制延迟及背压，报价合并仅用于UI"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T07",
@@ -224,7 +224,7 @@
         "缺失库版本预填抽屉、首次回测口径摘要",
         "结果与运行保留草稿上下文、账户归属清楚"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T08",
@@ -258,7 +258,7 @@
         "字号/对比/focus/键盘/Undo规范统一",
         "图表导出回放比较绘图使用正确数据与可见范围"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T09",
@@ -281,7 +281,7 @@
         "配额、pin、回收、DB+对象恢复hash一致",
         "验证对象写入与DB提交中断及活跃cursor跨保留边界"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T10",
@@ -367,7 +367,7 @@
         "发布证据绑定SHA/锁/hash/image而非只检查文件存在",
         "原前端授权或替代方案完成，依赖清单及单所有者权限边界清楚"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     },
     {
       "id": "T13",
@@ -388,7 +388,7 @@
         "Alpaca Paper账户下单、部分成交、撤单和核对",
         "没有凭据时保持待外部验收，不用fixture替代"
       ],
-      "status": "proposed"
+      "status": "blocked_external_dedicated_account_not_configured"
     },
     {
       "id": "T14",
@@ -408,7 +408,7 @@
         "声明的正式市场时段和加密周末长跑，记录失败和容量",
         "demo数据权利及隔离模式明确，推广素材与已验收版本一致"
       ],
-      "status": "proposed"
+      "status": "implemented_in_part_pending_full_release_acceptance"
     }
   ],
   "featureCoverage": [
@@ -1282,5 +1282,6 @@
         "T12"
       ]
     }
-  ]
+  ],
+  "implementationUpdate": "See docs/review/2026-10-15/implementation-update.md for scoped fixes and current evidence. Original feature requirements and release-gate statuses remain intact."
 }

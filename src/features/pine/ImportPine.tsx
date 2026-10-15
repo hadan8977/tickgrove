@@ -5,12 +5,15 @@ import { detectKind, detectTitle } from "../../pine/runtime";
 import { uid } from "../../builder/model";
 import { useScripts } from "../../store";
 import { Button, IconButton, Input } from "../../ui/primitives";
+import { isPineLibrary, pineDependencies, type DependencyRequest } from "./dependencies";
 
-export default function ImportPine({ onClose }: { onClose: () => void }) {
+export default function ImportPine({ onClose, onDependency }: { onClose: () => void; onDependency?: (request: DependencyRequest) => void }) {
   const [source, setSource] = useState(""),
     [name, setName] = useState(""),
     [error, setError] = useState("");
   const dialog = useRef<HTMLDivElement>(null);
+  const library = isPineLibrary(source);
+  const dependencies = pineDependencies(source);
   useEffect(() => {
     const prior = document.activeElement as HTMLElement | null;
     dialog.current?.querySelector<HTMLTextAreaElement>("textarea")?.focus();
@@ -48,9 +51,10 @@ export default function ImportPine({ onClose }: { onClose: () => void }) {
   }
   function save() {
     if (!source.trim()) return;
-    if (/^\s*library\s*\(/m.test(source)) {
+    if (library) {
+      if (onDependency) { onDependency({ source }); onClose(); return; }
       setError(
-        "This is a reusable Pine dependency. Use More → Pine dependencies to install it, then import the indicator or strategy that uses it.",
+        "This is a Pine dependency. Connect to a server workspace to install it, then import the indicator or strategy that uses it.",
       );
       return;
     }
@@ -123,6 +127,10 @@ export default function ImportPine({ onClose }: { onClose: () => void }) {
             onChange={(e) => setName(e.target.value)}
           />
         </label>
+        {library && <p className="mt-2 text-sm text-muted">This file is a reusable dependency. Install it first, then open the indicator or strategy that imports it.</p>}
+        {!!dependencies.length && <div className="mt-2 text-xs text-muted">Required dependencies (checked after import):
+          <ul className="mt-1 space-y-1">{dependencies.map((d, i) => <li key={i}>{d.reference} · line {d.line}</li>)}</ul>
+        </div>}
         {error && (
           <p role="alert" className="mt-3 text-sm text-down">
             {error}
@@ -135,7 +143,7 @@ export default function ImportPine({ onClose }: { onClose: () => void }) {
             disabled={!source.trim() || source.length > 1_000_000}
             onClick={save}
           >
-            Import and edit
+            {library ? "Install dependency…" : "Import and edit"}
           </Button>
         </div>
       </div>

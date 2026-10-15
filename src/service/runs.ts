@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { Timeframe, BacktestResult } from "../core/types";
-import { loadMarketHistory, marketSeries } from "../data/feed";
+import { prepareMarketSnapshot } from "../data/feed";
 import { command } from "./client";
 
 export const useRunProgress = create<{
@@ -26,15 +26,13 @@ export async function runServerStrategy(args: {
     jobId: undefined,
   });
   try {
-    const dataset = marketSeries(args.symbol, args.tf);
-    const range = dataset.historyRange;
-    await loadMarketHistory(args.symbol, args.tf, range && !range.live ? range : undefined);
-    if (!dataset.snapshotId) throw Error("No immutable market snapshot is available");
+    const dataset = await prepareMarketSnapshot(args.symbol, args.tf);
+    if (!dataset.snapshot_id) throw Error("No immutable market snapshot is available");
     if (dataset.gaps?.length)
       throw Error(
         `Market history has ${dataset.gaps.length} gap(s). Resolve the data coverage or choose a complete range before running.`,
       );
-    let snapshotId = dataset.snapshotId;
+    let snapshotId = dataset.snapshot_id;
     if (args.replayUntil !== undefined) {
       const original = await command("data.get", { snapshot_id: snapshotId });
       const bars = original.bars.filter((b: { time: number }) => b.time <= args.replayUntil!);

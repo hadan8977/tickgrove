@@ -477,5 +477,5 @@ input:focus-visible,
 }
 :root[data-theme="dark"],
 :root[data-theme="cobalt"] {
-  --brand: #9de2b6;
+  --brand: #b2f0cc;
 }

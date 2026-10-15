@@ -5,6 +5,7 @@ import { validateWorkspace } from "./workspaceDocument";
 import { Button, Input, Select } from "../ui/primitives";
 import ServiceExtensions from "./ServiceExtensions";
 import PineLibraries from "./PineLibraries";
+import DataConnections from "./DataConnections";
 import { useApp, THEMES } from "../store";
 
 const examples: Record<string, unknown> = {
@@ -172,16 +173,12 @@ export default function ServerIntegrations({ children }: { children: React.React
         )}
         {tab === "adapters" && (
           <>
-            <div className="grid gap-3 md:grid-cols-3">
-              {market?.providers?.map((p: any) => (
-                <article key={p.id} className="rounded-xl border border-line p-4">
-                  <h2 className="font-semibold">{p.id}</h2>
-                  <pre className="mt-3 whitespace-pre-wrap text-xs text-muted">
-                    {JSON.stringify(p, null, 2)}
-                  </pre>
-                </article>
-              ))}
-            </div>
+            <DataConnections
+              onChoose={(provider) => {
+                sessionStorage.setItem("tickgrove.data-source-selection", provider);
+                useApp.getState().setView("market");
+              }}
+            />
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               {[
                 ["Chart", "Lightweight Charts · Apache-2.0"],

@@ -1,6 +1,6 @@
 {
   "schema": "trading.feature-acceptance.v1",
-  "updated": "2026-10-14",
+  "updated": "2026-10-15",
   "scope": "用户确认只对齐看盘、Pine、回测、提醒、交易核心，原demo和现前端功能均纳入；不含资讯/财报/社交生态；交易会话日历仍属于必做基础。",
   "statusPolicy": {
     "verified": "完整功能通过本次验收且有证据",
@@ -30,7 +30,9 @@
       "evidence": [
         "docs/acceptance/market-network.json",
         "docs/acceptance/market-session-network.json",
-        "docs/acceptance/real-workspace-browser.json"
+        "docs/acceptance/real-workspace-browser.json",
+        "server/tests/market-data-report.json",
+        "docs/acceptance/free-data-workflow.json"
       ]
     },
     {
@@ -47,7 +49,8 @@
       "evidence": [
         "docs/acceptance/market-network.json",
         "docs/acceptance/real-workspace-browser.json",
-        "docs/acceptance/mobile-workspace.json"
+        "docs/acceptance/mobile-workspace.json",
+        "server/tests/market-data-report.json"
       ]
     },
     {
@@ -89,7 +92,8 @@
       "acceptance": "各图表/报价能看到provider/feed/session/eventTime/receivedAt和连接状态",
       "evidence": [
         "docs/acceptance/pine-host-browser.json",
-        "docs/acceptance/market-latency-current.json"
+        "docs/acceptance/market-latency-current.json",
+        "docs/acceptance/free-data-browser.json"
       ]
     },
     {
@@ -103,7 +107,10 @@
       "required": true,
       "status": "partial",
       "acceptance": "跨页历史完整去重，时间有序，缺口与预热范围有记录",
-      "evidence": []
+      "evidence": [
+        "server/tests/market-data-report.json",
+        "docs/acceptance/free-data-browser.json"
+      ]
     },
     {
       "id": "D07",
@@ -116,7 +123,9 @@
       "required": true,
       "status": "partial",
       "acceptance": "1m/5m/15m/1H/4H/1D/1W切换同源；日周使用会话时间不伪造休市bar",
-      "evidence": []
+      "evidence": [
+        "docs/acceptance/free-data-browser.json"
+      ]
     },
     {
       "id": "D08",
@@ -144,7 +153,8 @@
       "acceptance": "强制断网后显示stale/reconnecting，恢复补数且不重复决策",
       "evidence": [
         "docs/acceptance/market-status-index.json",
-        "docs/acceptance/market-latency-current.json"
+        "docs/acceptance/market-latency-current.json",
+        "server/tests/market-data-report.json"
       ]
     },
     {
@@ -171,7 +181,10 @@
       "required": true,
       "status": "partial",
       "acceptance": "动态源搜索和注册表，无固定股票/币白名单；未知标的不得退回AAPL；交易所/资产类别/货币/精度来自提供商",
-      "evidence": []
+      "evidence": [
+        "docs/acceptance/workspace-interactions.json",
+        "docs/acceptance/free-data-browser.json"
+      ]
     },
     {
       "id": "D12",
@@ -236,7 +249,10 @@
       "required": true,
       "status": "partial",
       "acceptance": "每个预设在真实数据模式可用，图表独立且切换不丢状态",
-      "evidence": []
+      "evidence": [
+        "docs/acceptance/workspace-interactions.json",
+        "docs/acceptance/free-data-browser.json"
+      ]
     },
     {
       "id": "W02",
@@ -289,7 +305,8 @@
       "status": "partial",
       "acceptance": "四套主题可读；窄屏可进入关键功能，不白屏或遮挡提交按钮",
       "evidence": [
-        "docs/acceptance/mobile-workspace.json"
+        "docs/acceptance/mobile-workspace.json",
+        "docs/acceptance/free-data-browser.json"
       ]
     },
     {
@@ -589,7 +606,8 @@
       "acceptance": "导出函数/方法/UDT/枚举、别名、嵌套依赖、循环/缺失错误有测试",
       "evidence": [
         "docs/acceptance/pine-libraries.json",
-        "docs/acceptance/pine-library-browser.json"
+        "docs/acceptance/pine-library-browser.json",
+        "docs/acceptance/workspace-interactions.json"
       ]
     },
     {
@@ -632,7 +650,8 @@
       "evidence": [
         "docs/acceptance/pine-event-service.json",
         "docs/acceptance/pine-event-host-boundaries.json",
-        "docs/acceptance/pine-host-browser.json"
+        "docs/acceptance/pine-host-browser.json",
+        "docs/acceptance/reliability-current.json"
       ]
     },
     {
@@ -647,7 +666,8 @@
       "acceptance": "关闭内部重复撮合，外部部分成交/费用/拒单/取消进入strategy账户读数",
       "evidence": [
         "docs/acceptance/pine-event-service.json",
-        "docs/api/pine-event-host.md"
+        "docs/api/pine-event-host.md",
+        "docs/acceptance/reliability-current.json"
       ]
     },
     {
@@ -662,7 +682,8 @@
       "acceptance": "运行结果产生可持久化提醒事件，频率/收盘条件可验证",
       "evidence": [
         "server/src/pine_host.rs",
-        "server/src/alerts.rs"
+        "server/src/alerts.rs",
+        "docs/acceptance/reliability-current.json"
       ]
     },
     {
@@ -815,7 +836,9 @@
       "required": true,
       "status": "partial",
       "acceptance": "原界面与API创建同一持久任务，不再浏览器第二次撮合",
-      "evidence": []
+      "evidence": [
+        "docs/acceptance/free-data-workflow.json"
+      ]
     },
     {
       "id": "R02",
@@ -1050,7 +1073,9 @@
       "required": true,
       "status": "partial",
       "acceptance": "后台运行，真实价格触发，重复消息不重复通知",
-      "evidence": []
+      "evidence": [
+        "docs/acceptance/reliability-current.json"
+      ]
     },
     {
       "id": "A02",
@@ -1064,7 +1089,8 @@
       "status": "partial",
       "acceptance": "绑定策略版本和参数，触发时点与对应计算一致",
       "evidence": [
-        "server/src/alerts.rs"
+        "server/src/alerts.rs",
+        "docs/acceptance/reliability-current.json"
       ]
     },
     {

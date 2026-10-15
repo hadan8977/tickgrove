@@ -3,6 +3,7 @@ import type { MarketEvent, MarketHistoryResult, MarketIdentity } from "../core/m
 import type { PineRunOptions } from "../pine/runtime";
 import { command } from "../service/client";
 import * as demo from "./demoFeed";
+import { mergeHistory, type HistoryState } from "./history";
 
 export type DataMode = "service" | "demo";
 let mode: DataMode =
@@ -37,6 +38,24 @@ export interface MarketSeries {
   identity?: MarketIdentity;
   metadata?: Record<string, unknown>;
   loading: boolean;
+  historyState: HistoryState;
+  historyGeneration?: number;
+  connectionGeneration?: number;
+  loadingOlder?: boolean;
+  olderError?: string;
+  hasMore?: boolean;
+  nextBefore?: number | null;
+  coverageStart?: number;
+  coverageReason?: string;
+  cacheHit?: boolean;
+  lastQuote?: { bid?: number; ask?: number; mid?: number; time: number };
+  marketState?: {
+    state: string;
+    open: boolean;
+    asOf: number;
+    timezone?: string;
+    selectedSession?: string;
+  };
   error?: string;
   streamError?: string;
   subscriptionId?: string;
@@ -73,6 +92,7 @@ const series = new Map<string, MarketSeries>(),
   books = new Map<string, DepthSnapshot>();
 const depthInFlight = new Set<string>(),
   histories = new Map<string, Promise<MarketSeries>>();
+const olderHistories = new Map<string, Promise<MarketSeries>>();
 const quoteLoaded = new Set<string>();
 const subscriptionsInFlight = new Map<string, Promise<string>>();
 const EMPTY_BOOK: DepthSnapshot = { asks: [], bids: [], spread: Number.NaN };
@@ -111,6 +131,20 @@ export function configureData(next: DataMode, authenticated = false) {
     timer = setInterval(() => {
       void poll();
     }, 700);
+  emit();
+}
+export function invalidateProviderConnection(provider: string) {
+  for (const entry of series.values()) {
+    if (entry.identity?.provider !== provider) continue;
+    entry.historyGeneration = (entry.historyGeneration ?? 0) + 1;
+    entry.connectionGeneration = (entry.connectionGeneration ?? 0) + 1;
+    entry.subscriptionId = undefined;
+    entry.status = "stopped";
+    entry.cursor = 0;
+    entry.error = "Account connection changed. Retry to load data with the current connection.";
+    entry.historyState = "error";
+    entry.quoteReceivedAt = undefined;
+  }
   emit();
 }
 export function subscribeTicks(listener: Listener) {
@@ -164,14 +198,13 @@ export function marketRequest(symbol: string, tf: Timeframe = "1D") {
     info.providerSymbol ??
     (symbol === "BTCUSD" ? "BTC-USD" : symbol === "ETHUSD" ? "ETH-USD" : parts.at(-1)!);
   const feed = provider === "alpaca" ? (parts.length > 2 ? parts[1] : "iex") : undefined;
-  const session =
-    provider === "yahoo" && parts.length > 2 && parts[1] === "extended" ? "extended" : "regular";
+  const session = feed === "boats" || feed === "overnight" ? "overnight" : parts.slice(1, -1).includes("extended") ? "extended" : "regular";
   return {
     provider,
     symbol: raw,
     timeframe: tf,
     ...(feed ? { feed } : {}),
-    ...(provider === "yahoo" ? { session } : {}),
+    ...(["yahoo", "alpaca"].includes(provider) ? { session } : {}),
     adjustment: provider === "coinbase" ? "none" : "raw",
   };
 }
@@ -181,6 +214,7 @@ export function marketSeries(symbol: string, tf: Timeframe): MarketSeries {
     series.set(key, {
       bars: [],
       loading: false,
+      historyState: "idle",
       cursor: 0,
       status: "not-connected",
       complete: false,
@@ -201,6 +235,7 @@ export async function loadMarketHistory(
   symbol: string,
   tf: Timeframe,
   range?: { start: number; end: number },
+  options: { force?: boolean } = {},
 ): Promise<MarketSeries> {
   if (!connected) throw Error("Connect to the trading service before loading market data");
   const key = `${symbol}|${tf}`,
@@ -212,20 +247,46 @@ export async function loadMarketHistory(
     return done;
   }
   const entry = marketSeries(symbol, tf);
+  if (
+    !options.force &&
+    !range &&
+    entry.loadedAt &&
+    entry.bars.length &&
+    entry.historyRange?.live &&
+    Date.now() - entry.loadedAt < 30_000 &&
+    !entry.error
+  )
+    return entry;
+  const generation = (entry.historyGeneration = (entry.historyGeneration ?? 0) + 1);
+  entry.loadingOlder = false;
+  entry.olderError = undefined;
   entry.loading = true;
+  entry.historyState = "loading";
   entry.error = undefined;
   emit();
   const task = budget(async () => {
     try {
       const end = range?.end ?? Math.floor(Date.now() / 1000);
       const start = range?.start ?? end - windowSeconds(tf);
-      const result = await command<MarketHistoryResult>("market.history", {
-        ...marketRequest(symbol, tf),
-        start,
-        end,
-        allowGaps: true,
-      });
-      entry.historyRange = { start, end, live: !range };
+      const result = await command<MarketHistoryResult>(
+        range ? "market.history" : "market.historyPage",
+        {
+          ...marketRequest(symbol, tf),
+          ...(range ? { start, end } : { limit: 1000 }),
+          allowGaps: true,
+        },
+      );
+      if (generation !== entry.historyGeneration) return entry;
+      entry.historyRange = {
+        start: range?.start ?? result.data.bars[0]?.time ?? start,
+        end: result.page?.requestedEnd ?? end,
+        live: !range,
+      };
+      entry.hasMore = result.page?.hasMore ?? false;
+      entry.nextBefore = result.page?.nextBefore;
+      entry.coverageStart = result.page?.coverageStart;
+      entry.coverageReason = result.page?.reason;
+      entry.cacheHit = result.cache?.hit;
       entry.bars.splice(
         0,
         entry.bars.length,
@@ -234,7 +295,7 @@ export async function loadMarketHistory(
           volume: b.volume ?? Number.NaN,
         })),
       );
-      entry.snapshotId = result.snapshot_id;
+      entry.snapshotId = result.snapshot_id ?? undefined;
       entry.identity = result.identity;
       entry.metadata = result.data.metadata;
       entry.provenance = result.provenance;
@@ -242,6 +303,7 @@ export async function loadMarketHistory(
       entry.revision++;
       entry.complete = !result.gaps.length;
       entry.loadedAt = Date.now();
+      entry.historyState = entry.bars.length ? "ready" : "empty";
       if (!entry.subscriptionId) entry.status = "historical";
       const last = entry.bars.at(-1);
       if (last && !Number.isFinite(prices[symbol])) prices[symbol] = last.close;
@@ -282,16 +344,16 @@ export async function loadMarketHistory(
               ? "etf"
               : "stock",
       });
-      if (!entry.subscriptionId)
+      if (!entry.subscriptionId && !range)
         void subscribeMarket(symbol, tf).catch((error) => {
           entry.streamError = String(error);
           emit();
         });
-      else await hydrateMarket(symbol, entry);
+      else if (entry.subscriptionId && !range) await hydrateMarket(symbol, entry);
       return entry;
     } catch (error) {
       entry.error = String(error);
-      entry.status = "error";
+      entry.historyState = "error";
       throw error;
     } finally {
       entry.loading = false;
@@ -302,14 +364,90 @@ export async function loadMarketHistory(
   histories.set(key, task);
   return task;
 }
+export async function loadOlderHistory(symbol: string, tf: Timeframe): Promise<MarketSeries> {
+  const entry = marketSeries(symbol, tf),
+    key = `${symbol}|${tf}`;
+  const pending = olderHistories.get(key);
+  if (pending) return pending;
+  if (!connected || mode === "demo" || entry.loading || entry.hasMore !== true) return entry;
+  const generation = entry.historyGeneration;
+  const before = entry.nextBefore ?? entry.bars[0]?.time;
+  if (!Number.isFinite(before)) return entry;
+  entry.loadingOlder = true;
+  entry.olderError = undefined;
+  emit();
+  const task = budget(async () => {
+    try {
+      const result = await command<MarketHistoryResult>("market.historyPage", {
+        ...marketRequest(symbol, tf),
+        before,
+        limit: 1000,
+        allowGaps: true,
+      });
+      if (generation !== entry.historyGeneration) return entry;
+      if (result.page?.hasMore && !(Number(result.page.nextBefore) < Number(before)))
+        throw Error("The source did not advance the history cursor. Try again later.");
+      entry.bars = mergeHistory(result.data.bars, entry.bars);
+      entry.historyState = entry.bars.length ? "ready" : "empty";
+      entry.hasMore = result.page?.hasMore === true;
+      entry.nextBefore = result.page?.nextBefore;
+      entry.coverageStart = result.page?.coverageStart ?? entry.coverageStart;
+      entry.coverageReason = result.page?.reason;
+      entry.cacheHit = result.cache?.hit;
+      entry.snapshotId = undefined;
+      if (entry.historyRange && entry.bars.length) entry.historyRange.start = entry.bars[0].time;
+      entry.gaps = [...(result.gaps ?? []), ...(entry.gaps ?? [])];
+      entry.revision++;
+      return entry;
+    } catch (error) {
+      if (generation === entry.historyGeneration) entry.olderError = String(error);
+      throw error;
+    } finally {
+      if (generation === entry.historyGeneration) entry.loadingOlder = false;
+      olderHistories.delete(key);
+      emit();
+    }
+  });
+  olderHistories.set(key, task);
+  return task;
+}
+
+export async function prepareMarketSnapshot(
+  symbol: string,
+  tf: Timeframe,
+): Promise<MarketHistoryResult> {
+  let entry = marketSeries(symbol, tf);
+  const pending = histories.get(`${symbol}|${tf}`);
+  if (pending) entry = await pending;
+  else if (!entry.bars.length) entry = await loadMarketHistory(symbol, tf);
+  if (entry.error) throw Error(entry.error);
+  if (!entry.bars.length) throw Error("No historical bars are available for this range");
+  const range = entry.historyRange!;
+  const result = await command<MarketHistoryResult>("market.history", {
+    ...marketRequest(symbol, tf),
+    start: range.start,
+    end: range.live ? Math.floor(Date.now() / 1000) : range.end,
+    allowGaps: false,
+  });
+  if (!result.snapshot_id) throw Error("The server did not create an immutable data snapshot");
+  entry.snapshotId = result.snapshot_id;
+  return result;
+}
 export function ensureMarket(symbol: string, tf: Timeframe) {
   if (!connected || mode === "demo") return;
   const entry = marketSeries(symbol, tf);
-  if (!entry.loadedAt && !entry.loading && !entry.error)
+  if (!entry.loadedAt && !entry.loading && !entry.error) {
+    entry.loading = true;
+    entry.historyState = "loading";
     queueMicrotask(() => {
-      if (connected && !entry.loadedAt && !entry.loading && !entry.error)
+      if (connected && !entry.loadedAt && !entry.error)
         void loadMarketHistory(symbol, tf).catch(() => {});
+      else if (!connected) {
+        entry.loading = false;
+        entry.historyState = "idle";
+      }
     });
+  }
 }
 export function getBars(symbol: string, tf: Timeframe): Bar[] {
   if (mode === "demo") return demo.getBars(symbol, tf);
@@ -397,6 +535,7 @@ export async function subscribeMarket(symbol: string, tf: Timeframe) {
   if (pending) return pending;
   if (entry.subscriptionId) return entry.subscriptionId;
   entry.subscribing = true;
+  const generation = entry.connectionGeneration;
   const task = (async () => {
     try {
       const response = await command<{
@@ -404,6 +543,8 @@ export async function subscribeMarket(symbol: string, tf: Timeframe) {
         identity: MarketIdentity;
         status?: string;
       }>("market.subscribe", marketRequest(symbol, tf));
+      if (generation !== entry.connectionGeneration)
+        throw Error("Account connection changed. Reopen this chart.");
       entry.subscriptionId = response.subscription_id;
       entry.identity = response.identity;
       entry.status = response.status ?? "connecting";
@@ -419,9 +560,11 @@ export async function subscribeMarket(symbol: string, tf: Timeframe) {
   return task;
 }
 async function hydrateMarket(symbol: string, entry: MarketSeries) {
+  const subscriptionId = entry.subscriptionId;
   const value = await command<any>("market.bars", {
-    subscription_id: entry.subscriptionId,
+    subscription_id: subscriptionId,
   });
+  if (subscriptionId !== entry.subscriptionId) return;
   for (let index = 0; index < (value.bars?.length ?? 0); index++) {
     const bar = value.bars[index];
     if (value.quality?.[index]?.complete !== false || !entry.bars.some((b) => b.time === bar.time))
@@ -431,6 +574,7 @@ async function hydrateMarket(symbol: string, entry: MarketSeries) {
   entry.revision++;
   if (value.status) entry.status = value.status;
   if (value.identity) entry.identity = value.identity;
+  if (value.marketState) entry.marketState = value.marketState;
   if (Number.isFinite(value.cursor)) entry.cursor = Math.max(entry.cursor, value.cursor);
   if (value.lastQuote && (!entry.eventTime || value.lastQuote.eventTime >= entry.eventTime))
     processMarketEvent(symbol, entry, {
@@ -455,6 +599,7 @@ export async function stopMarket(subscriptionId: string) {
   emit();
 }
 function updateBar(entry: MarketSeries, value: Bar) {
+  if (entry.historyRange?.live === false) return;
   if (!Number.isFinite(value?.time) || !Number.isFinite(value?.close)) return;
   if (value.volume == null) value = { ...value, volume: Number.NaN };
   const i = entry.bars.findIndex((b) => b.time === value.time);
@@ -471,8 +616,27 @@ function processMarketEvent(symbol: string, entry: MarketSeries, event: MarketEv
   const data = event.payload as Record<string, any>;
   if (event.type === "quote" || event.type === "trade") {
     const price = Number(data.price ?? data.p ?? data.quote?.price);
-    if (Number.isFinite(price) && price > 0) {
+    if (event.type === "quote") {
+      const bid = Number(data.bid ?? data.bp),
+        ask = Number(data.ask ?? data.ap);
+      entry.lastQuote = {
+        ...(Number.isFinite(bid) && bid > 0 ? { bid } : {}),
+        ...(Number.isFinite(ask) && ask > 0 ? { ask } : {}),
+        ...(bid > 0 && ask > 0 ? { mid: (bid + ask) / 2 } : {}),
+        time: event.eventTime,
+      };
+    }
+    if (
+      Number.isFinite(price) &&
+      price > 0 &&
+      (event.type === "trade" || (event.identity.provider !== "alpaca" && data.priceKind !== "mid"))
+    ) {
       prices[symbol] = price;
+    }
+    if (
+      (Number.isFinite(price) && price > 0) ||
+      (event.type === "quote" && (entry.lastQuote?.bid || entry.lastQuote?.ask))
+    ) {
       entry.eventTime = event.eventTime;
       entry.quoteReceivedAt = event.receivedAt;
     }
@@ -518,16 +682,20 @@ async function poll() {
     for (let offset = 0; offset < selected.length; offset += 4)
       await Promise.all(
         selected.slice(offset, offset + 4).map(async ([key, entry]) => {
+          const subscriptionId = entry.subscriptionId;
           try {
             const result = await command<{
               events: MarketEvent[];
               nextCursor: number;
               cursorExpired?: boolean;
+              marketState?: MarketSeries["marketState"];
             }>("market.events", {
-              subscription_id: entry.subscriptionId,
+              subscription_id: subscriptionId,
               cursor: entry.cursor,
               limit: 1000,
             });
+            if (subscriptionId !== entry.subscriptionId) return;
+            if (result.marketState) entry.marketState = result.marketState;
             if (result.cursorExpired) {
               entry.complete = false;
               entry.streamError =
@@ -539,6 +707,7 @@ async function poll() {
               if (event.cursor > entry.cursor) processMarketEvent(key.split("|")[0], entry, event);
             entry.cursor = Math.max(entry.cursor, result.nextCursor);
           } catch (error) {
+            if (subscriptionId !== entry.subscriptionId) return;
             entry.status = "disconnected";
             entry.streamError = String(error);
           }

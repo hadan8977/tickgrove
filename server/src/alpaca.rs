@@ -4,13 +4,8 @@ use crate::{
 };
 use serde_json::{Value, json};
 use sqlx::Row;
-fn config() -> anyhow::Result<(String, String)> {
-    Ok((
-        std::env::var("ALPACA_API_KEY")
-            .map_err(|_| anyhow::anyhow!("Alpaca Paper credentials not configured"))?,
-        std::env::var("ALPACA_API_SECRET")
-            .map_err(|_| anyhow::anyhow!("Alpaca Paper credentials not configured"))?,
-    ))
+async fn config(app: &App) -> anyhow::Result<(String, String)> {
+    crate::connections::alpaca_credentials(app).await
 }
 fn client() -> anyhow::Result<reqwest::Client> {
     Ok(reqwest::Client::builder()
@@ -41,11 +36,12 @@ impl std::fmt::Display for VenueFailure {
 }
 impl std::error::Error for VenueFailure {}
 async fn request(
+    app: &App,
     method: reqwest::Method,
     path: &str,
     body: Option<&Value>,
 ) -> anyhow::Result<Value> {
-    let (key, secret) = config()?;
+    let (key, secret) = config(app).await?;
     let mut r = client()?
         .request(method, format!("{}/{path}", paper_base()?))
         .header("APCA-API-KEY-ID", key)
@@ -65,9 +61,15 @@ async fn request(
     Ok(value)
 }
 pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value> {
+    let _account_guard = if ["orders.submit", "orders.cancel", "orders.reconcile"].contains(&method)
+    {
+        Some(crate::connections::ACCOUNT_CHANGE.lock().await)
+    } else {
+        None
+    };
     match method {
         "alpaca.config" => Ok(
-            json!({"configured":config().is_ok(),"ordersEndpoint":"https://paper-api.alpaca.markets/v2","marketDataEndpoint":"https://data.alpaca.markets/v2","liveTrading":false,"credentialsSource":"server environment","networkVerified":false}),
+            json!({"configured":config(app).await.is_ok(),"ordersEndpoint":"https://paper-api.alpaca.markets/v2","marketDataEndpoint":"https://data.alpaca.markets/v2","liveTrading":false,"credentialsSource":"server connection profile or environment","networkVerified":false}),
         ),
         "orders.list" => {
             let rows=sqlx::query("SELECT client_order_id,state,error,updated_at FROM broker_orders ORDER BY rowid DESC LIMIT 100").fetch_all(&app.db).await?;
@@ -93,7 +95,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
         "orders.submit" => {
             validate_order(p)?;
             let id = required(p, "client_order_id")?;
-            config()?;
+            config(app).await?;
             let payload = p.to_string();
             let mut reserve = app.db.begin().await?;
             if let Some(row) = sqlx::query("SELECT * FROM broker_orders WHERE client_order_id=?")
@@ -124,7 +126,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             .execute(&mut *reserve)
             .await?;
             reserve.commit().await?;
-            match request(reqwest::Method::POST, "orders", Some(p)).await {
+            match request(app, reqwest::Method::POST, "orders", Some(p)).await {
                 Ok(order) => {
                     if let Err(error) = persist(app, id, &order).await {
                         sqlx::query("UPDATE broker_orders SET state='unknown',error=? WHERE client_order_id=?").bind(error.to_string()).bind(id).execute(&app.db).await?;
@@ -169,6 +171,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                 "Invalid client_order_id"
             );
             let order = request(
+                app,
                 reqwest::Method::GET,
                 &format!("orders:by_client_order_id?client_order_id={id}"),
                 None,
@@ -180,7 +183,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
         "orders.cancel" => {
             let id = required(p, "order_id")?;
             anyhow::ensure!(uuid::Uuid::parse_str(id).is_ok(), "order_id must be UUID");
-            let (key, secret) = config()?;
+            let (key, secret) = config(app).await?;
             let response = client()?
                 .delete(format!("{}/orders/{id}", paper_base()?))
                 .header("APCA-API-KEY-ID", key)
@@ -194,7 +197,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
             );
             Ok(json!({"cancelRequested":true,"order_id":id}))
         }
-        "alpaca.account" => request(reqwest::Method::GET, "account", None).await,
+        "alpaca.account" => request(app, reqwest::Method::GET, "account", None).await,
         "data.fetch" => {
             let symbol = required(p, "symbol")?;
             anyhow::ensure!(
@@ -203,7 +206,7 @@ pub async fn execute(app: &App, method: &str, p: &Value) -> anyhow::Result<Value
                     .all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-'),
                 "Invalid symbol"
             );
-            let (key, secret) = config()?;
+            let (key, secret) = config(app).await?;
             let start = required(p, "start")?;
             let end = required(p, "end")?;
             let tf = p["timeframe"].as_str().unwrap_or("1Day");

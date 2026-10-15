@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-15T06:50:46.053Z",
+  "scope": "isolated public provider market-data tests; no user credentials, orders or public-preview state",
+  "checks": [
+    {
+      "name": "generic ETF history, older paging and persistent cache",
+      "passed": true,
+      "symbol": "VOO",
+      "firstBars": 1000,
+      "olderBars": 1000,
+      "oldest": 1540819800,
+      "latest": 1791984600
+    },
+    {
+      "name": "two older pages span over eight years",
+      "passed": true,
+      "oldest": 1415370600
+    },
+    {
+      "name": "default live page uses stable minute cache boundary",
+      "passed": true,
+      "cacheHit": true
+    },
+    {
+      "name": "Yahoo minute history beyond seven days",
+      "passed": true,
+      "bars": 100,
+      "oldest": 1790274000
+    },
+    {
+      "name": "ten-day minute range freezes through seven-day source chunks",
+      "passed": true,
+      "pages": 2,
+      "bars": 3120,
+      "gaps": 0
+    },
+    {
+      "name": "month minute range respects actual-bar budget beyond twenty-thousand wallclock slots",
+      "passed": true,
+      "pages": 4,
+      "bars": 7800,
+      "gaps": 0
+    },
+    {
+      "name": "Coinbase month-old minute history",
+      "passed": true,
+      "bars": 119
+    },
+    {
+      "name": "non-default crypto real history",
+      "passed": true,
+      "symbol": "LTC-USD",
+      "bars": 47
+    },
+    {
+      "name": "real Coinbase multiplexed source fanout and per-consumer stop",
+      "passed": true,
+      "symbols": [
+        "BTC-USD",
+        "ETH-USD"
+      ],
+      "timeframes": [
+        "1m",
+        "1H"
+      ],
+      "connections": 1,
+      "quotes": [
+        {
+          "eventTime": 1792047036389,
+          "receivedAt": 1792047036778
+        },
+        {
+          "eventTime": 1792047036389,
+          "receivedAt": 1792047036941
+        },
+        {
+          "eventTime": 1792047035860,
+          "receivedAt": 1792047037411
+        }
+      ]
+    },
+    {
+      "name": "real Yahoo generic-symbol multiplexed reference stream",
+      "passed": true,
+      "connections": 1,
+      "marketState": {
+        "asOf": 1792047046017,
+        "open": false,
+        "selectedSession": "regular",
+        "state": "overnight",
+        "timezone": "America/New_York"
+      },
+      "eventTime": 1792047044000,
+      "priceKind": "reference",
+      "scope": "public reference quote; no exchange realtime or freshness guarantee while selected session is closed"
+    },
+    {
+      "name": "bounded cache reports capacity",
+      "passed": true,
+      "entries": 15,
+      "bytes": 2712871,
+      "maxBytes": 67108864
+    }
+  ],
+  "passed": 11
+}

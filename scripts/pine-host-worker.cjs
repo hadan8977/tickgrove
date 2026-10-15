@@ -4,7 +4,7 @@ const readline=require('node:readline');
 const {PineEventHost}=require('../src/pine/host.ts');
 let host,alertCursor=0;
 const lines=readline.createInterface({input:process.stdin,crlfDelay:Infinity});
-(async()=>{for await(const line of lines){try{if(line.length>16_000_000)throw Error('Host message budget exceeded');const request=JSON.parse(line);let output;
+(async()=>{for await(const line of lines){let request;try{if(line.length>16_000_000)throw Error('Host message budget exceeded');request=JSON.parse(line);let output;
  if(request.operation==='init'){if(host)throw Error('Host already initialized');host=await PineEventHost.create(request.source,request.data.bars,request.data.timeframe,{...request.options,symbol:request.data.symbol,metadata:request.data.metadata,datasets:request.data.datasets});alertCursor=host.state.alerts.length;output={ready:true};}
  else{if(!host)throw Error('Host not initialized');if(request.operation==='market')output=await host.append(request.event);else if(request.operation==='fill')output=host.applyBrokerFill(request.fill);else if(request.operation==='clearOrders'){host.clearPendingOrders();output={cleared:true}}else if(request.operation!=='state')throw Error('Unknown host operation');}
  const ctx=host.state;const alerts=ctx.alerts.slice(alertCursor);alertCursor=ctx.alerts.length;
@@ -18,4 +18,4 @@ const lines=readline.createInterface({input:process.stdin,crlfDelay:Infinity});
  response.render={ok:true,kind:ctx.strategy?'strategy':'indicator',title:ctx.strategy?.config.title??ctx.indicator?.title??'Pine event host',overlay:Boolean(ctx.strategy?.config.overlay??ctx.indicator?.overlay),plots:lines,signals,visuals,warnings:ctx.warnings.map(w=>w.message),alerts:ctx.alerts,ms:host.executionMs};response.bars=bars;
  }
  process.stdout.write(JSON.stringify(response,(_,v)=>typeof v==='number'&&!Number.isFinite(v)?null:v)+'\n');
- }catch(e){process.stdout.write(JSON.stringify({ok:false,error:{message:e.message}})+'\n');process.exitCode=1;break;}}})().catch(()=>process.exit(2));
+ }catch(e){const recoverable=request?.operation==='fill';process.stdout.write(JSON.stringify({ok:false,error:{message:e.message},recoverable})+'\n');if(!recoverable){process.exitCode=1;break;}}}})().catch(()=>process.exit(2));

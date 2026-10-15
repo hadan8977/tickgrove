@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-15T07:20:42.215Z",
+  "ok": true,
+  "health": {
+    "ok": true,
+    "product": "Tickgrove",
+    "service": "tickgrove-server",
+    "version": "0.1.0"
+  },
+  "port": 30711,
+  "workspaceRevision": 30,
+  "workspacePreserved": true,
+  "tokenPreserved": true,
+  "financialStatePreserved": true,
+  "hostCount": 0,
+  "providers": [
+    {
+      "id": "yahoo",
+      "configured": true
+    },
+    {
+      "id": "coinbase",
+      "configured": true
+    },
+    {
+      "id": "alpaca",
+      "configured": false
+    }
+  ],
+  "cacheMaxBytes": 67108864,
+  "frontend": "index-BecLKarF.js",
+  "binarySha256": "c846fc1a304461fd32e125bbe26c600a201e08df57cccd383478bba288dd1991",
+  "backup": "var/free-data-release/backup-release",
+  "publicAccountWrites": false,
+  "httpsUrl": "https://jelsoft-expand-celebration-tools.trycloudflare.com",
+  "httpsHealth": 200,
+  "unauthenticatedApi": 401,
+  "authenticatedConnections": 200,
+  "newVectorFavicon": true
+}

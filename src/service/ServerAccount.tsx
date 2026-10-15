@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount, refreshAccount, accountAction } from "./account";
 import { command } from "./client";
 import { Button, Input, Select, fmt, cx } from "../ui/primitives";
@@ -16,6 +16,10 @@ function download(value: unknown, name: string) {
   URL.revokeObjectURL(url);
 }
 export default function ServerAccount() {
+  const selectedSessionId = useApp((s) => s.paperSessionId);
+  const selectedRow = useRef<HTMLDivElement>(null);
+  const lastFocused = useRef<string | null>(null);
+  const [versions, setVersions] = useState<any[]>([]);
   const { data, error } = useAccount(),
     [tab, setTab] = useState("positions"),
     [sessions, setSessions] = useState<any[]>([]),
@@ -34,6 +38,18 @@ export default function ServerAccount() {
     await refreshAccount();
     setSessions(await command("paper.list"));
   }
+  useEffect(() => {
+    if (!selectedSessionId) return;
+    setTab("strategies");
+    setReport(undefined); setReportData(undefined);
+    void refresh().catch((e) => setFailure(String(e)));
+  }, [selectedSessionId]);
+  useEffect(() => {
+    if (tab !== "strategies" || !selectedSessionId || lastFocused.current === selectedSessionId || !selectedRow.current) return;
+    selectedRow.current.scrollIntoView({ block: "nearest" });
+    selectedRow.current.focus({ preventScroll: true });
+    lastFocused.current = selectedSessionId;
+  }, [sessions, selectedSessionId, tab]);
   async function act(fn: () => Promise<unknown>) {
     setBusy(true);
     setFailure("");
@@ -52,6 +68,7 @@ export default function ServerAccount() {
   }
   useEffect(() => {
     void act(refresh);
+    void command<any[]>("strategy.list").then(setVersions).catch((e) => setFailure(String(e)));
     const timer = setInterval(() => void refresh().catch((e) => setFailure(String(e))), 2000);
     return () => clearInterval(timer);
   }, []);
@@ -65,7 +82,7 @@ export default function ServerAccount() {
   return (
     <div className="flex h-full flex-col bg-panel text-xs">
       <div className="flex flex-wrap items-center gap-4 border-b border-line p-3">
-        <span className="text-accent">LOCAL PAPER</span>
+        <span className="text-accent">MANUAL PAPER ACCOUNT</span>
         {stats.map(([label, value]) => (
           <div key={label}>
             <div className="text-faint">{label}</div>
@@ -316,17 +333,21 @@ export default function ServerAccount() {
         {tab === "strategies" && (
           <div className="p-3">
             <p className="mb-3 text-muted">
-              Each deployed strategy has its own native account and immutable inputs. Manual account
-              totals are shown above.
+              Each strategy runs in a separate simulated account after bars close. Its results do
+              not change the manual account totals above. No broker orders are placed.
             </p>
             {!sessions.length && (
               <p>Run a backtest, then deploy its saved version to a market stream.</p>
             )}
             {sessions.map((s) => (
-              <div key={s.session_id} className="mb-2 rounded border border-line p-3">
+              <div key={s.session_id} data-paper-session={s.session_id}
+                ref={s.session_id === selectedSessionId ? selectedRow : undefined}
+                tabIndex={s.session_id === selectedSessionId ? -1 : undefined}
+                className={cx("mb-2 rounded border p-3 outline-none", s.session_id === selectedSessionId ? "border-accent bg-accent/5" : "border-line")}>
                 <div className="flex flex-wrap items-center gap-3">
-                  <b>{s.name ?? s.session_id.slice(0, 8)}</b>
+                  <b>{s.name ?? versions.find((v) => v.id === s.version_id)?.name ?? "Strategy run"}</b>
                   <span>{s.status}</span>
+                  {s.session_id === selectedSessionId && <span className="text-accent">Selected run</span>}
                   <span className="text-muted">
                     {s.subscription_id ? "Bound market stream" : "Imported event stream"}
                   </span>
@@ -405,9 +426,11 @@ export default function ServerAccount() {
                 </div>
                 {s.error && <p className="mt-2 text-down">{s.error}</p>}
                 <p className="mt-2 text-faint">
-                  {s.pending_job_id ? "Waiting for pending job confirmation" : "Committed snapshot"}{" "}
-                  · {s.snapshot_id?.slice(0, 12)}
+                  {s.status === "stopped" ? "Stopped — no new bars will be processed" : s.status === "paused" ? "Paused — resume to process new confirmed bars" : s.pending_job_id ? "Processing a confirmed market bar" : "Waiting for the next confirmed market bar"}
                 </p>
+                <details className="mt-2 text-muted"><summary className="cursor-pointer">Run details</summary>
+                  <p className="mt-1 break-all">Run {s.session_id} · saved version {s.version_id} · snapshot {s.snapshot_id}</p>
+                </details>
               </div>
             ))}
             {report && reportData && <ServiceReport report={report} data={reportData} />}

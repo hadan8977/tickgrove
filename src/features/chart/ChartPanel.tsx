@@ -47,7 +47,8 @@ import SymbolSearch from "./SymbolSearch";
 import ChartTools from "./ChartTools";
 import Comparison from "./Comparison";
 import ChartTrading from "./ChartTrading";
-import { getBars, symbolInfo } from "../../data/feed";
+import { formatInstrumentPrice, getBars, symbolInfo } from "../../data/feed";
+import { formatIndicatorValue } from "./valueFormat";
 
 const TOOLS: { id: DrawingTool; icon: typeof Slash; label: string; key?: string }[] = [
   { id: "cursor", icon: MousePointer2, label: "Cursor", key: "Esc" },
@@ -463,16 +464,19 @@ function Legend({
     state.backtestId ? s.results.find((r) => r.id === state.backtestId) : undefined,
   );
   const info = symbolInfo(state.symbol);
+  const ohlc = (["open", "high", "low", "close"] as const)
+    .map((key) => `${key[0].toUpperCase()} ${formatInstrumentPrice(state.symbol, b?.[key] ?? Number.NaN)}`)
+    .join(" · ");
   return (
     <div className="pointer-events-none absolute left-2 top-1.5 z-10 flex max-h-[45%] max-w-[calc(100%-84px)] overflow-hidden flex-col gap-1">
-      <div className="num flex w-fit max-w-full gap-2 overflow-hidden whitespace-nowrap rounded-md bg-panel/80 px-1.5 py-0.5 text-[11px] text-muted backdrop-blur-sm">
+      <div aria-label={ohlc} title={ohlc} className="num flex w-fit max-w-full gap-2 overflow-hidden whitespace-nowrap rounded-md bg-panel/80 px-1.5 py-0.5 text-[11px] text-muted backdrop-blur-sm">
         <span className="hidden text-faint @min-[560px]:inline">
           {info.exchange} · {state.tf}
         </span>
         {(["open", "high", "low", "close"] as const).map((k) => (
-          <span key={k} className={k === "close" ? "" : "chart-ohlc-extra"}>
+          <span key={k} className={k === "close" ? "" : "chart-ohlc-extra hidden @min-[620px]:inline"}>
             {k[0].toUpperCase()}{" "}
-            <span className={up ? "text-up" : "text-down"}>{fmt.price(b?.[k] ?? Number.NaN)}</span>
+            <span className={up ? "text-up" : "text-down"}>{formatInstrumentPrice(state.symbol, b?.[k] ?? Number.NaN)}</span>
           </span>
         ))}
         <span className="hidden @min-[480px]:inline">
@@ -585,11 +589,7 @@ function IndicatorRow({
           const v = o.data[index];
           return (
             <span key={o.title} className="num" style={{ color: o.color }}>
-              {v === null || v === undefined
-                ? "—"
-                : Math.abs(v) >= 1000
-                  ? fmt.price(v)
-                  : v.toFixed(2)}
+              {formatIndicatorValue(v)}
             </span>
           );
         })

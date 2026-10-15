@@ -25,7 +25,14 @@ export async function command<T = any>(
     },
     body: JSON.stringify({ method, params, idempotency_key: key }),
   });
-  const body = await response.json();
+  let body: any;
+  try {
+    body = await response.json();
+  } catch {
+    throw new Error(response.ok
+      ? "The trading service returned an incomplete response. Please retry."
+      : `The trading service is unavailable (HTTP ${response.status}). Check the server connection and retry.`);
+  }
   if (!response.ok) throw new Error(body.error ?? response.statusText);
   return body;
 }

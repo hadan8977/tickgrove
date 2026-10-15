@@ -1,0 +1,164 @@
+{
+  "date": "2026-10-15T06:24:06.453Z",
+  "scope": "Read-only direct public-source contract probes; no credentials or runtime state",
+  "checks": [
+    {
+      "provider": "yahoo",
+      "name": "minute9days",
+      "symbol": "VOO",
+      "interval": "1m",
+      "start": 1791181443,
+      "end": 1791267843,
+      "status": 200,
+      "barsInRequestedWindow": 390,
+      "first": 1791207000,
+      "last": 1791230340,
+      "error": null
+    },
+    {
+      "provider": "yahoo",
+      "name": "minute21days",
+      "symbol": "SPY",
+      "interval": "1m",
+      "start": 1790144643,
+      "end": 1790231043,
+      "status": 200,
+      "barsInRequestedWindow": 390,
+      "first": 1790170200,
+      "last": 1790193540,
+      "error": null
+    },
+    {
+      "provider": "yahoo",
+      "name": "minute34days",
+      "symbol": "SPY",
+      "interval": "1m",
+      "start": 1789107843,
+      "end": 1789194243,
+      "status": 422,
+      "barsInRequestedWindow": 0,
+      "error": {
+        "code": "Unprocessable Entity",
+        "description": "1m data not available for startTime=1789107843 and endTime=1789194243. The requested range must be within the last 30 days."
+      }
+    },
+    {
+      "provider": "yahoo",
+      "name": "daily10years",
+      "symbol": "VOO",
+      "interval": "1d",
+      "start": 1476685443,
+      "end": 1792045443,
+      "status": 200,
+      "barsInRequestedWindow": 2512,
+      "first": 1476711000,
+      "last": 1791984600,
+      "error": null
+    },
+    {
+      "provider": "coinbase",
+      "name": "minute30days",
+      "symbol": "LTC-USD",
+      "interval": 60,
+      "start": 1789453443,
+      "end": 1789460643,
+      "status": 200,
+      "barsInRequestedWindow": 120,
+      "first": 1789453500,
+      "last": 1789460640
+    },
+    {
+      "provider": "coinbase",
+      "name": "hour60days",
+      "symbol": "LTC-USD",
+      "interval": 3600,
+      "start": 1786861443,
+      "end": 1787293443,
+      "status": 200,
+      "barsInRequestedWindow": 120,
+      "first": 1786863600,
+      "last": 1787292000
+    },
+    {
+      "provider": "yahoo",
+      "name": "fiveMinute65days",
+      "symbol": "SPY",
+      "interval": "5m",
+      "start": 1786429939,
+      "end": 1786516339,
+      "status": 422,
+      "barsInRequestedWindow": 0,
+      "error": {
+        "code": "Unprocessable Entity",
+        "description": "5m data not available for startTime=1786429939 and endTime=1786516339. The requested range must be within the last 60 days."
+      }
+    },
+    {
+      "provider": "yahoo",
+      "name": "hour728days",
+      "symbol": "SPY",
+      "interval": "60m",
+      "start": 1729146739,
+      "end": 1729233139,
+      "status": 200,
+      "barsInRequestedWindow": 7,
+      "first": 1729171800,
+      "last": 1729193400,
+      "error": null
+    },
+    {
+      "provider": "yahoo",
+      "name": "hour740days",
+      "symbol": "SPY",
+      "interval": "60m",
+      "start": 1728109939,
+      "end": 1728196339,
+      "status": 422,
+      "barsInRequestedWindow": 0,
+      "error": {
+        "code": "Unprocessable Entity",
+        "description": "1h data not available for startTime=1728109939 and endTime=1728196339. The requested range must be within the last 730 days."
+      }
+    },
+    {
+      "provider": "yahoo",
+      "name": "twentyEightDayMinuteSourceChunks",
+      "symbol": "SPY",
+      "interval": "1m",
+      "start": 1789627440,
+      "end": 1792046640,
+      "pages": [
+        {
+          "start": 1789627440,
+          "end": 1790232240,
+          "status": 200,
+          "returnedInWindow": 1950,
+          "error": null
+        },
+        {
+          "start": 1790232240,
+          "end": 1790837040,
+          "status": 200,
+          "returnedInWindow": 1950,
+          "error": null
+        },
+        {
+          "start": 1790837040,
+          "end": 1791441840,
+          "status": 200,
+          "returnedInWindow": 1950,
+          "error": null
+        },
+        {
+          "start": 1791441840,
+          "end": 1792046640,
+          "status": 200,
+          "returnedInWindow": 1951,
+          "error": null
+        }
+      ],
+      "uniqueSourceTimestamps": 7801,
+      "note": "Direct source timestamps; Rust subsequently applies session/closed-bar validation"
+    }
+  ]
+}

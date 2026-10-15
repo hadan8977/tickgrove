@@ -5,6 +5,7 @@ mod alerts;
 mod alpaca;
 mod auth;
 mod commands;
+mod connections;
 mod market;
 mod paper;
 mod paper_stream;
@@ -118,6 +119,7 @@ pub async fn run() -> anyhow::Result<()> {
     };
     tokio::spawn(worker::queue(app.clone()));
     market::resume(&app).await?;
+    tokio::spawn(alerts::run(app.clone()));
     tokio::spawn(paper_stream::run(app.clone()));
     tokio::spawn(pine_host::coordinator(app.clone()));
     let router = Router::new()

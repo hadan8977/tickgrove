@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-15T07:07:04.027Z",
+  "base": "http://127.0.0.1:18894",
+  "publicPreviewWrites": false,
+  "serverRequestsForwarded": 0,
+  "checks": [
+    "Fresh demo: SOL-USD/5m/area and chart IDs survive 6→1→reload→6; template replacement Undo restores all six.",
+    "Actual SymbolSearch fixture: changing AAPL→SOL then immediate Enter cannot choose old AAPL; completed SOL result is selectable.",
+    "Actual Enter search: provider returns VOO.MX first; exact VOO is ranked first and Enter selects YAHOO:VOO.",
+    "Actual PineEditor/PineLibraries fixtures: missing dependency opens prefilled Actual/Math/3, installs supplied source, rechecks lock and returns to unchanged script.",
+    "Actual ServerAccount fixture: selected new run opens Strategies, is highlighted/focused and is explicitly separate from manual account totals."
+  ],
+  "ok": true
+}

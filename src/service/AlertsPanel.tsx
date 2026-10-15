@@ -74,6 +74,10 @@ export default function AlertsPanel() {
         Alerts run on the server against their provider's market events. Delivery history remains
         available after closing your browser.
       </p>
+      <p className="mt-2 text-xs text-muted">
+        Only fresh source events trigger price alerts. Delayed or unknown-latency feeds, including
+        the free stock fallback, do not guarantee realtime alerts.
+      </p>
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted"><span>{followChart ? `Following current chart${chart ? " · " + chart.symbol + " " + chart.tf : ""}` : "Custom alert instrument"}</span><Button type="button" size="sm" disabled={busy || !chart} onClick={useCurrentChart}>Use current chart</Button></div>
       <form
         className="my-5 flex flex-wrap items-end gap-3"
@@ -157,16 +161,16 @@ export default function AlertsPanel() {
         {alerts.map((a) => (
           <div
             key={a.id}
-            className="flex flex-wrap items-center gap-3 rounded-lg border border-line p-3 text-sm"
+            className="flex min-w-0 flex-wrap items-center gap-3 rounded-lg border border-line p-3 text-sm"
           >
             <b>{a.name}</b>
             <span>
               {a.symbol} · {a.kind} {a.price}
             </span>
-            <span className="text-muted">
-              {a.provider} · {a.status}
+            <span className={a.status === "failed" ? "text-down" : "text-muted"}>
+              {a.provider} · {a.status === "failed" ? "Source needs attention" : a.status}
             </span>
-            {["active", "paused"].includes(a.status) && <Button
+            {["active", "paused", "failed"].includes(a.status) && <Button
               size="sm"
               disabled={busy}
               onClick={() =>
@@ -175,10 +179,11 @@ export default function AlertsPanel() {
                     id: a.id,
                     paused: a.status === "active",
                   }),
+                  a.status === "active" ? "Alert paused" : "A new observation window has started. Earlier gaps are not replayed.",
                 )
               }
             >
-              {a.status === "active" ? "Pause" : "Resume"}
+              {a.status === "active" ? "Pause" : "Resume from now"}
             </Button>}
             <Button
               size="sm"
@@ -188,6 +193,8 @@ export default function AlertsPanel() {
             >
               Delete
             </Button>
+            {a.error && <p role="alert" className="w-full min-w-0 break-words text-xs text-down">{a.error}</p>}
+            {["paused", "failed"].includes(a.status) && <p className="w-full text-xs text-muted">Resuming starts a new observation window. Earlier gaps are not replayed.</p>}
           </div>
         ))}
       </div>
@@ -206,10 +213,10 @@ export default function AlertsPanel() {
       ))}
       {supportsStrategies && (
         <>
-          <h2 className="mb-3 mt-6 font-semibold">Pine strategy notifications</h2>
+          <h2 className="mb-3 mt-6 font-semibold">Pine notifications</h2>
           <p className="mb-3 text-xs text-muted">
-            Notifications from newly committed bars in running strategy sessions. Historical
-            backtest alerts are retained with their reports.
+            Notifications from live scripts and newly committed strategy bars. Each trigger follows
+            its script's frequency. Historical backtest alerts stay with their reports.
           </p>
           {!strategyHistory.length && (
             <p className="text-sm text-muted">No strategy notifications yet.</p>
@@ -217,10 +224,10 @@ export default function AlertsPanel() {
           {strategyHistory.map((event) => (
             <div key={event.id} className="flex flex-wrap gap-3 border-b border-line py-2 text-xs">
               <span>{new Date(event.eventTime).toLocaleString()}</span>
-              <b>{event.alert.title ?? event.alert.type}</b>
-              <span>{event.alert.message}</span>
+              <b>{event.alert?.title ?? event.alert?.type ?? "Pine alert"}</b>
+              <span className="min-w-0 break-words">{event.alert?.message}</span>
               <span className="text-muted">
-                Session {event.session_id.slice(0, 8)} · job {event.job_id.slice(0, 8)}
+                {event.context?.source === "pine_host" ? "Live script" : "Strategy"} · {event.session_id.slice(0, 8)}
               </span>
             </div>
           ))}

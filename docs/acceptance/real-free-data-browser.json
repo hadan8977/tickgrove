@@ -1,0 +1,478 @@
+{
+  "at": "2026-10-15T07:17:29.104Z",
+  "base": "http://127.0.0.1:18896",
+  "isolatedDataDirectory": "var/free-data-review",
+  "publicPreviewWrites": false,
+  "realSources": true,
+  "histories": [
+    {
+      "provider": "coinbase",
+      "symbol": "LTC-USD",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 999,
+      "first": 1705708800,
+      "last": 1791936000,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "LTC-USD",
+      "timeframe": "1H",
+      "before": null,
+      "bars": 999,
+      "first": 1788451200,
+      "last": 1792044000,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "VOO",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "BTC-USD",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 999,
+      "first": 1705708800,
+      "last": 1791936000,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "IWM",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "SPY",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "QQQ",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "BTC-USD",
+      "timeframe": "4H",
+      "before": null,
+      "bars": 999,
+      "first": 1777651200,
+      "last": 1792022400,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "SPY",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": true,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "QQQ",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": true,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "AAPL",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "MSFT",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "NVDA",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "AMZN",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "META",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "GOOGL",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "yahoo",
+      "symbol": "TSLA",
+      "timeframe": "1D",
+      "before": null,
+      "bars": 1000,
+      "first": 1666186200,
+      "last": 1791984600,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "delayed"
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "LTC-USD",
+      "timeframe": "1m",
+      "before": null,
+      "bars": 1000,
+      "first": 1791988560,
+      "last": 1792048500,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    },
+    {
+      "provider": "coinbase",
+      "symbol": "LTC-USD",
+      "timeframe": "1m",
+      "before": 1791988560,
+      "bars": 999,
+      "first": 1791928560,
+      "last": 1791988500,
+      "hasMore": true,
+      "cacheHit": false,
+      "delay": "realtime"
+    }
+  ],
+  "liveEvents": [
+    {
+      "type": "trade",
+      "timeframe": "1D",
+      "eventTime": 1792048672943,
+      "receivedAt": 1792048673269,
+      "price": "58.062"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1H",
+      "eventTime": 1792048672943,
+      "receivedAt": 1792048673292,
+      "price": "58.062"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1D",
+      "eventTime": 1792048673738,
+      "receivedAt": 1792048673738
+    },
+    {
+      "type": "quote",
+      "timeframe": "1D",
+      "eventTime": 1792048672943,
+      "receivedAt": 1792048673744,
+      "price": "58.062"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1H",
+      "eventTime": 1792048673954,
+      "receivedAt": 1792048673954
+    },
+    {
+      "type": "quote",
+      "timeframe": "1H",
+      "eventTime": 1792048672943,
+      "receivedAt": 1792048673974,
+      "price": "58.062"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1D",
+      "eventTime": 1792048672949,
+      "receivedAt": 1792048675172,
+      "price": "58.062"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1D",
+      "eventTime": 1792048675347,
+      "receivedAt": 1792048675347
+    },
+    {
+      "type": "quote",
+      "timeframe": "1D",
+      "eventTime": 1792048672949,
+      "receivedAt": 1792048675351,
+      "price": "58.062"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1H",
+      "eventTime": 1792048672949,
+      "receivedAt": 1792048675126,
+      "price": "58.062"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1H",
+      "eventTime": 1792048675305,
+      "receivedAt": 1792048675305
+    },
+    {
+      "type": "quote",
+      "timeframe": "1H",
+      "eventTime": 1792048672949,
+      "receivedAt": 1792048675316,
+      "price": "58.062"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1D",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048676838,
+      "price": "58.047"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1D",
+      "eventTime": 1792048677372,
+      "receivedAt": 1792048677372
+    },
+    {
+      "type": "quote",
+      "timeframe": "1D",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048677378,
+      "price": "58.047"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1D",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048677890,
+      "price": "58.046"
+    },
+    {
+      "type": "bar.update",
+      "timeframe": "1D",
+      "eventTime": 1792048678189,
+      "receivedAt": 1792048678189
+    },
+    {
+      "type": "quote",
+      "timeframe": "1D",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048678254,
+      "price": "58.046"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1D",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048678601,
+      "price": "58.045"
+    },
+    {
+      "type": "trade",
+      "timeframe": "1H",
+      "eventTime": 1792048675930,
+      "receivedAt": 1792048677061,
+      "price": "58.047"
+    }
+  ],
+  "themes": [
+    {
+      "name": "dark",
+      "mark": {
+        "width": 24,
+        "height": 24,
+        "color": "rgb(178, 240, 204)",
+        "path": "M2 3H30V9.5H22.8C19.1 9.5 16 12.5 16 17C16 12.5 12.9 9.5 9.2 9.5H2Z M8.75 12.5C12.1 12.5 14.5 15.1 14.5 18.75V29H8.75Z M23.25 12.5C19.9 12.5 17.5 15.1 17.5 18.75V29H23.25Z"
+      },
+      "favicon": {
+        "status": 200,
+        "newMark": true
+      }
+    },
+    {
+      "name": "cobalt",
+      "mark": {
+        "width": 24,
+        "height": 24,
+        "color": "rgb(178, 240, 204)",
+        "path": "M2 3H30V9.5H22.8C19.1 9.5 16 12.5 16 17C16 12.5 12.9 9.5 9.2 9.5H2Z M8.75 12.5C12.1 12.5 14.5 15.1 14.5 18.75V29H8.75Z M23.25 12.5C19.9 12.5 17.5 15.1 17.5 18.75V29H23.25Z"
+      },
+      "favicon": {
+        "status": 200,
+        "newMark": true
+      }
+    },
+    {
+      "name": "moss",
+      "mark": {
+        "width": 24,
+        "height": 24,
+        "color": "rgb(35, 100, 73)",
+        "path": "M2 3H30V9.5H22.8C19.1 9.5 16 12.5 16 17C16 12.5 12.9 9.5 9.2 9.5H2Z M8.75 12.5C12.1 12.5 14.5 15.1 14.5 18.75V29H8.75Z M23.25 12.5C19.9 12.5 17.5 15.1 17.5 18.75V29H23.25Z"
+      },
+      "favicon": {
+        "status": 200,
+        "newMark": true
+      }
+    },
+    {
+      "name": "light",
+      "mark": {
+        "width": 24,
+        "height": 24,
+        "color": "rgb(35, 100, 73)",
+        "path": "M2 3H30V9.5H22.8C19.1 9.5 16 12.5 16 17C16 12.5 12.9 9.5 9.2 9.5H2Z M8.75 12.5C12.1 12.5 14.5 15.1 14.5 18.75V29H8.75Z M23.25 12.5C19.9 12.5 17.5 15.1 17.5 18.75V29H23.25Z"
+      },
+      "favicon": {
+        "status": 200,
+        "newMark": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "task": "Generic stock/ETF search and real history",
+      "symbol": "YAHOO:VOO",
+      "last": 707.4299926757812,
+      "history": "1,000 bars2022-10-19 — 2026-10-14",
+      "policy": "delayed",
+      "session": "regular · unknown · America/New_York"
+    },
+    {
+      "task": "Generic stock/ETF search and real history",
+      "symbol": "YAHOO:IWM",
+      "last": 272.2200012207031,
+      "history": "1,000 bars2022-10-19 — 2026-10-14",
+      "policy": "delayed",
+      "session": "regular · overnight · America/New_York"
+    },
+    {
+      "task": "Real LTC-USD 1m→1H→1m transition",
+      "samples": 4,
+      "loadingObserved": false,
+      "noFalseEmpty": true
+    },
+    {
+      "task": "Real earlier history",
+      "symbol": "COINBASE:LTC-USD",
+      "before": 1002,
+      "after": 2001,
+      "range": "2,001 bars · 1 gaps2026-10-13 — 2026-10-15"
+    },
+    {
+      "task": "Real stream updates visible in UI",
+      "distinctQuoteOrTradeTimes": 2,
+      "quoteTime": "2026-10-15 07:18:11 UTC",
+      "received": "2s ago",
+      "connection": "connected",
+      "uiLast": 58.029
+    }
+  ],
+  "errors": [],
+  "frontendAssets": [
+    "/assets/index-BecLKarF.js"
+  ],
+  "mobile": {
+    "overflow": 0,
+    "logo": [
+      25
+    ],
+    "charts": 1
+  },
+  "ok": true
+}

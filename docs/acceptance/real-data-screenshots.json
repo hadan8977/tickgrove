@@ -1,0 +1,189 @@
+{
+  "at": "2026-10-15T07:19:02.163Z",
+  "base": "http://127.0.0.1:18896",
+  "realSources": true,
+  "publicPreviewWrites": false,
+  "screenshots": [
+    {
+      "path": "var/real-free-data-browser/charts4-moss.png",
+      "theme": "moss",
+      "canvasTextColor": "#5d6350",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "charts": [
+        [
+          "YAHOO:VOO",
+          "1D"
+        ],
+        [
+          "YAHOO:IWM",
+          "1D"
+        ],
+        [
+          "COINBASE:LTC-USD",
+          "1H"
+        ],
+        [
+          "COINBASE:BTC-USD",
+          "4H"
+        ]
+      ],
+      "geometry": [
+        {
+          "id": "chmv96r2987",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 328,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        },
+        {
+          "id": "chmv96r2dk9",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 328,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        },
+        {
+          "id": "chmv96r2c88",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 328,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Live"
+        },
+        {
+          "id": "chmv96r2ema",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 314,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "As of last quote!"
+        }
+      ]
+    },
+    {
+      "path": "var/real-free-data-browser/charts6-dark.png",
+      "theme": "dark",
+      "canvasTextColor": "#a1a1a0",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "charts": [
+        [
+          "YAHOO:VOO",
+          "1D"
+        ],
+        [
+          "YAHOO:IWM",
+          "1D"
+        ],
+        [
+          "COINBASE:LTC-USD",
+          "1H"
+        ],
+        [
+          "COINBASE:BTC-USD",
+          "4H"
+        ],
+        [
+          "YAHOO:SPY",
+          "1D"
+        ],
+        [
+          "YAHOO:QQQ",
+          "1D"
+        ]
+      ],
+      "geometry": [
+        {
+          "id": "chmv96r2987",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 328,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        },
+        {
+          "id": "chmv96r2ema",
+          "width": 418,
+          "height": 284,
+          "chartAreaWidth": 386,
+          "chartAreaHeight": 252,
+          "plotWidth": 328,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        },
+        {
+          "id": "chmv96r2c88",
+          "width": 422,
+          "height": 284,
+          "chartAreaWidth": 390,
+          "chartAreaHeight": 252,
+          "plotWidth": 332,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Live"
+        },
+        {
+          "id": "chmv97d09b7",
+          "width": 422,
+          "height": 284,
+          "chartAreaWidth": 390,
+          "chartAreaHeight": 252,
+          "plotWidth": 318,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "As of last quote!"
+        },
+        {
+          "id": "chmv96r2dk9",
+          "width": 426,
+          "height": 284,
+          "chartAreaWidth": 394,
+          "chartAreaHeight": 252,
+          "plotWidth": 336,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        },
+        {
+          "id": "chmv97d0a18",
+          "width": 426,
+          "height": 284,
+          "chartAreaWidth": 394,
+          "chartAreaHeight": 252,
+          "plotWidth": 336,
+          "plotHeight": 224,
+          "status": "ready",
+          "sourceLabel": "Closed"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "frontendAssets": [
+    "/assets/index-BecLKarF.js"
+  ],
+  "ok": true
+}
